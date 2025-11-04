@@ -1,13 +1,14 @@
-import { Home, Users, User, Car } from "lucide-react";
+import { Home, Users, User, Car, Shield } from "lucide-react";
 import { Button } from "./ui/button";
 
 interface BottomNavigationProps {
   activeTab: string;
   onTabChange: (tab: string) => void;
+  isAdmin?: boolean;
 }
 
-export function BottomNavigation({ activeTab, onTabChange }: BottomNavigationProps) {
-  const navItems = [
+export function BottomNavigation({ activeTab, onTabChange, isAdmin = false }: BottomNavigationProps) {
+  const baseNavItems = [
     {
       id: "home",
       label: "Home",
@@ -30,6 +31,14 @@ export function BottomNavigation({ activeTab, onTabChange }: BottomNavigationPro
     }
   ];
 
+  const adminNavItem = {
+    id: "admin",
+    label: "Admin",
+    icon: Shield
+  };
+
+  const navItems = isAdmin ? [...baseNavItems, adminNavItem] : baseNavItems;
+
   return (
     <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-border shadow-lg">
       <div className="flex items-center justify-around py-2">
@@ -42,14 +51,16 @@ export function BottomNavigation({ activeTab, onTabChange }: BottomNavigationPro
               key={item.id}
               variant="ghost"
               size="sm"
-              className={`flex flex-col items-center gap-1 px-3 py-2 ${
+              className={`flex flex-col items-center gap-1 ${
+                isAdmin ? 'px-2 py-2' : 'px-3 py-2'
+              } ${
                 isActive 
                   ? "text-primary bg-primary/10" 
                   : "text-muted-foreground hover:text-foreground"
               }`}
               onClick={() => onTabChange(item.id)}
             >
-              <Icon className="w-5 h-5" />
+              <Icon className={`${isAdmin ? 'w-4 h-4' : 'w-5 h-5'}`} />
               <span className="text-xs">{item.label}</span>
             </Button>
           );

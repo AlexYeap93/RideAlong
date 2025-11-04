@@ -4,15 +4,27 @@ import { Button } from "./ui/button";
 import { Avatar, AvatarFallback } from "./ui/avatar";
 import { Badge } from "./ui/badge";
 import { Input } from "./ui/input";
-import { Star, Search, MapPin, Calendar, Filter, Plus, Clock } from "lucide-react";
+import { Search, MapPin, Filter, Plus, Clock, CheckCircle } from "lucide-react";
 import { ListRideDialog } from "./ListRideDialog";
 import { DriverRideDetailDialog } from "./DriverRideDetailDialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "./ui/alert-dialog";
 import { toast } from "sonner@2.0.3";
 
 export function DriversPage() {
   const [showListDialog, setShowListDialog] = useState(false);
   const [showDetailDialog, setShowDetailDialog] = useState(false);
   const [selectedRide, setSelectedRide] = useState<any>(null);
+  const [showCompleteDialog, setShowCompleteDialog] = useState(false);
+  const [rideToComplete, setRideToComplete] = useState<any>(null);
 
   // Active rides that the driver has listed
   const activeRides = [
@@ -44,82 +56,6 @@ export function DriversPage() {
     }
   ];
 
-  // Users requesting rides
-  const rideRequests = [
-    {
-      id: 1,
-      userName: "Jessica Wang",
-      rating: 4.8,
-      totalRides: 45,
-      pickup: "Brentwood Station",
-      destination: "University of Calgary",
-      date: "Oct 20, 2025",
-      time: "3:00 PM",
-      quadrant: "NW",
-      verified: true
-    },
-    {
-      id: 2,
-      userName: "David Miller",
-      rating: 4.9,
-      totalRides: 78,
-      pickup: "Dalhousie Station",
-      destination: "University of Calgary",
-      date: "Oct 20, 2025",
-      time: "1:30 PM",
-      quadrant: "NW",
-      verified: true
-    },
-    {
-      id: 3,
-      userName: "Lisa Park",
-      rating: 4.7,
-      totalRides: 23,
-      pickup: "Kensington",
-      destination: "University of Calgary",
-      date: "Oct 21, 2025",
-      time: "8:00 AM",
-      quadrant: "NW",
-      verified: false
-    },
-    {
-      id: 4,
-      userName: "Ryan Cooper",
-      rating: 5.0,
-      totalRides: 156,
-      pickup: "Chinook Centre",
-      destination: "University of Calgary",
-      date: "Oct 20, 2025",
-      time: "5:30 PM",
-      quadrant: "SW",
-      verified: true
-    },
-    {
-      id: 5,
-      userName: "Maria Santos",
-      rating: 4.6,
-      totalRides: 34,
-      pickup: "Forest Lawn",
-      destination: "University of Calgary",
-      date: "Oct 20, 2025",
-      time: "2:45 PM",
-      quadrant: "SE",
-      verified: true
-    },
-    {
-      id: 6,
-      userName: "Tom Anderson",
-      rating: 4.8,
-      totalRides: 92,
-      pickup: "Marlborough",
-      destination: "University of Calgary",
-      date: "Oct 21, 2025",
-      time: "9:15 AM",
-      quadrant: "NE",
-      verified: true
-    }
-  ];
-
   const handleListRide = (data: { date: Date; time: string; destination: string }) => {
     console.log("Ride listed:", data);
     toast.success("Ride listed successfully!", {
@@ -130,6 +66,19 @@ export function DriversPage() {
   const handleViewDetails = (ride: any) => {
     setSelectedRide(ride);
     setShowDetailDialog(true);
+  };
+
+  const handleCompleteRideClick = (ride: any) => {
+    setRideToComplete(ride);
+    setShowCompleteDialog(true);
+  };
+
+  const handleConfirmComplete = () => {
+    toast.success("Ride completed successfully!", {
+      description: "You can view this ride in your ride history."
+    });
+    setShowCompleteDialog(false);
+    setRideToComplete(null);
   };
 
   return (
@@ -181,12 +130,12 @@ export function DriversPage() {
           <p className="text-xs text-muted-foreground">Active</p>
         </Card>
         <Card className="p-3 text-center">
-          <p className="text-lg font-medium text-blue-600">{rideRequests.length}</p>
-          <p className="text-xs text-muted-foreground">Requests</p>
+          <p className="text-lg font-medium text-blue-600">0</p>
+          <p className="text-xs text-muted-foreground">Completed Today</p>
         </Card>
         <Card className="p-3 text-center">
-          <p className="text-lg font-medium text-orange-600">{rideRequests.filter(r => r.verified).length}</p>
-          <p className="text-xs text-muted-foreground">Verified</p>
+          <p className="text-lg font-medium text-orange-600">$0</p>
+          <p className="text-xs text-muted-foreground">Earnings</p>
         </Card>
       </div>
 
@@ -237,16 +186,24 @@ export function DriversPage() {
                   </div>
 
                   {/* Actions */}
-                  <div className="flex gap-2 pt-2">
+                  <div className="grid grid-cols-3 gap-2 pt-2">
                     <Button 
-                      size="sm" 
-                      className="flex-1"
+                      size="sm"
                       onClick={() => handleViewDetails(ride)}
                     >
                       Details
                     </Button>
-                    <Button size="sm" variant="outline" className="flex-1">
-                      Cancel Ride
+                    <Button 
+                      size="sm" 
+                      variant="outline"
+                      className="bg-green-50 border-green-600 text-green-700 hover:bg-green-100 hover:text-green-800"
+                      onClick={() => handleCompleteRideClick(ride)}
+                    >
+                      <CheckCircle className="w-3 h-3 mr-1" />
+                      Complete
+                    </Button>
+                    <Button size="sm" variant="outline">
+                      Cancel
                     </Button>
                   </div>
                 </div>
@@ -255,65 +212,6 @@ export function DriversPage() {
           </div>
         </div>
       )}
-
-      {/* Ride Requests Section */}
-      <div className="px-4">
-        <h2 className="mb-3">Ride Requests</h2>
-        <div className="space-y-3">
-          {rideRequests.map((request) => (
-            <Card key={request.id} className="p-4">
-              <div className="flex items-start gap-3">
-                <Avatar className="w-12 h-12">
-                  <AvatarFallback className="bg-secondary text-secondary-foreground">
-                    {request.userName.split(' ').map(n => n[0]).join('')}
-                  </AvatarFallback>
-                </Avatar>
-                
-                <div className="flex-1">
-                  <div className="flex items-center gap-2 mb-1">
-                    <h3 className="font-medium">{request.userName}</h3>
-                    {request.verified && (
-                      <Badge variant="secondary" className="text-xs">
-                        Verified
-                      </Badge>
-                    )}
-                    <Badge variant="outline" className="text-xs">
-                      {request.quadrant}
-                    </Badge>
-                  </div>
-                  
-                  <div className="flex items-center gap-1 mb-2">
-                    <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                    <span className="text-sm">{request.rating}</span>
-                    <span className="text-sm text-muted-foreground">• {request.totalRides} rides</span>
-                  </div>
-                  
-                  <div className="space-y-1">
-                    <div className="flex items-center gap-2 text-sm">
-                      <MapPin className="w-3 h-3 text-muted-foreground" />
-                      <span>{request.pickup} → {request.destination}</span>
-                    </div>
-                    
-                    <div className="flex items-center gap-2 text-sm">
-                      <Calendar className="w-3 h-3 text-muted-foreground" />
-                      <span>{request.date} • {request.time}</span>
-                    </div>
-                  </div>
-                </div>
-                
-                <div className="flex flex-col gap-2">
-                  <Button size="sm">
-                    Accept
-                  </Button>
-                  <Button size="sm" variant="outline">
-                    Details
-                  </Button>
-                </div>
-              </div>
-            </Card>
-          ))}
-        </div>
-      </div>
 
       <ListRideDialog 
         open={showListDialog} 
@@ -335,6 +233,32 @@ export function DriversPage() {
           passengers={selectedRide.passengers}
         />
       )}
+
+      {/* Complete Ride Confirmation Dialog */}
+      <AlertDialog open={showCompleteDialog} onOpenChange={setShowCompleteDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Complete Ride?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to mark this ride as completed? This action cannot be undone.
+              {rideToComplete && (
+                <div className="mt-3 p-3 bg-muted rounded-md">
+                  <p className="font-medium text-foreground mb-1">Ride Details:</p>
+                  <p className="text-sm">Destination: {rideToComplete.destination}</p>
+                  <p className="text-sm">Date: {rideToComplete.date}</p>
+                  <p className="text-sm">Passengers: {rideToComplete.passengers.length}</p>
+                </div>
+              )}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleConfirmComplete}>
+              Complete Ride
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

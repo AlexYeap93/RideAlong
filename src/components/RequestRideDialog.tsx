@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "./ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "./ui/dialog";
 import { Button } from "./ui/button";
 import { Calendar } from "./ui/calendar";
 import { Label } from "./ui/label";
@@ -50,6 +50,9 @@ export function RequestRideDialog({ open, onClose, onSubmit }: RequestRideDialog
       <DialogContent className="max-w-md">
         <DialogHeader>
           <DialogTitle>Request a Ride</DialogTitle>
+          <DialogDescription>
+            Choose your ride details to request a ride to the University of Calgary.
+          </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4 py-4">

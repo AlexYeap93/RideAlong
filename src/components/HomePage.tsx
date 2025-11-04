@@ -5,11 +5,16 @@ import { DestinationList } from "./DestinationList";
 import { TimeSlotSelection } from "./TimeSlotSelection";
 import { RideCard } from "./RideCard";
 import { SeatSelection } from "./SeatSelection";
+import { PaymentPage } from "./PaymentPage";
+import { BookingConfirmation } from "./BookingConfirmation";
 import { Button } from "./ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
-import { toast } from "sonner";
+import { toast } from "sonner@2.0.3";
 
-export function HomePage() {
+interface HomePageProps {
+  onNavigateToUsers?: () => void;
+}
+
+export function HomePage({ onNavigateToUsers }: HomePageProps) {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedDestination, setSelectedDestination] = useState("");
   const [selectedTimeSlot, setSelectedTimeSlot] = useState("");
@@ -17,6 +22,10 @@ export function HomePage() {
   const [showRides, setShowRides] = useState(false);
   const [selectedDriver, setSelectedDriver] = useState<any>(null);
   const [showSeatSelection, setShowSeatSelection] = useState(false);
+  const [showPayment, setShowPayment] = useState(false);
+  const [showConfirmation, setShowConfirmation] = useState(false);
+  const [selectedSeat, setSelectedSeat] = useState<number | null>(null);
+  const [bookingId, setBookingId] = useState("");
 
   const handleSearch = () => {
     if (searchTerm.trim()) {
@@ -47,22 +56,35 @@ export function HomePage() {
     setShowTimeSlots(false);
     setShowRides(false);
     setShowSeatSelection(false);
+    setShowPayment(false);
+    setShowConfirmation(false);
     setSelectedDestination("");
     setSelectedTimeSlot("");
     setSearchTerm("");
     setSelectedDriver(null);
+    setSelectedSeat(null);
+    setBookingId("");
   };
 
   const handleBackToTimeSlots = () => {
     setShowRides(false);
     setShowSeatSelection(false);
+    setShowPayment(false);
+    setShowConfirmation(false);
     setShowTimeSlots(true);
     setSelectedDriver(null);
+    setSelectedSeat(null);
   };
 
   const handleBackToRides = () => {
     setShowSeatSelection(false);
+    setShowPayment(false);
     setSelectedDriver(null);
+    setSelectedSeat(null);
+  };
+
+  const handleBackToSeatSelection = () => {
+    setShowPayment(false);
   };
 
   const handleDriverSelect = (driver: any) => {
@@ -72,12 +94,36 @@ export function HomePage() {
   };
 
   const handleSeatConfirm = (seatNumber: number) => {
-    console.log("Seat confirmed:", seatNumber, "for driver:", selectedDriver);
-    // Handle booking confirmation
-    toast.success(`Seat ${seatNumber} booked successfully!`, {
-      description: `Your ride with ${selectedDriver.driverName} is confirmed for ${selectedDriver.departureTime}.`
+    setSelectedSeat(seatNumber);
+    setShowSeatSelection(false);
+    setShowPayment(true);
+  };
+
+  const handlePaymentConfirm = (paymentMethod: string) => {
+    // Generate a booking ID
+    const id = `RA${Date.now().toString().slice(-8)}`;
+    setBookingId(id);
+    setShowPayment(false);
+    setShowConfirmation(true);
+    
+    toast.success("Payment successful!", {
+      description: "Your booking has been confirmed."
     });
-    handleBackToDestinations();
+  };
+
+  const handleViewBookings = () => {
+    onNavigateToUsers?.();
+  };
+
+  const handleBookAnotherRide = () => {
+    setShowConfirmation(false);
+    setShowPayment(false);
+    setShowSeatSelection(false);
+    setShowRides(false);
+    setSelectedDriver(null);
+    setSelectedSeat(null);
+    setBookingId("");
+    setShowTimeSlots(true);
   };
 
   const getMockRides = () => {
@@ -138,6 +184,62 @@ export function HomePage() {
 
   const mockRides = getMockRides();
 
+  // Get current date for booking
+  const getCurrentDate = () => {
+    const today = new Date();
+    return today.toLocaleDateString('en-US', { 
+      weekday: 'short', 
+      month: 'short', 
+      day: 'numeric',
+      year: 'numeric'
+    });
+  };
+
+  // If showing confirmation
+  if (showConfirmation && selectedDriver && selectedSeat) {
+    return (
+      <BookingConfirmation
+        bookingDetails={{
+          bookingId: bookingId,
+          driverName: selectedDriver.driverName,
+          rating: selectedDriver.rating,
+          departureTime: selectedDriver.departureTime,
+          destination: selectedDriver.destination,
+          quadrant: selectedDriver.quadrant,
+          seatNumber: selectedSeat,
+          price: selectedDriver.price,
+          car: selectedDriver.car,
+          carType: selectedDriver.carType,
+          bookingDate: getCurrentDate()
+        }}
+        onViewBookings={handleViewBookings}
+        onReturnHome={handleBookAnotherRide}
+      />
+    );
+  }
+
+  // If showing payment
+  if (showPayment && selectedDriver && selectedSeat) {
+    return (
+      <PaymentPage
+        bookingDetails={{
+          driverName: selectedDriver.driverName,
+          rating: selectedDriver.rating,
+          departureTime: selectedDriver.departureTime,
+          destination: selectedDriver.destination,
+          quadrant: selectedDriver.quadrant,
+          seatNumber: selectedSeat,
+          price: selectedDriver.price,
+          car: selectedDriver.car,
+          carType: selectedDriver.carType,
+          bookingDate: getCurrentDate()
+        }}
+        onBack={handleBackToSeatSelection}
+        onConfirm={handlePaymentConfirm}
+      />
+    );
+  }
+
   // If showing seat selection
   if (showSeatSelection && selectedDriver) {
     return (
@@ -196,34 +298,15 @@ export function HomePage() {
             </Button>
           </div>
           
-          <Tabs defaultValue="rides" className="w-full">
-            <TabsList className="grid w-full grid-cols-2 mx-4 my-4">
-              <TabsTrigger value="rides">Available Rides</TabsTrigger>
-              <TabsTrigger value="offer">Offer Ride</TabsTrigger>
-            </TabsList>
-            
-            <TabsContent value="rides" className="space-y-0">
-              {mockRides.map((ride, index) => (
-                <RideCard 
-                  key={index} 
-                  {...ride} 
-                  onSelect={() => handleDriverSelect(ride)}
-                />
-              ))}
-            </TabsContent>
-            
-            <TabsContent value="offer" className="p-4">
-              <div className="bg-white rounded-lg p-6 text-center">
-                <h3 className="font-medium mb-2">Offer a Ride</h3>
-                <p className="text-muted-foreground mb-4">
-                  Going to {selectedDestination}? Offer a ride and earn money while helping others!
-                </p>
-                <Button className="w-full">
-                  Create Ride Offer
-                </Button>
-              </div>
-            </TabsContent>
-          </Tabs>
+          <div className="space-y-0">
+            {mockRides.map((ride, index) => (
+              <RideCard 
+                key={index} 
+                {...ride} 
+                onSelect={() => handleDriverSelect(ride)}
+              />
+            ))}
+          </div>
         </div>
       )}
     </div>
