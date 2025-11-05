@@ -1,4 +1,4 @@
-import universityImage from 'figma:asset/fa24c410eb5417abe435789bbef39287d0dddb37.png';
+import universityImage from './photos/UofC.jpg';
 
 interface DestinationListProps {
   searchTerm: string;
