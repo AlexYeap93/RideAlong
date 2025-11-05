@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "./ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "./ui/dialog";
 import { Button } from "./ui/button";
 import { Calendar } from "./ui/calendar";
 import { Label } from "./ui/label";
@@ -39,6 +39,9 @@ export function ListRideDialog({ open, onClose, onSubmit }: ListRideDialogProps)
       <DialogContent className="max-w-md">
         <DialogHeader>
           <DialogTitle>List a Ride to University of Calgary</DialogTitle>
+          <DialogDescription>
+            Choose a date and time for your ride to the University of Calgary.
+          </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4 py-4">

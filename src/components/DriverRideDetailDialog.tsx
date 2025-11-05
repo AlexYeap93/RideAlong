@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "./ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "./ui/dialog";
 import { Button } from "./ui/button";
 import { Card } from "./ui/card";
 import { Avatar, AvatarFallback } from "./ui/avatar";
@@ -75,6 +75,9 @@ export function DriverRideDetailDialog({
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Ride Details</DialogTitle>
+          <DialogDescription>
+            Manage your ride and view passenger information.
+          </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4 py-4">

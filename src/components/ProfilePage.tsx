@@ -2,9 +2,20 @@ import { Card } from "./ui/card";
 import { Button } from "./ui/button";
 import { Avatar, AvatarFallback } from "./ui/avatar";
 import { Badge } from "./ui/badge";
-import { Star, Edit, Settings, CreditCard, History, HelpCircle, ChevronRight } from "lucide-react";
+import { Star, Edit, Settings, CreditCard, History, HelpCircle, ChevronRight, Car } from "lucide-react";
+import { toast } from "sonner@2.0.3";
 
-export function ProfilePage() {
+interface ProfilePageProps {
+  onBecomeDriver?: () => void;
+  onNavigateToPaymentMethods?: () => void;
+  onNavigateToRideHistory?: () => void;
+}
+
+export function ProfilePage({ onBecomeDriver, onNavigateToPaymentMethods, onNavigateToRideHistory }: ProfilePageProps) {
+  const handleBecomeDriver = () => {
+    toast.info("Redirecting to driver registration...");
+    onBecomeDriver?.();
+  };
   return (
     <div className="pb-20 bg-background min-h-screen">
       {/* Profile Header */}
@@ -45,26 +56,32 @@ export function ProfilePage() {
       {/* Menu Options */}
       <div className="px-4 space-y-2">
         <Card className="p-4">
-          <div className="flex items-center gap-3 mb-4">
+          <button 
+            onClick={onNavigateToPaymentMethods}
+            className="flex items-center gap-3 mb-4 w-full text-left hover:bg-accent/50 -mx-4 px-4 py-2 rounded transition-colors"
+          >
             <CreditCard className="w-5 h-5 text-muted-foreground" />
             <span className="flex-1">Payment Methods</span>
             <ChevronRight className="w-4 h-4 text-muted-foreground" />
-          </div>
-          <div className="flex items-center gap-3 mb-4">
+          </button>
+          <button 
+            onClick={onNavigateToRideHistory}
+            className="flex items-center gap-3 mb-4 w-full text-left hover:bg-accent/50 -mx-4 px-4 py-2 rounded transition-colors"
+          >
             <History className="w-5 h-5 text-muted-foreground" />
             <span className="flex-1">Ride History</span>
             <ChevronRight className="w-4 h-4 text-muted-foreground" />
-          </div>
-          <div className="flex items-center gap-3 mb-4">
+          </button>
+          <button className="flex items-center gap-3 mb-4 w-full text-left hover:bg-accent/50 -mx-4 px-4 py-2 rounded transition-colors">
             <Settings className="w-5 h-5 text-muted-foreground" />
             <span className="flex-1">Settings</span>
             <ChevronRight className="w-4 h-4 text-muted-foreground" />
-          </div>
-          <div className="flex items-center gap-3">
+          </button>
+          <button className="flex items-center gap-3 w-full text-left hover:bg-accent/50 -mx-4 px-4 py-2 rounded transition-colors">
             <HelpCircle className="w-5 h-5 text-muted-foreground" />
             <span className="flex-1">Help & Support</span>
             <ChevronRight className="w-4 h-4 text-muted-foreground" />
-          </div>
+          </button>
         </Card>
 
         <Card className="p-4">
@@ -85,7 +102,12 @@ export function ProfilePage() {
           </div>
         </Card>
 
-        <Button variant="outline" className="w-full">
+        <Button 
+          variant="outline" 
+          className="w-full"
+          onClick={handleBecomeDriver}
+        >
+          <Car className="w-4 h-4 mr-2" />
           Become a Driver
         </Button>
       </div>

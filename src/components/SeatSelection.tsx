@@ -3,7 +3,7 @@ import { Card } from "./ui/card";
 import { Button } from "./ui/button";
 import { Avatar, AvatarFallback } from "./ui/avatar";
 import { Badge } from "./ui/badge";
-import { X, Star, Car, MapPin } from "lucide-react";
+import { X, Star, MapPin, Car as CarIcon } from "lucide-react";
 
 interface SeatSelectionProps {
   driver: {
@@ -27,7 +27,7 @@ export function SeatSelection({ driver, onBack, onConfirm }: SeatSelectionProps)
   // Mock some already booked seats
   const bookedSeats = driver.carType === "5-seater" ? [1, 3] : [1, 2, 5];
   
-  const renderSeat = (seatNumber: number) => {
+  const renderSeat = (seatNumber: number, showSeatbelt: boolean = true) => {
     const isBooked = bookedSeats.includes(seatNumber);
     const isSelected = selectedSeat === seatNumber;
     
@@ -37,16 +37,25 @@ export function SeatSelection({ driver, onBack, onConfirm }: SeatSelectionProps)
         disabled={isBooked}
         onClick={() => setSelectedSeat(seatNumber)}
         className={`
-          w-14 h-14 rounded-lg border-2 flex items-center justify-center transition-all
-          ${isBooked ? 'bg-gray-200 border-gray-300 cursor-not-allowed' : ''}
-          ${isSelected ? 'bg-primary border-primary text-white' : 'border-border hover:border-primary'}
-          ${!isBooked && !isSelected ? 'bg-white' : ''}
+          w-16 h-20 rounded-xl border-2 flex flex-col items-center justify-center transition-all relative
+          ${isBooked ? 'bg-gray-300/50 border-gray-400 cursor-not-allowed' : ''}
+          ${isSelected ? 'bg-cyan-400 border-cyan-600' : 'border-cyan-600 hover:border-cyan-500'}
+          ${!isBooked && !isSelected ? 'bg-cyan-50' : ''}
         `}
       >
+        {showSeatbelt && !isBooked && (
+          <div className="absolute top-1 left-1">
+            <svg width="12" height="16" viewBox="0 0 12 16" fill="none" className={isSelected ? "text-white" : "text-cyan-700"}>
+              <circle cx="6" cy="3" r="2.5" stroke="currentColor" strokeWidth="1"/>
+              <path d="M6 6 L6 13" stroke="currentColor" strokeWidth="1.5"/>
+              <path d="M3 13 L9 13" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+            </svg>
+          </div>
+        )}
         {isBooked ? (
-          <X className="w-5 h-5 text-gray-400" />
+          <X className="w-5 h-5 text-gray-500" />
         ) : (
-          <span className="font-medium">{seatNumber}</span>
+          <span className={`font-medium mt-2 ${isSelected ? 'text-white' : 'text-cyan-900'}`}>{seatNumber}</span>
         )}
       </button>
     );
@@ -56,16 +65,21 @@ export function SeatSelection({ driver, onBack, onConfirm }: SeatSelectionProps)
     if (driver.carType === "5-seater") {
       return (
         <div className="space-y-8">
-          {/* Front row: Driver (left) + Passenger (right) */}
-          <div className="flex justify-between items-center px-8">
-            <div className="w-14 h-14 rounded-lg bg-gray-800 text-white flex items-center justify-center">
-              <Car className="w-5 h-5" />
+          {/* Front row: Driver with steering wheel + Front passenger */}
+          <div className="flex justify-between items-center px-2">
+            {/* Steering wheel */}
+            <div className="w-16 h-16 rounded-full border-[3px] border-cyan-600 bg-white flex items-center justify-center">
+              <div className="w-11 h-11 rounded-full border-[3px] border-cyan-600 flex items-center justify-center">
+                <div className="w-1.5 h-7 bg-cyan-600 rounded-full"></div>
+              </div>
             </div>
-            {renderSeat(1)}
+            <div className="flex items-center gap-6">
+              {renderSeat(1)}
+            </div>
           </div>
           
-          {/* Back row: 3 seats */}
-          <div className="flex justify-around px-4">
+          {/* Back row: 3 seats spread out */}
+          <div className="flex justify-between px-2">
             {renderSeat(2)}
             {renderSeat(3)}
             {renderSeat(4)}
@@ -73,26 +87,31 @@ export function SeatSelection({ driver, onBack, onConfirm }: SeatSelectionProps)
         </div>
       );
     } else {
-      // 7-seater: 2 front, 3 middle, 2 back
+      // 7-seater van layout
       return (
         <div className="space-y-6">
-          {/* Front row: Driver (left) + Passenger (right) */}
-          <div className="flex justify-between items-center px-8">
-            <div className="w-14 h-14 rounded-lg bg-gray-800 text-white flex items-center justify-center">
-              <Car className="w-5 h-5" />
+          {/* Front row: Driver with steering wheel + Front passenger */}
+          <div className="flex justify-between items-center px-2">
+            {/* Steering wheel */}
+            <div className="w-16 h-16 rounded-full border-[3px] border-cyan-600 bg-white flex items-center justify-center">
+              <div className="w-11 h-11 rounded-full border-[3px] border-cyan-600 flex items-center justify-center">
+                <div className="w-1.5 h-7 bg-cyan-600 rounded-full"></div>
+              </div>
             </div>
-            {renderSeat(1)}
+            <div className="flex items-center gap-6">
+              {renderSeat(1)}
+            </div>
           </div>
           
-          {/* Middle row: 3 seats */}
-          <div className="flex justify-around px-4">
+          {/* Middle row: 3 seats spread out */}
+          <div className="flex justify-between px-2">
             {renderSeat(2)}
             {renderSeat(3)}
             {renderSeat(4)}
           </div>
           
           {/* Back row: 2 seats */}
-          <div className="flex justify-around px-12">
+          <div className="flex justify-around px-8">
             {renderSeat(5)}
             {renderSeat(6)}
           </div>
@@ -142,8 +161,8 @@ export function SeatSelection({ driver, onBack, onConfirm }: SeatSelectionProps)
       </div>
 
       {/* Seat Map */}
-      <div className="p-6">
-        <div className="bg-white rounded-lg p-6 shadow-sm">
+      <div className="p-6 flex justify-center">
+        <div className="bg-white rounded-lg p-6 shadow-sm w-full max-w-md">
           <div className="mb-4 text-center">
             <Badge variant="secondary" className="mb-2">
               {driver.carType}
@@ -151,23 +170,52 @@ export function SeatSelection({ driver, onBack, onConfirm }: SeatSelectionProps)
             <p className="text-sm text-muted-foreground">{driver.car}</p>
           </div>
           
-          {/* Car outline */}
-          <div className="border-2 border-gray-300 rounded-3xl p-6 bg-gray-50">
-            {renderSeats()}
+          {/* Van outline */}
+          <div className="relative">
+            {/* Van body */}
+            <div className="border-[3px] border-cyan-600 bg-white rounded-[32px] p-8 relative">
+              {/* Side mirrors - swapped sides */}
+              <div className="absolute -left-3 top-6 w-6 h-4 border-2 border-cyan-600 bg-white rounded-r-lg"></div>
+              <div className="absolute -right-3 top-6 w-6 h-4 border-2 border-cyan-600 bg-white rounded-l-lg"></div>
+              
+              {/* Door outline on left side (driver door) */}
+              <div className="absolute left-0 top-6 w-1 h-20 bg-cyan-600 rounded-r"></div>
+              
+              {/* Door outlines on right side (passenger doors) */}
+              <div className="absolute right-0 top-6 w-1 h-20 bg-cyan-600 rounded-l"></div>
+              
+              {/* Additional passenger door separators for back rows */}
+              <div className="absolute right-0 top-32 w-1 h-20 bg-cyan-600 rounded-l"></div>
+              {driver.carType === "7-seater" && (
+                <div className="absolute right-0 top-56 w-1 h-20 bg-cyan-600 rounded-l"></div>
+              )}
+              
+              {/* Windshield indicator at top */}
+              <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2">
+                <div className="w-32 h-3 border-2 border-cyan-600 bg-cyan-100 rounded-b-xl"></div>
+              </div>
+              
+              {/* Rear window/bumper at bottom */}
+              <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2">
+                <div className="w-24 h-2 border-2 border-cyan-600 bg-cyan-100 rounded-t-lg"></div>
+              </div>
+              
+              {renderSeats()}
+            </div>
           </div>
 
           {/* Legend */}
           <div className="flex justify-around mt-6 text-sm">
             <div className="flex items-center gap-2">
-              <div className="w-4 h-4 rounded bg-white border-2 border-border"></div>
+              <div className="w-4 h-4 rounded bg-cyan-50 border-2 border-cyan-600"></div>
               <span className="text-muted-foreground">Available</span>
             </div>
             <div className="flex items-center gap-2">
-              <div className="w-4 h-4 rounded bg-gray-200 border-2 border-gray-300"></div>
+              <div className="w-4 h-4 rounded bg-gray-300/50 border-2 border-gray-400"></div>
               <span className="text-muted-foreground">Booked</span>
             </div>
             <div className="flex items-center gap-2">
-              <div className="w-4 h-4 rounded bg-primary border-2 border-primary"></div>
+              <div className="w-4 h-4 rounded bg-cyan-400 border-2 border-cyan-600"></div>
               <span className="text-muted-foreground">Selected</span>
             </div>
           </div>
