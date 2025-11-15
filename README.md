@@ -1,93 +1,176 @@
-# seng513-202510-group-21
+# RideAlong
 
+A carpooling app built for university students and commuters. Think of it like Uber, but for people who are already going the same way. Drivers can list their rides and make some money, riders can find affordable transportation to campus or wherever they need to go.
 
+## What's This Built With?
 
-## Getting started
+- **Frontend:** React with TypeScript, styled with Tailwind CSS and Bootstrap
+- **Backend:** Express.js with TypeScript
+- **Database:** PostgreSQL
+- **Build Tool:** Vite
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
+## Quick Start
 
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
+Want to get this running right now? Here's the fastest path:
 
-## Add your files
+1. **Install everything:**
 
-- [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://docs.gitlab.com/topics/git/add_files/#add-files-to-a-git-repository) or push an existing Git repository with the following command:
+   ```bash
+   npm run install:all
+   ```
 
-```
-cd existing_repo
-git remote add origin https://csgit.ucalgary.ca/alex.yeap/seng513-202401-group-21.git
-git branch -M main
-git push -uf origin main
-```
+2. **Set up the database:**
 
-## Integrate with your tools
+   - Make sure PostgreSQL is running
+   - Create a database called `ridealong`
+   - Create `backend/.env` with your database credentials (see SETUP.md for details)
+   - Run `npm run migrate` to set up the tables
 
-- [ ] [Set up project integrations](https://csgit.ucalgary.ca/alex.yeap/seng513-202401-group-21/-/settings/integrations)
+3. **Configure environment variables:**
 
-## Collaborate with your team
+   - Backend: `backend/.env` (database connection, port, etc.)
+   - Frontend: `frontend/.env` (just needs the API URL)
 
-- [ ] [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-- [ ] [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-- [ ] [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-- [ ] [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-- [ ] [Set auto-merge](https://docs.gitlab.com/user/project/merge_requests/auto_merge/)
+4. **Run it:**
 
-## Test and Deploy
+   ```bash
+   npm run dev
+   ```
 
-Use the built-in continuous integration in GitLab.
+   This starts both the backend (port 5000) and frontend (port 5173). Open http://localhost:5173 and you're good to go!
 
-- [ ] [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/)
-- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing (SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-- [ ] [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-- [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
+For more detailed setup instructions, check out [SETUP.md](./SETUP.md).
 
-***
+## Available Commands
 
-# Editing this README
+### From the Root Directory
 
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thanks to [makeareadme.com](https://www.makeareadme.com/) for this template.
+- `npm run dev` - Start both frontend and backend (development mode)
+- `npm run build` - Build both for production
+- `npm run install:all` - Install all dependencies at once
+- `npm run migrate` - Run database migrations
+- `npm start` - Start both in production mode (after building)
 
-## Suggestions for a good README
+### Frontend Commands (from `frontend/`)
 
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
+- `npm run dev` - Start the Vite dev server
+- `npm run build` - Build for production
+- `npm run preview` - Preview the production build
 
-## Name
-Choose a self-explaining name for your project.
+### Backend Commands (from `backend/`)
 
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
+- `npm run dev` - Start the dev server with hot reload
+- `npm run build` - Compile TypeScript to JavaScript
+- `npm start` - Start the production server
+- `npm run migrate` - Run database migrations
 
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
+## Development Info
 
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
+**Frontend:**
 
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
+- Runs on http://localhost:5173
+- Built with React 19 and Vite
+- Uses Tailwind CSS for styling
+- Components from shadcn/ui
 
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
+**Backend:**
 
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
+- Runs on http://localhost:5000
+- Express.js server
+- PostgreSQL database
+- Written in TypeScript
 
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
+## API Overview
 
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
+The backend exposes a REST API. Here are all the endpoints:
 
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
+### Authentication
 
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
+- `POST /api/auth/register` - Create a new account
+- `POST /api/auth/login` - Log in
+- `POST /api/auth/logout` - Log out
+- `GET /api/auth/me` - Get current user info (requires auth)
 
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
+### Users
 
-## License
-For open source projects, say how it is licensed.
+- `GET /api/users` - Get all users (admin only)
+- `GET /api/users/:id` - Get a specific user
+- `PUT /api/users/:id` - Update user profile
+- `DELETE /api/users/:id` - Delete user account
+- `GET /api/users/:id/rides` - Get user's booked rides
+- `POST /api/users/:id/suspend` - Suspend user (admin only)
+- `POST /api/users/:id/unsuspend` - Unsuspend user (admin only)
 
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+### Drivers
+
+- `GET /api/drivers` - Get all drivers
+- `GET /api/drivers/me` - Get your driver profile
+- `POST /api/drivers` - Create a driver profile
+- `GET /api/drivers/:id` - Get driver by ID
+- `PUT /api/drivers/:id` - Update driver profile (driver or admin)
+- `DELETE /api/drivers/:id` - Delete driver (admin only)
+- `GET /api/drivers/:id/rides` - Get driver's rides
+- `POST /api/drivers/:id/approve` - Approve a driver (admin only)
+
+### Rides
+
+- `GET /api/rides` - Get all rides (with optional filters: destination, date, driverId)
+- `GET /api/rides/available` - Get rides with available seats
+- `GET /api/rides/destination/:destination` - Get rides by destination
+- `GET /api/rides/driver/:driverId` - Get rides by driver
+- `GET /api/rides/:id` - Get ride by ID
+- `POST /api/rides` - Create a new ride (drivers only)
+- `PUT /api/rides/:id` - Update a ride (driver only)
+- `DELETE /api/rides/:id` - Delete a ride (driver only)
+
+### Bookings
+
+- `GET /api/bookings` - Get all bookings
+- `GET /api/bookings/user/:userId` - Get bookings by user
+- `GET /api/bookings/ride/:rideId` - Get bookings for a ride
+- `GET /api/bookings/ride/:rideId/seats` - Get booked seat numbers for a ride
+- `GET /api/bookings/:id` - Get booking by ID
+- `POST /api/bookings` - Create a booking
+- `PUT /api/bookings/pickup-times` - Update pickup times for multiple bookings (driver only)
+- `PUT /api/bookings/:id` - Update a booking
+- `DELETE /api/bookings/:id` - Delete a booking
+- `POST /api/bookings/:id/cancel` - Cancel a booking
+- `POST /api/bookings/:bookingId/request-additional-amount` - Driver requests additional payment
+- `POST /api/bookings/:bookingId/respond-additional-amount` - User accepts/declines additional amount
+
+### Payments
+
+- `GET /api/payments` - Get all payments
+- `GET /api/payments/user/:userId` - Get payments for a user
+- `GET /api/payments/booking/:bookingId` - Get payments for a booking
+- `GET /api/payments/:id` - Get payment by ID
+- `POST /api/payments` - Create a payment
+- `PUT /api/payments/:id` - Update payment (admin only)
+
+### Payment Methods
+
+- `GET /api/payment-methods` - Get all payment methods for current user
+- `GET /api/payment-methods/:id` - Get payment method by ID
+- `POST /api/payment-methods` - Add a payment method
+- `PUT /api/payment-methods/:id` - Update payment method
+- `DELETE /api/payment-methods/:id` - Delete payment method
+
+### Ratings
+
+- `POST /api/ratings` - Create a rating for a driver
+- `GET /api/ratings/driver/:driverId` - Get all ratings for a driver
+- `GET /api/ratings/booking/:bookingId` - Get rating for a specific booking
+
+### Issues
+
+- `POST /api/issues` - Report an issue/complaint
+- `GET /api/issues` - Get all issues (admin only, with optional filters: status, priority)
+- `GET /api/issues/:id` - Get issue by ID (admin or issue owner)
+- `PUT /api/issues/:id` - Update issue status/priority/notes (admin only)
+
+The API follows REST conventions and most endpoints require authentication. Check the route files in `backend/src/routes/` for more details on permissions and usage.
+
+## Documentation
+
+- **[SETUP.md](./SETUP.md)** - Detailed setup instructions
+- **[HOW_IT_WORKS.md](./HOW_IT_WORKS.md)** - Deep dive into how the app works (architecture, database schema, authentication, etc.)
