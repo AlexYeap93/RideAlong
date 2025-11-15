@@ -1,0 +1,64 @@
+@import "tailwindcss";
+@import "./styles/globals.css";
+@import "bootstrap/dist/css/bootstrap.min.css";
+
+/* Bootstrap overrides to match existing black theme */
+:root {
+  --bs-primary: #030213;
+  --bs-primary-rgb: 3, 2, 19;
+  --bs-primary-text-emphasis: #030213;
+  --bs-primary-bg-subtle: #f5f5f5;
+  --bs-primary-border-subtle: #e0e0e0;
+}
+
+/* Override Bootstrap button and link colors to use black instead of blue */
+.btn-primary {
+  background-color: #030213 !important;
+  border-color: #030213 !important;
+  color: #ffffff !important;
+}
+
+.btn-primary:hover,
+.btn-primary:focus,
+.btn-primary:active {
+  background-color: rgba(3, 2, 19, 0.9) !important;
+  border-color: rgba(3, 2, 19, 0.9) !important;
+  color: #ffffff !important;
+}
+
+.btn-link {
+  color: #030213 !important;
+}
+
+.btn-link:hover,
+.btn-link:focus {
+  color: rgba(3, 2, 19, 0.9) !important;
+  text-decoration: underline;
+}
+
+/* Override Bootstrap text-primary utility */
+.text-primary {
+  color: #030213 !important;
+}
+
+/* Override Bootstrap link colors */
+a:not([class*="btn"]):not([class*="text-"]) {
+  color: inherit;
+}
+
+/* Ensure Bootstrap doesn't override our custom primary colors */
+.bg-primary {
+  background-color: #030213 !important;
+}
+
+.border-primary {
+  border-color: #030213 !important;
+}
+
+/* Make toast description text black */
+[data-sonner-toast] [data-description],
+[data-sonner-toast] .description,
+.sonner-toast [data-description],
+.sonner-toast .description {
+  color: #000000 !important;
+}
