@@ -25,6 +25,7 @@ Want to get this running right now? Here's the fastest path:
    - Create a database called `ridealong`
    - Create `backend/.env` with your database credentials (see SETUP.md for details)
    - Run `npm run migrate` to set up the tables
+   - Run `npm run seed` (from `backend/` directory) to create default users (admin, rider, driver)
 
 3. **Configure environment variables:**
 
@@ -63,6 +64,7 @@ For more detailed setup instructions, check out [SETUP.md](./SETUP.md).
 - `npm run build` - Compile TypeScript to JavaScript
 - `npm start` - Start the production server
 - `npm run migrate` - Run database migrations
+- `npm run seed` - Seed default users (admin, rider, driver)
 
 ## Development Info
 

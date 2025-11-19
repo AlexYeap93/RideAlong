@@ -94,6 +94,22 @@ You'll need PostgreSQL running for this. If you don't have it installed, go grab
 
    You should see some success messages if everything went well.
 
+5. **Seed default users:**
+   After running migrations, seed the database with default users (admin, rider, driver). From the backend directory:
+
+   ```bash
+   cd backend
+   npm run seed
+   ```
+
+   This creates three test users:
+
+   - **Admin:** `admin@ridealong.com` / `admin123`
+   - **Rider:** `rider@ridealong.com` / `rider`
+   - **Driver:** `driver@ridealong.com` / `driver`
+
+   You can use these accounts to test different user roles in the app.
+
 ### Step 3: Configure the Frontend
 
 The frontend needs to know where to find the backend API.
@@ -144,7 +160,7 @@ npm run dev:frontend
 
 **From the root directory:**
 
-- `npm run dev` - Start both frontend and backend 
+- `npm run dev` - Start both frontend and backend
 - `npm run build` - Build everything for production
 - `npm run install:all` - Install all dependencies at once
 - `npm run migrate` - Run database migrations
@@ -162,4 +178,4 @@ npm run dev:frontend
 - `npm run build` - Compile TypeScript
 - `npm start` - Run the compiled production server
 - `npm run migrate` - Run migrations (same as from root)
-
+- `npm run seed` - Seed default users (admin, rider, driver)
