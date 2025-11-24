@@ -1,7 +1,4 @@
-import { Card } from "./ui/card";
-import { Button } from "./ui/button";
-import { Avatar, AvatarFallback } from "./ui/avatar";
-import { Badge } from "./ui/badge";
+// Bootstrap implementation
 import { Star, Users, Clock, MapPin } from "lucide-react";
 
 interface RideCardProps {
@@ -32,71 +29,78 @@ export function RideCard({
   onSelect
 }: RideCardProps) {
   return (
-    <Card className="p-4 m-4 shadow-sm border border-border">
-      <div className="flex items-start justify-between mb-3">
-        <div className="flex items-center gap-3">
-          <Avatar className="w-12 h-12">
-            <AvatarFallback className="bg-primary text-primary-foreground">
-              {driverName.charAt(0)}
-            </AvatarFallback>
-          </Avatar>
+    <div className="card p-4 m-4 shadow-sm border" style={{ borderRadius: '0.75rem' }}>
+      <div className="d-flex align-items-start justify-content-between mb-3">
+        <div className="d-flex align-items-center" style={{ gap: '0.75rem' }}>
+          <div 
+            className="rounded-circle d-flex align-items-center justify-content-center"
+            style={{ 
+              width: '3rem', 
+              height: '3rem', 
+              backgroundColor: '#030213', 
+              color: '#ffffff',
+              fontSize: '1.25rem',
+              fontWeight: '500'
+            }}
+          >
+            {driverName.charAt(0)}
+          </div>
           <div>
-            <p className="font-medium">{driverName}</p>
+            <p className="mb-0 fw-medium">{driverName}</p>
             {rating > 0 && !isNaN(rating) ? (
-              <div className="flex items-center gap-1">
-                <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                <span className="text-sm font-medium">{rating.toFixed(1)}</span>
+              <div className="d-flex align-items-center" style={{ gap: '0.25rem' }}>
+                <Star className="w-4 h-4" style={{ fill: '#facc15', color: '#facc15' }} />
+                <span className="text-sm fw-medium">{rating.toFixed(1)}</span>
               </div>
             ) : (
-              <div className="flex items-center gap-1">
-                <Star className="w-4 h-4 text-gray-300" />
-                <span className="text-xs text-muted-foreground">No rating yet</span>
+              <div className="d-flex align-items-center" style={{ gap: '0.25rem' }}>
+                <Star className="w-4 h-4" style={{ color: '#d1d5db' }} />
+                <span className="text-xs text-muted">No rating yet</span>
               </div>
             )}
           </div>
         </div>
-        <div className="text-right">
-          <p className="font-semibold text-lg">${price}</p>
-          <p className="text-sm text-muted-foreground">per person</p>
+        <div className="text-end">
+          <p className="mb-0 fw-semibold" style={{ fontSize: '1.125rem' }}>${price}</p>
+          <p className="text-sm text-muted mb-0">per person</p>
         </div>
       </div>
       
-      <div className="space-y-2 mb-4">
-        <div className="flex items-center gap-2 text-sm">
-          <Clock className="w-4 h-4 text-muted-foreground" />
+      <div className="mb-4" style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+        <div className="d-flex align-items-center text-sm" style={{ gap: '0.5rem' }}>
+          <Clock className="w-4 h-4 text-muted" />
           <span>Departure: {departureTime}</span>
         </div>
-        <div className="flex items-center gap-2 text-sm">
-          <Users className="w-4 h-4 text-muted-foreground" />
+        <div className="d-flex align-items-center text-sm" style={{ gap: '0.5rem' }}>
+          <Users className="w-4 h-4 text-muted" />
           <span>{availableSeats} seats available</span>
           {carType && (
-            <Badge variant="secondary" className="text-xs ml-2">
-              {carType}
-            </Badge>
+            <span className="badge bg-secondary text-xs ms-2">{carType}</span>
           )}
         </div>
         {driverAddress ? (
-          <div className="flex items-start gap-2 text-sm">
-            <MapPin className="w-4 h-4 text-muted-foreground mt-0.5 flex-shrink-0" />
-            <span className="break-words">{driverAddress}</span>
+          <div className="d-flex align-items-start text-sm" style={{ gap: '0.5rem' }}>
+            <MapPin className="w-4 h-4 text-muted mt-1" style={{ flexShrink: 0 }} />
+            <span style={{ wordBreak: 'break-word' }}>{driverAddress}</span>
           </div>
         ) : quadrant ? (
-          <div className="flex items-center gap-2 text-sm">
-            <MapPin className="w-4 h-4 text-muted-foreground" />
+          <div className="d-flex align-items-center text-sm" style={{ gap: '0.5rem' }}>
+            <MapPin className="w-4 h-4 text-muted" />
             <span>{quadrant}</span>
           </div>
         ) : null}
-        <p className="text-sm text-muted-foreground">
+        <p className="text-sm text-muted mb-0">
           To: {destination} • {estimatedDuration}
         </p>
       </div>
       
-      <Button 
-        className="w-full bg-primary text-primary-foreground"
+      <button 
+        className="btn btn-primary w-100"
         onClick={onSelect}
+        style={{ backgroundColor: '#030213', borderColor: '#030213', color: '#ffffff' }}
       >
         Book Ride
-      </Button>
-    </Card>
+      </button>
+    </div>
   );
 }
