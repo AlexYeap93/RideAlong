@@ -72,7 +72,7 @@ For more detailed setup instructions, check out [SETUP.md](./SETUP.md).
 
 - Runs on http://localhost:5173
 - Built with React 19 and Vite
-- Uses Tailwind CSS for styling
+- Uses Bootstrap and Tailwind CSS for styling
 - Components from shadcn/ui
 
 **Backend:**

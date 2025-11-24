@@ -1,7 +1,5 @@
 import { useState } from "react";
 import { Button } from "./ui/button";
-import { Input } from "./ui/input";
-import { Label } from "./ui/label";
 import { Tabs, TabsList, TabsTrigger } from "./ui/tabs";
 import { Car, ArrowLeft } from "lucide-react";
 import { useAuth } from "../contexts/AuthContext";
@@ -167,12 +165,12 @@ export function LoginPage({ initialMode = "login", initialUserType = "rider", on
               {isSignUp ? "Create Account" : "Welcome Back"}
             </h2>
 
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
               {isSignUp && (
                 <>
-                  {/* User Type Selection */}
-                  <div className="space-y-3">
-                    <Label>Register as</Label>
+                  {/* User Type Selection - Keeping Tabs component for complex UI */}
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                    <label className="form-label">Register as</label>
                     <Tabs value={userType} onValueChange={(value: string) => setUserType(value as "rider" | "driver")} className="w-full">
                       <TabsList className="grid w-full grid-cols-2">
                         <TabsTrigger value="rider">Rider</TabsTrigger>
@@ -181,59 +179,65 @@ export function LoginPage({ initialMode = "login", initialUserType = "rider", on
                     </Tabs>
                   </div>
 
-                  {/* Name Field */}
-                  <div className="space-y-2">
-                    <Label htmlFor="name">Full Name</Label>
-                    <Input
+                  {/* Name Field - Bootstrap */}
+                  <div className="mb-3">
+                    <label htmlFor="name" className="form-label">Full Name</label>
+                    <input
                       id="name"
                       type="text"
+                      className="form-control"
                       placeholder="Enter your name"
                       value={name}
                       onChange={(e) => setName(e.target.value)}
                       required
-                      className="bg-input-background"
+                      style={{ backgroundColor: '#f3f3f5', borderColor: 'rgba(0, 0, 0, 0.1)' }}
                     />
                   </div>
 
-                  {/* Phone Field */}
-                  <div className="space-y-2">
-                    <Label htmlFor="phone">Phone Number</Label>
-                    <Input
+                  {/* Phone Field - Bootstrap */}
+                  <div className="mb-3">
+                    <label htmlFor="phone" className="form-label">Phone Number</label>
+                    <input
                       id="phone"
                       type="tel"
+                      className="form-control"
                       placeholder="e.g., (403) 555-1234"
                       value={phone}
                       onChange={(e) => setPhone(e.target.value)}
                       required
-                      className="bg-input-background"
+                      style={{ backgroundColor: '#f3f3f5', borderColor: 'rgba(0, 0, 0, 0.1)' }}
                     />
                   </div>
                 </>
               )}
 
-              <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
-                <Input
+              {/* Email Field - Bootstrap */}
+              <div className="mb-3">
+                <label htmlFor="email" className="form-label">Email</label>
+                <input
                   id="email"
                   type="email"
+                  className="form-control"
                   placeholder="Enter your email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
-                  className="bg-input-background"
+                  style={{ backgroundColor: '#f3f3f5', borderColor: 'rgba(0, 0, 0, 0.1)' }}
                 />
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="password">Password</Label>
-                <Input
+              {/* Password Field - Bootstrap */}
+              <div className="mb-3">
+                <label htmlFor="password" className="form-label">Password</label>
+                <input
                   id="password"
                   type="password"
+                  className="form-control"
                   placeholder="Enter your password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
-                  className="bg-input-background"
+                  style={{ backgroundColor: '#f3f3f5', borderColor: 'rgba(0, 0, 0, 0.1)' }}
                 />
               </div>
 
@@ -243,42 +247,47 @@ export function LoginPage({ initialMode = "login", initialUserType = "rider", on
                   <div className="pt-4 border-t border-border">
                     <h3 className="mb-4">Address Information</h3>
                     
-                    <div className="space-y-2 mb-4">
-                      <Label htmlFor="address">Address</Label>
-                      <Input
+                    {/* Address Field - Bootstrap */}
+                    <div className="mb-3">
+                      <label htmlFor="address" className="form-label">Address</label>
+                      <input
                         id="address"
                         type="text"
+                        className="form-control"
                         placeholder="e.g., 123 Main St, Calgary, AB"
                         value={address}
                         onChange={(e) => setAddress(e.target.value)}
-                        className="bg-input-background"
+                        style={{ backgroundColor: '#f3f3f5', borderColor: 'rgba(0, 0, 0, 0.1)' }}
                       />
-                      <p className="text-muted-foreground text-sm">Your home or primary location address</p>
+                      <p className="text-muted text-sm mt-1 mb-0">Your home or primary location address</p>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="latitude">Latitude (Optional)</Label>
-                        <Input
+                    {/* Latitude/Longitude - Bootstrap Grid */}
+                    <div className="row g-3 mb-3">
+                      <div className="col-6">
+                        <label htmlFor="latitude" className="form-label">Latitude (Optional)</label>
+                        <input
                           id="latitude"
                           type="number"
                           step="any"
+                          className="form-control"
                           placeholder="e.g., 51.0447"
                           value={latitude}
                           onChange={(e) => setLatitude(e.target.value)}
-                          className="bg-input-background"
+                          style={{ backgroundColor: '#f3f3f5', borderColor: 'rgba(0, 0, 0, 0.1)' }}
                         />
                       </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="longitude">Longitude (Optional)</Label>
-                        <Input
+                      <div className="col-6">
+                        <label htmlFor="longitude" className="form-label">Longitude (Optional)</label>
+                        <input
                           id="longitude"
                           type="number"
                           step="any"
+                          className="form-control"
                           placeholder="e.g., -114.0719"
                           value={longitude}
                           onChange={(e) => setLongitude(e.target.value)}
-                          className="bg-input-background"
+                          style={{ backgroundColor: '#f3f3f5', borderColor: 'rgba(0, 0, 0, 0.1)' }}
                         />
                       </div>
                     </div>
@@ -295,89 +304,94 @@ export function LoginPage({ initialMode = "login", initialUserType = "rider", on
                   <div className="pt-4 border-t border-border">
                     <h3 className="mb-4">Driver Information</h3>
                     
-                    {/* License Number */}
-                    <div className="space-y-2 mb-4">
-                      <Label htmlFor="licenseNumber">Driver's License Number</Label>
-                      <Input
+                    {/* License Number - Bootstrap */}
+                    <div className="mb-3">
+                      <label htmlFor="licenseNumber" className="form-label">Driver's License Number</label>
+                      <input
                         id="licenseNumber"
                         type="text"
+                        className="form-control"
                         placeholder="Enter license number"
                         value={licenseNumber}
                         onChange={(e) => setLicenseNumber(e.target.value)}
                         required
-                        className="bg-input-background"
+                        style={{ backgroundColor: '#f3f3f5', borderColor: 'rgba(0, 0, 0, 0.1)' }}
                       />
                     </div>
                     
-                    {/* Driver's License File */}
-                    <div className="space-y-2 mb-4">
-                      <Label htmlFor="license">Driver's License (File)</Label>
-                      <div className="flex items-center gap-2">
-                        <Input
+                    {/* Driver's License File - Bootstrap */}
+                    <div className="mb-3">
+                      <label htmlFor="license" className="form-label">Driver's License (File)</label>
+                      <div className="d-flex align-items-center" style={{ gap: '0.5rem' }}>
+                        <input
                           id="license"
                           type="file"
+                          className="form-control"
                           accept="image/*,.pdf"
                           onChange={(e) => handleFileChange(e, setDriversLicense)}
-                          className="bg-input-background"
+                          style={{ backgroundColor: '#f3f3f5', borderColor: 'rgba(0, 0, 0, 0.1)' }}
                         />
                         {driversLicense && (
-                          <span className="text-muted-foreground whitespace-nowrap">✓</span>
+                          <span className="text-muted" style={{ whiteSpace: 'nowrap' }}>✓</span>
                         )}
                       </div>
-                      <p className="text-muted-foreground text-sm">Upload a photo or PDF of your license (optional)</p>
+                      <p className="text-muted text-sm mt-1 mb-0">Upload a photo or PDF of your license (optional)</p>
                     </div>
 
-                    {/* Proof of Insurance */}
-                    <div className="space-y-2 mb-4">
-                      <Label htmlFor="insurance">Proof of Insurance</Label>
-                      <div className="flex items-center gap-2">
-                        <Input
+                    {/* Proof of Insurance - Bootstrap */}
+                    <div className="mb-3">
+                      <label htmlFor="insurance" className="form-label">Proof of Insurance</label>
+                      <div className="d-flex align-items-center" style={{ gap: '0.5rem' }}>
+                        <input
                           id="insurance"
                           type="file"
+                          className="form-control"
                           accept="image/*,.pdf"
                           onChange={(e) => handleFileChange(e, setInsurance)}
-                          className="bg-input-background"
+                          style={{ backgroundColor: '#f3f3f5', borderColor: 'rgba(0, 0, 0, 0.1)' }}
                         />
                         {insurance && (
-                          <span className="text-muted-foreground whitespace-nowrap">✓</span>
+                          <span className="text-muted" style={{ whiteSpace: 'nowrap' }}>✓</span>
                         )}
                       </div>
-                      <p className="text-muted-foreground text-sm">Upload proof of vehicle insurance (optional)</p>
+                      <p className="text-muted text-sm mt-1 mb-0">Upload proof of vehicle insurance (optional)</p>
                     </div>
 
-                    {/* Car Photo */}
-                    <div className="space-y-2 mb-4">
-                      <Label htmlFor="carPhoto">Car Photo</Label>
-                      <div className="flex items-center gap-2">
-                        <Input
+                    {/* Car Photo - Bootstrap */}
+                    <div className="mb-3">
+                      <label htmlFor="carPhoto" className="form-label">Car Photo</label>
+                      <div className="d-flex align-items-center" style={{ gap: '0.5rem' }}>
+                        <input
                           id="carPhoto"
                           type="file"
+                          className="form-control"
                           accept="image/*"
                           onChange={(e) => handleFileChange(e, setCarPhoto)}
-                          className="bg-input-background"
+                          style={{ backgroundColor: '#f3f3f5', borderColor: 'rgba(0, 0, 0, 0.1)' }}
                         />
                         {carPhoto && (
-                          <span className="text-muted-foreground whitespace-nowrap">✓</span>
+                          <span className="text-muted" style={{ whiteSpace: 'nowrap' }}>✓</span>
                         )}
                       </div>
-                      <p className="text-muted-foreground text-sm">Upload a photo of your vehicle (optional)</p>
+                      <p className="text-muted text-sm mt-1 mb-0">Upload a photo of your vehicle (optional)</p>
                     </div>
 
-                    {/* Number of Seats */}
-                    <div className="space-y-2">
-                      <Label htmlFor="seats">Number of Available Seats</Label>
-                      <Input
+                    {/* Number of Seats - Bootstrap */}
+                    <div className="mb-3">
+                      <label htmlFor="seats" className="form-label">Number of Available Seats</label>
+                      <input
                         id="seats"
                         type="number"
+                        className="form-control"
                         min="1"
                         max="8"
                         placeholder="e.g., 4"
                         value={numberOfSeats}
                         onChange={(e) => setNumberOfSeats(e.target.value)}
                         required
-                        className="bg-input-background"
+                        style={{ backgroundColor: '#f3f3f5', borderColor: 'rgba(0, 0, 0, 0.1)' }}
                       />
-                      <p className="text-muted-foreground text-sm">How many passengers can you accommodate?</p>
+                      <p className="text-muted text-sm mt-1 mb-0">How many passengers can you accommodate?</p>
                     </div>
                   </div>
                 </>
@@ -394,9 +408,20 @@ export function LoginPage({ initialMode = "login", initialUserType = "rider", on
                 </div>
               )}
 
-              <Button type="submit" className="w-full mt-6" disabled={isLoading}>
+              <button 
+                type="submit" 
+                className="btn btn-primary w-100 mt-4" 
+                disabled={isLoading}
+                style={{ 
+                  backgroundColor: '#030213', 
+                  borderColor: '#030213', 
+                  color: '#ffffff',
+                  paddingTop: '0.75rem',
+                  paddingBottom: '0.75rem'
+                }}
+              >
                 {isLoading ? "Loading..." : isSignUp ? "Sign Up" : "Log In"}
-              </Button>
+              </button>
             </form>
 
             <div className="mt-6 text-center">

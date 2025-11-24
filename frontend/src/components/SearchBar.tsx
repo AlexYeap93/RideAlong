@@ -1,6 +1,5 @@
+// Bootstrap implementation
 import { Search } from "lucide-react";
-import { Input } from "./ui/input";
-import { Button } from "./ui/button";
 
 interface SearchBarProps {
   value: string;
@@ -17,24 +16,51 @@ export function SearchBar({ value, onChange, onSearch }: SearchBarProps) {
 
   return (
     <div className="p-4 bg-white">
-      <div className="relative flex items-center gap-2">
-        <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-5 h-5 z-10" />
-          <Input
+      <div className="position-relative d-flex align-items-center" style={{ gap: '0.5rem' }}>
+        <div className="position-relative flex-grow-1">
+          <Search 
+            className="position-absolute" 
+            style={{ 
+              left: '0.75rem', 
+              top: '50%', 
+              transform: 'translateY(-50%)', 
+              color: '#717182',
+              width: '1.25rem',
+              height: '1.25rem',
+              zIndex: 10,
+              pointerEvents: 'none'
+            }} 
+          />
+          <input
             type="text"
+            className="form-control"
             placeholder="Where are you going?"
             value={value}
             onChange={(e) => onChange(e.target.value)}
             onKeyPress={handleKeyPress}
-            className="pl-10 pr-4 py-3 bg-input-background border-border rounded-lg"
+            style={{
+              paddingLeft: '2.5rem',
+              paddingRight: '1rem',
+              paddingTop: '0.75rem',
+              paddingBottom: '0.75rem',
+              backgroundColor: '#f3f3f5',
+              borderColor: 'rgba(0, 0, 0, 0.1)',
+              borderRadius: '0.5rem'
+            }}
           />
         </div>
-        <Button
+        <button
+          className="btn btn-primary"
           onClick={onSearch}
-          className="shrink-0"
+          style={{ 
+            flexShrink: 0,
+            backgroundColor: '#030213',
+            borderColor: '#030213',
+            color: '#ffffff'
+          }}
         >
           Search
-        </Button>
+        </button>
       </div>
     </div>
   );
