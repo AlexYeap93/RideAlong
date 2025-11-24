@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { query } from '../config/database';
+import jwt from 'jsonwebtoken';
 import { CustomError } from './errorHandler';
 
 // Extend Request interface to include user
@@ -15,10 +15,25 @@ declare global {
   }
 }
 
+interface JwtPayload {
+  id: string;
+  email: string;
+  role: 'user' | 'driver' | 'admin';
+  iat?: number;
+  exp?: number;
+}
+
 export const authenticate = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    // For now, we'll use a simple token-based auth. The token is just the user id.
-    const token = req.headers.authorization?.replace('Bearer ', '');
+    const authHeader = req.headers.authorization;
+    
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      const error: CustomError = new Error('Authentication required');
+      error.statusCode = 401;
+      throw error;
+    }
+
+    const token = authHeader.replace('Bearer ', '');
     
     if (!token) {
       const error: CustomError = new Error('Authentication required');
@@ -26,25 +41,24 @@ export const authenticate = async (req: Request, res: Response, next: NextFuncti
       throw error;
     }
 
-    // Verify token and get user 
-    const result = await query(
-      'SELECT id, email, role FROM users WHERE id = $1',
-      [token]
-    );
+    // Verify JWT token
+    const jwtSecret = process.env.JWT_SECRET || 'fallback_secret_key';
+    
+    try {
+      const decoded = jwt.verify(token, jwtSecret) as JwtPayload;
+      
+      req.user = {
+        id: decoded.id,
+        email: decoded.email,
+        role: decoded.role,
+      };
 
-    if (result.rows.length === 0) {
-      const error: CustomError = new Error('Invalid authentication token');
+      next();
+    } catch (jwtError) {
+      const error: CustomError = new Error('Invalid or expired authentication token');
       error.statusCode = 401;
       throw error;
     }
-
-    req.user = {
-      id: result.rows[0].id,
-      email: result.rows[0].email,
-      role: result.rows[0].role,
-    };
-
-    next();
   } catch (error) {
     next(error);
   }

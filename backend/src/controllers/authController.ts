@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
 import { query } from '../config/database';
 import { CustomError } from '../middleware/errorHandler';
 
@@ -8,8 +9,8 @@ export const register = async (req: Request, res: Response, next: NextFunction) 
   
   try {
     const { email, password, name, userType, phone, address, latitude, longitude } = req.body;
-    // Validate email, password, name, and phone are required if not 
-    if (!email && !password && !name || !phone) {
+    // Validate email, password, name, and phone are required
+    if (!email || !password || !name || !phone) {
       const error: CustomError = new Error('Email, password, name, and phone are required');
       error.statusCode = 400;
       throw error;
@@ -68,6 +69,14 @@ export const register = async (req: Request, res: Response, next: NextFunction) 
 
     const user = userResult.rows[0];
 
+    // Generate JWT token
+    const jwtSecret = process.env.JWT_SECRET || 'fallback_secret_key';
+    const token = jwt.sign(
+      { id: user.id, email: user.email, role: user.role },
+      jwtSecret,
+      { expiresIn: '7d' }
+    );
+
     // If driver, create driver profile
     let driverInfo = null;
     if (userType === 'driver') {
@@ -105,8 +114,7 @@ export const register = async (req: Request, res: Response, next: NextFunction) 
           role: user.role,
           driverInfo,
         },
-        // Return token for new registrations (same as login)
-        token: user.id, // Simplified - use JWT in production
+        token: token,
       },
     });
   } catch (error) {
@@ -150,6 +158,14 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
       throw error;
     }
 
+    // Generate JWT token
+    const jwtSecret = process.env.JWT_SECRET || 'fallback_secret_key';
+    const token = jwt.sign(
+      { id: user.id, email: user.email, role: user.role },
+      jwtSecret,
+      { expiresIn: '7d' }
+    );
+
     // Get driver or admin info if applicable
     let driverInfo = null;
     if (user.role === 'driver' || user.role === 'admin') {
@@ -173,7 +189,7 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
           role: user.role,
           driverInfo,
         },
-        token: user.id, // Simplified toekn for login
+        token: token,
       },
     });
   } catch (error) {
