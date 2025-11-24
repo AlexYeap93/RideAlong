@@ -226,24 +226,6 @@ export function ProfilePage({ onNavigateToPaymentMethods, onNavigateToRideHistor
           </button>
         </Card>
 
-        <Card className="p-4">
-          <h3 className="font-medium mb-3">Preferences</h3>
-          <div className="space-y-3">
-            <div className="flex items-center justify-between">
-              <span>Music Preferences</span>
-              <Badge variant="outline">Pop, Rock</Badge>
-            </div>
-            <div className="flex items-center justify-between">
-              <span>Smoking Policy</span>
-              <Badge variant="outline">No Smoking</Badge>
-            </div>
-            <div className="flex items-center justify-between">
-              <span>Pet Policy</span>
-              <Badge variant="outline">No Pets</Badge>
-            </div>
-          </div>
-        </Card>
-
         {user?.role !== 'driver' && user?.role !== 'admin' && (
           <Button 
             variant="outline" 

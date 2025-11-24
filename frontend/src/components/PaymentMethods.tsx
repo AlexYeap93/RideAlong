@@ -4,7 +4,7 @@ import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 import { Badge } from "./ui/badge";
-import { ArrowLeft, CreditCard, Wallet, Plus, MoreVertical,Check} from "lucide-react";
+import { ArrowLeft, Trash2, CreditCard, Wallet, Plus, MoreVertical,Check} from "lucide-react";
 import {Dialog,DialogContent,DialogHeader,DialogTitle,DialogDescription,DialogTrigger} from "./ui/dialog";
 import {DropdownMenu,DropdownMenuContent,DropdownMenuItem,DropdownMenuTrigger} from "./ui/dropdown-menu";
 import { toast } from "sonner";
@@ -293,52 +293,20 @@ export function PaymentMethods({ onBack }: PaymentMethodsProps) {
                   )}
                 </div>
 
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="icon">
-                      <MoreVertical className="w-4 h-4" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
-                    {!method.is_default && (
-                      <DropdownMenuItem onClick={() => handleSetDefault(method.id)}>
-                        Set as Default
-                      </DropdownMenuItem>
-                    )}
-                    <DropdownMenuItem onClick={() => handleRemove(method.id)}>
-                      Remove Card
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
+              <Button 
+                variant="ghost" 
+                size="sm"
+                onClick={() => handleRemove(method.id)}
+                className="text-destructive hover:text-destructive hover:bg-destructive/10"
+              >
+                <Trash2 className="w-4 h-4 mr-1" />
+                Remove
+              </Button>
               </div>
             </Card>
           ))
         )}
 
-        {/* RideAlong Wallet */}
-        <Card className="p-4 bg-gradient-to-br from-primary to-primary/80 text-primary-foreground">
-          <div className="flex items-start gap-3">
-            <div className="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center">
-              <Wallet className="w-6 h-6" />
-            </div>
-            
-            <div className="flex-1">
-              <p className="font-medium mb-1">RideAlong Wallet</p>
-              <p className="text-2xl font-medium mb-2">$25.00</p>
-              <p className="text-xs text-primary-foreground/80">
-                Available balance
-              </p>
-            </div>
-
-            <Button 
-              variant="secondary" 
-              size="sm"
-              className="bg-white text-primary hover:bg-white/90"
-            >
-              Add Funds
-            </Button>
-          </div>
-        </Card>
       </div>
 
       {/* Security Info */}
