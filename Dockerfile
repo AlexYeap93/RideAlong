@@ -1,26 +1,32 @@
-# --- Stage 1: Build the Vite app ---
-FROM node:18 AS build
+# --- Multi-stage Dockerfile for RideAlong ---
+# This Dockerfile is for the frontend only. Use docker-compose.yml for full stack deployment.
+
+# --- Stage 1: Build the Vite frontend app ---
+FROM node:18 AS build-frontend
 
 # Set working directory
 WORKDIR /app
 
-# Copy package.json and lock file
-COPY package*.json ./
+# Copy frontend package files
+COPY frontend/package*.json ./
 
 # Install dependencies
 RUN npm install
 
-# Copy the rest of the app
-COPY . .
+# Copy frontend source
+COPY frontend/ ./
 
-# Build the app for production
+# Build the frontend for production
 RUN npm run build
 
-# --- Stage 2: Serve the built files using a lightweight web server ---
+# --- Stage 2: Serve the built frontend files using nginx ---
 FROM nginx:alpine
 
-# Copy built files from previous stage
-COPY --from=build /app/dist /usr/share/nginx/html
+# Copy built frontend files from previous stage
+COPY --from=build-frontend /app/dist /usr/share/nginx/html
+
+# Copy nginx configuration if needed
+# COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 # Expose port 80
 EXPOSE 80
