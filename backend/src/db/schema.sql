@@ -124,6 +124,12 @@ BEGIN
 END;
 $$ language 'plpgsql';
 
+DROP TRIGGER IF EXISTS update_users_updated_at ON users;
+DROP TRIGGER IF EXISTS update_drivers_updated_at ON drivers;
+DROP TRIGGER IF EXISTS update_rides_updated_at ON rides;
+DROP TRIGGER IF EXISTS update_bookings_updated_at ON bookings;
+DROP TRIGGER IF EXISTS update_payments_updated_at ON payments;
+DROP TRIGGER IF EXISTS update_issues_updated_at ON issues;
 -- Create triggers to automatically update updated_at
 CREATE TRIGGER update_users_updated_at BEFORE UPDATE ON users
     FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
