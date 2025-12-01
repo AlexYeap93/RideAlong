@@ -24,6 +24,7 @@ export function DriversPage() {
   const [driverId, setDriverId] = useState<string | null>(null);
   const [isApprovedDriver, setIsApprovedDriver] = useState(false);
   const [isCheckingDriver, setIsCheckingDriver] = useState(true);
+  const [hasDriverApplication, setHasDriverApplication] = useState(false);
   const [totalEarnings, setTotalEarnings] = useState<number>(0);
 
   // Function to fetch driver info
@@ -40,6 +41,7 @@ export function DriversPage() {
           if (driverResponse.data && driverResponse.data.id) {
             setDriverId(driverResponse.data.id);
             const wasApproved = driverResponse.data.is_approved === true;
+            setHasDriverApplication(true);
             setIsApprovedDriver(wasApproved);
             localStorage.setItem('driverId', driverResponse.data.id);
             if (wasApproved) {
@@ -59,6 +61,7 @@ export function DriversPage() {
         if (driverResponse.data && driverResponse.data.id) {
           setDriverId(driverResponse.data.id);
           const wasApproved = driverResponse.data.is_approved === true;
+          setHasDriverApplication(true);
           setIsApprovedDriver(wasApproved);
           localStorage.setItem('driverId', driverResponse.data.id);
           if (wasApproved) {
@@ -69,9 +72,13 @@ export function DriversPage() {
       catch (error: any) {
         // Driver profile doesn't exist yet or not approved
         if (error.message.includes('404') || error.message.includes('not found')) {
+          // No driver record exists for this user yet
+          setHasDriverApplication(false);
           setIsApprovedDriver(false);
         } else {
           console.error("Failed to fetch driver profile:", error);
+          // On other errors, assume no application so UI doesn't show pending incorrectly
+          setHasDriverApplication(false);
           setIsApprovedDriver(false);
         }
       } finally {
@@ -436,7 +443,7 @@ export function DriversPage() {
       </div>
 
       {/* Driver Approval Status */}
-      {!isCheckingDriver && !isApprovedDriver && (
+      {!isCheckingDriver && hasDriverApplication && !isApprovedDriver && (
         <div className="px-4 mb-6">
           <Card className="p-4 bg-yellow-50 border-yellow-200">
             <div className="flex items-start gap-3">

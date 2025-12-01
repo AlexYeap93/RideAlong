@@ -21,7 +21,7 @@ export function BottomNavigation({ activeTab, onTabChange, isAdmin = false }: Bo
     },
     {
       id: "users",
-      label: "For Users",
+      label: "For Riders",
       icon: Users
     },
     {

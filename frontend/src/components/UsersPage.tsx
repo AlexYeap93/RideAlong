@@ -492,16 +492,15 @@ export function UsersPage({ initialMode = "main", onModeChange, refreshTrigger, 
     <div className="pb-20 bg-background min-h-screen">
       {/* Header */}
       <div className="bg-primary text-primary-foreground p-4">
-        <h1 className="text-xl font-medium mb-1">For Users</h1>
+        <h1 className="text-xl font-medium mb-1">For Riders</h1>
         <p className="text-sm text-primary-foreground/80">Your rides to University of Calgary</p>
       </div>
 
-      {/* Browse Rides Button - Thinner Bar */}
       <div className="p-4">
         <Button 
           className="w-full"
           onClick={() => {
-            // Navigate to home tab instead of showing time slots in Users tab
+            // Navigate to home tab instead of showing time slots in Riders tab
             if (onNavigateToHome) {
               onNavigateToHome();
             } else {
