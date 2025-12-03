@@ -454,9 +454,10 @@ async function seedIssuesForBookings() {
   try {
     // Pick some bookings (both completed and confirmed) to attach issues to
     const bookingsRes = await query(
-      `SELECT b.id as booking_id, b.user_id, b.ride_id, r.driver_id, r.ride_date
+      `SELECT b.id as booking_id, b.user_id, b.ride_id, r.driver_id, d.user_id as driver_user_id, r.ride_date
        FROM bookings b
        JOIN rides r ON b.ride_id = r.id
+       JOIN drivers d ON r.driver_id = d.id
        WHERE r.ride_date <= $1
        ORDER BY random()
        LIMIT 200`,
@@ -479,7 +480,7 @@ async function seedIssuesForBookings() {
 
       const bookingId = b.booking_id;
       const userId = b.user_id;
-      const driverId = b.driver_id;
+      const driverUserId = b.driver_user_id;
 
       const issueType = issueTypes[Math.floor(Math.random() * issueTypes.length)];
       const subject = issueType === 'payment' ? 'Payment not processed' :
@@ -506,7 +507,7 @@ async function seedIssuesForBookings() {
       if (exists.rows.length > 0) continue;
 
       // reported_user_id set to driver for driver-related issues, else null
-      const reportedUserId = issueType === 'driver' ? driverId : null;
+      const reportedUserId = issueType === 'driver' ? driverUserId : null;
 
       await query(
         `INSERT INTO issues (user_id, booking_id, issue_type, subject, description, reported_user_id, status, priority, admin_notes)

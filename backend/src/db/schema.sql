@@ -168,6 +168,7 @@ CREATE INDEX IF NOT EXISTS idx_ratings_user_id ON ratings(user_id);
 CREATE INDEX IF NOT EXISTS idx_ratings_ride_id ON ratings(ride_id);
 CREATE INDEX IF NOT EXISTS idx_ratings_booking_id ON ratings(booking_id);
 
+DROP TRIGGER IF EXISTS update_ratings_updated_at ON ratings;
 CREATE TRIGGER update_ratings_updated_at BEFORE UPDATE ON ratings
     FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
@@ -189,6 +190,7 @@ CREATE TABLE IF NOT EXISTS payment_methods (
 CREATE INDEX IF NOT EXISTS idx_payment_methods_user_id ON payment_methods(user_id);
 CREATE INDEX IF NOT EXISTS idx_payment_methods_is_default ON payment_methods(is_default);
 
+DROP TRIGGER IF EXISTS update_payment_methods_updated_at ON payment_methods;
 CREATE TRIGGER update_payment_methods_updated_at BEFORE UPDATE ON payment_methods
     FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
