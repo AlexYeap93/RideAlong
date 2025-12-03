@@ -1,4 +1,7 @@
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+
+import { API_BASE_URL } from '../types/const';
+import { User,APIUser } from '../types/api_interfaces';
+
 
 // Helper function to get auth token
 const getAuthToken = (): string | null => {
@@ -55,20 +58,7 @@ async function apiRequest<T>(
 
 // Auth API
 export const authAPI = {
-  register: async (data: {
-    email: string;
-    password: string;
-    name: string;
-    phone: string;
-    userType: 'rider' | 'driver';
-    address?: string;
-    latitude?: number;
-    longitude?: number;
-    licenseNumber?: string;
-    insuranceProof?: string;
-    carPhoto?: string;
-    availableSeats?: number;
-  }) => {
+  register: async (data: User) => {
     const formData: any = {
       email: data.email.trim().toLowerCase(),
       password: data.password,
@@ -97,20 +87,7 @@ export const authAPI = {
     }
 
     try {
-      const response = await apiRequest<{
-        status: string;
-        message: string;
-        data: {
-          user: {
-            id: string;
-            email: string;
-            name: string;
-            role: string;
-            driverInfo?: any;
-          };
-          token?: string;
-        };
-      }>('/auth/register', {
+      const response = await apiRequest<APIUser>('/auth/register', {
         method: 'POST',
         body: JSON.stringify(formData),
       });
@@ -138,20 +115,7 @@ export const authAPI = {
   },
 
   login: async (email: string, password: string) => {
-    const response = await apiRequest<{
-      status: string;
-      message: string;
-      data: {
-        user: {
-          id: string;
-          email: string;
-          name: string;
-          role: string;
-          driverInfo?: any;
-        };
-        token: string;
-      };
-    }>('/auth/login', {
+    const response = await apiRequest<APIUser>('/auth/login', {
       method: 'POST',
       body: JSON.stringify({ email, password }),
     });
@@ -181,18 +145,7 @@ export const authAPI = {
   },
 
   getCurrentUser: async () => {
-    return apiRequest<{
-      status: string;
-      data: {
-        user: {
-          id: string;
-          email: string;
-          name: string;
-          role: string;
-          driverInfo?: any;
-        };
-      };
-    }>('/auth/me');
+    return apiRequest<APIUser>('/auth/me');
   },
 };
 
