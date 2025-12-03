@@ -11,7 +11,7 @@ import { Star, Edit, Settings, CreditCard, History, HelpCircle, ChevronRight, Ca
 import { toast } from "sonner";
 import { useAuth } from "../contexts/AuthContext";
 import { bookingsAPI, driversAPI, issuesAPI } from "../services/api";
-import { DriverApplicationDialog } from "./DriverApplicationDialog";
+import { DriverApplicationDialog } from "../features/driver/components/dialog/DriverApplicationDialog";
 
 interface ProfilePageProps {
   onNavigateToPaymentMethods?: () => void;

@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
-import { AppHeader } from "./components/AppHeader";
+import { AppHeader } from "./features/shared/ui/AppHeader";
 import { HomePage } from "./components/HomePage";
-import { DriversPage } from "./components/DriversPage";
+import { DriversPage } from "./features/driver/components/DriversPage";
 import { UsersPage } from "./components/UsersPage";
 import { ProfilePage } from "./components/ProfilePage";
 import { AdminPage } from "./features/admin/pages/AdminPage";
