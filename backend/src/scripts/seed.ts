@@ -216,8 +216,8 @@ async function seedBookingsForSomeRides() {
 
     // Make some riders have a pending driver application (is_approved = false)
     for (const r of riderEmails) {
-      // 30% chance to have applied
-      if (Math.random() > 0.3) continue;
+      // 40% chance to have applied
+      if (Math.random() > 0.4) continue;
 
       // Check if driver record already exists for this user
       const drvExists = await query('SELECT id FROM drivers WHERE user_id = $1', [r.id]);
@@ -470,13 +470,13 @@ async function seedIssuesForBookings() {
     }
 
     const issueTypes = ['payment', 'driver', 'safety', 'other'];
-    const statuses = ['open', 'under_review', 'resolved', 'closed'];
+    const statuses = ['open', 'resolved'];
 
     let issuesCreated = 0;
 
     for (const b of bookingsRes.rows) {
-      // 20% chance to create an issue for this booking
-      if (Math.random() > 0.2) continue;
+      // 30% chance to create an issue for this booking
+      if (Math.random() > 0.3) continue;
 
       const bookingId = b.booking_id;
       const userId = b.user_id;
