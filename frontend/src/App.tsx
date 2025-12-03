@@ -4,7 +4,7 @@ import { HomePage } from "./components/HomePage";
 import { DriversPage } from "./components/DriversPage";
 import { UsersPage } from "./components/UsersPage";
 import { ProfilePage } from "./components/ProfilePage";
-import { AdminPage } from "./components/AdminPage";
+import { AdminPage } from "./features/admin/pages/AdminPage";
 import { LoginPage } from "./components/LoginPage";
 import { RideHistory } from "./components/RideHistory";
 import { PaymentMethods } from "./components/PaymentMethods";
