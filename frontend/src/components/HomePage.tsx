@@ -5,7 +5,7 @@ import { TimeSlotSelection } from "./TimeSlotSelection";
 import { RideCard } from "../features/ride/components/RideCard";
 import { SeatSelection } from "./SeatSelection";
 import { PaymentPage } from "./PaymentPage";
-import { BookingConfirmation } from "./BookingConfirmation";
+import { BookingConfirmation } from "../features/ride/components/BookingConfirmation";
 import { Button } from "./ui/button";
 import { toast } from "sonner";
 import { ridesAPI, bookingsAPI, paymentsAPI, transformRideData } from "../services/api";

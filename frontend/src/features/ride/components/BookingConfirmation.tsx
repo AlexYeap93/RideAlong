@@ -1,27 +1,10 @@
-import { Card } from "./ui/card";
-import { Button } from "./ui/button";
-import { Avatar, AvatarFallback } from "./ui/avatar";
-import { Badge } from "./ui/badge";
+import { Card } from "../../../components/ui/card";
+import { Button } from "../../../components/ui/button";
+import { Avatar, AvatarFallback } from "../../../components/ui/avatar";
+import { Badge } from "../../../components/ui/badge";
 import { CheckCircle2, MapPin, Clock, Calendar, User, Car } from "lucide-react";
+import { BookingConfirmationProps, serviceFee } from "../../shared/constants/const";
 
-// After Payment, to the Booking Confirmation Page
-interface BookingConfirmationProps {
-  bookingDetails: {
-    bookingId: string;
-    driverName: string;
-    rating: number; // This is the rating of the driver from the database "Ratings" table
-    departureTime: string;
-    destination: string;
-    quadrant: string;
-    seatNumber: number;
-    price: number;
-    car: string;
-    carType: string;
-    bookingDate: string;
-  };
-  onViewBookings: () => void;
-  onReturnHome: () => void;
-}
 
 export function BookingConfirmation({ 
   bookingDetails, 
@@ -29,7 +12,7 @@ export function BookingConfirmation({
   onReturnHome 
 }: BookingConfirmationProps) {
   // Service fee is 2.50$ which we may increase based on team discussion
-  const serviceFee = 2.50;
+  
   // Total is the price of the ride + service fee THIS IS $12.50 FOR NOW
   const total = bookingDetails.price + serviceFee;
 
