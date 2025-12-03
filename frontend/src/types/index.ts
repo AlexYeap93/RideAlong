@@ -13,3 +13,13 @@ export interface Passenger {
   additionalAmountStatus?: 'pending' | 'accepted' | 'declined' | null;
 }
 
+export interface DriverRideDetailDialogProps {
+  open: boolean;
+  onClose: () => void;
+  rideId: string | number;
+  destination: string;
+  date: string;
+  departureTime: string;
+  passengers: Passenger[];
+  onSave?: () => void;
+}

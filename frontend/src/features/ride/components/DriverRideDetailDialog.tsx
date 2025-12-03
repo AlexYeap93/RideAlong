@@ -11,18 +11,8 @@ import { Label } from "../../../components/ui/label";
 import { toast } from "sonner";
 import { bookingsAPI, usersAPI } from "../../../services/api";
 import { useAuth } from "../../../contexts/AuthContext";
-import { Passenger } from "../../../types";
+import { DriverRideDetailDialogProps } from "../../../types";
 
-interface DriverRideDetailDialogProps {
-  open: boolean;
-  onClose: () => void;
-  rideId: string | number;
-  destination: string;
-  date: string;
-  departureTime: string;
-  passengers: Passenger[];
-  onSave?: () => void;
-}
 
 export function DriverRideDetailDialog({ 
   open, 

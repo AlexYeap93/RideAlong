@@ -1,7 +1,5 @@
 // API interfaces for RideAlong frontend
 
-
-
 export interface User {
     email: string;
     password: string;
@@ -16,7 +14,6 @@ export interface User {
     carPhoto?: string;
     availableSeats?: number;
 }
-
 
 export interface APIUser{
         status: string;
