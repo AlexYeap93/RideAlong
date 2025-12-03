@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { LocationHeader } from "./LocationHeader";
 import { DestinationList } from "./DestinationList";
 import { TimeSlotSelection } from "./TimeSlotSelection";
-import { RideCard } from "./RideCard";
+import { RideCard } from "../features/ride/components/RideCard";
 import { SeatSelection } from "./SeatSelection";
 import { PaymentPage } from "./PaymentPage";
 import { BookingConfirmation } from "./BookingConfirmation";

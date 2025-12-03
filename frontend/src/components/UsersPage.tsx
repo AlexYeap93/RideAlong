@@ -5,7 +5,7 @@ import { Avatar, AvatarFallback } from "./ui/avatar";
 import { Badge } from "./ui/badge";
 import { Star, MapPin, Clock, HelpCircle, DollarSign, CheckCircle, XCircle } from "lucide-react";
 import { TimeSlotSelection } from "./TimeSlotSelection";
-import { RideCard } from "./RideCard";
+import { RideCard } from "../features/ride/components/RideCard";
 import { SeatSelection } from "./SeatSelection";
 import { PaymentPage } from "./PaymentPage";
 import { BookingConfirmation } from "./BookingConfirmation";
