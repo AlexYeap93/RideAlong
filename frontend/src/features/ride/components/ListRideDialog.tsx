@@ -1,10 +1,10 @@
 import { useState, useMemo } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "./ui/dialog";
-import { Button } from "./ui/button";
-import { Label } from "./ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "../../../components/ui/dialog";
+import { Button } from "../../../components/ui/button";
+import { Label } from "../../../components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../../components/ui/select";
 import { MapPin, Clock } from "lucide-react";
-import { ScrollableDatePicker } from "./ScrollableDatePicker";
+import { ScrollableDatePicker } from "../../../components/ScrollableDatePicker";
 import { toast } from "sonner";
 
 interface ListRideDialogProps {
