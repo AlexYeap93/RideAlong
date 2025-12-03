@@ -1,11 +1,11 @@
 import { useState, useEffect } from "react";
-import { Card } from "./ui/card";
-import { Button } from "./ui/button";
-import { Avatar, AvatarFallback } from "./ui/avatar";
-import { Badge } from "./ui/badge";
+import { Card } from "../../../components/ui/card";
+import { Button } from "../../../components/ui/button";
+import { Avatar, AvatarFallback } from "../../../components/ui/avatar";
+import { Badge } from "../../../components/ui/badge";
 import { ArrowLeft, MapPin, Calendar, Clock, Star, Download } from "lucide-react";
-import { bookingsAPI, transformBookingData } from "../services/api";
-import { useAuth } from "../contexts/AuthContext";
+import { bookingsAPI, transformBookingData } from "../../../services/api";
+import { useAuth } from "../../../contexts/AuthContext";
 import { toast } from "sonner";
 
 interface RideHistoryProps {

@@ -6,7 +6,7 @@ import { UsersPage } from "./components/UsersPage";
 import { ProfilePage } from "./components/ProfilePage";
 import { AdminPage } from "./features/admin/pages/AdminPage";
 import { LoginPage } from "./components/LoginPage";
-import { RideHistory } from "./components/RideHistory";
+import { RideHistory } from "./features/rider/components/RideHistory";
 import { PaymentMethods } from "./components/PaymentMethods";
 import { SettingsPage } from "./components/SettingsPage";
 import { BottomNavigation } from "./components/BottomNavigation";
