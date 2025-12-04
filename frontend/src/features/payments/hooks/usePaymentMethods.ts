@@ -1,24 +1,8 @@
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 import { paymentMethodsAPI } from "../../../services/api";
-
-export interface PaymentMethod {
-  id: string;
-  type: string;
-  brand?: string;
-  last4: string;
-  expiry_month?: number;
-  expiry_year?: number;
-  cardholder_name?: string;
-  is_default?: boolean;
-}
-
-interface AddCardParams {
-  cardNumber: string;
-  cardName: string;
-  expiryDate: string; // MM/YY
-  cvv: string;
-}
+import type { FrontendPaymentMethod as PaymentMethod } from "../../../types/api_interfaces";
+import type { AddCardParams } from "../../../serviceInterface";
 
 export function usePaymentMethods() {
   const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>([]);

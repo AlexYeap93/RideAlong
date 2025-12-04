@@ -1,35 +1,22 @@
 import { useState, useEffect } from "react";
-import { Card } from "./ui/card";
-import { Button } from "./ui/button";
-import { Avatar, AvatarFallback } from "./ui/avatar";
-import { Badge } from "./ui/badge";
+import { Card } from "../../../components/ui/card";
+import { Button } from "../../../components/ui/button";
+import { Avatar, AvatarFallback } from "../../../components/ui/avatar";
+import { Badge } from "../../../components/ui/badge";
 import { Star, MapPin, Clock, HelpCircle, DollarSign, CheckCircle, XCircle } from "lucide-react";
-import { TimeSlotSelection } from "../features/shared/ui/TimeSlotSelection";
-import { RideCard } from "../features/ride/components/RideCard";
-import { SeatSelection } from "../features/shared/ui/SeatSelection";
-import { PaymentPage } from "../features/payments/pages/PaymentPage";
-import { BookingConfirmation } from "../features/ride/components/BookingConfirmation";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from "./ui/dialog";
-import { Label } from "./ui/label";
-import { Textarea } from "./ui/textarea";
-import { RadioGroup, RadioGroupItem } from "./ui/radio-group";
+import { TimeSlotSelection } from "../../ride/components/TimeSlotSelection";
+import { RideCard } from "../../ride/components/RideCard";
+import { SeatSelection } from "../../ride/components/SeatSelection";
+import { PaymentPage } from "../../payments/pages/PaymentPage";
+import { BookingConfirmation } from "../../ride/components/BookingConfirmation";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from "../../../components/ui/dialog";
+import { Label } from "../../../components/ui/label";
+import { Textarea } from "../../../components/ui/textarea";
+import { RadioGroup, RadioGroupItem } from "../../../components/ui/radio-group";
 import { toast } from "sonner";
-import { bookingsAPI, ridesAPI, paymentsAPI, issuesAPI, ratingsAPI, transformRideData, transformBookingData } from "../services/api";
-import { useAuth } from "../contexts/AuthContext";
-
-interface UsersPageProps {
-  initialMode?: "main" | "browseRides";
-  onModeChange?: (mode: "main" | "browseRides") => void;
-  refreshTrigger?: number; // Add refresh trigger prop
-  onNavigateToHome?: () => void; // Callback to navigate to home tab
-}
+import { bookingsAPI, ridesAPI, paymentsAPI, issuesAPI, ratingsAPI, transformRideData, transformBookingData } from "../../../services/api";
+import { useAuth } from "../../../contexts/AuthContext";
+import type { UsersPageProps } from "../../../serviceInterface";
 
 export function UsersPage({ initialMode = "main", onModeChange, refreshTrigger, onNavigateToHome }: UsersPageProps) {
   const { user } = useAuth();
@@ -228,7 +215,13 @@ export function UsersPage({ initialMode = "main", onModeChange, refreshTrigger, 
     setShowPayment(true);
   };
 
-  const handlePaymentConfirm = async (paymentMethod: string, pickupAddress: string) => {
+  const handlePaymentConfirm = async (
+    paymentMethod: string,
+    pickupAddress: string,
+    pickupCity: string,
+    pickupProvince: string,
+    pickupPostalCode: string
+  ) => {
     if (!user || !selectedDriver || !selectedSeat) {
       toast.error("Missing information", {
         description: "Please try again.",
@@ -236,19 +229,21 @@ export function UsersPage({ initialMode = "main", onModeChange, refreshTrigger, 
       return;
     }
 
-    if (!pickupAddress.trim()) {
-      toast.error("Pickup address is required", {
-        description: "Please enter your pickup address.",
+    if (!pickupAddress.trim() || !pickupCity.trim() || !pickupProvince.trim() || !pickupPostalCode.trim()) {
+      toast.error("Complete pickup address is required", {
+        description: "Please enter all address fields.",
       });
       return;
     }
 
     try {
+      // Create booking with complete pickup address combined into one string
+      const fullPickupAddress = `${pickupAddress}, ${pickupCity}, ${pickupProvince} ${pickupPostalCode}`;
       const bookingResponse = await bookingsAPI.createBooking({
         rideId: selectedDriver.rideId || selectedDriver.id,
         numberOfSeats: 1,
         seatNumber: selectedSeat,
-        pickupLocation: pickupAddress,
+        pickupLocation: fullPickupAddress,
       });
 
       const booking = bookingResponse.data;

@@ -11,24 +11,7 @@ import { CreditCard, ArrowLeft, MapPin, Clock, User, Calendar, CheckCircle2, Ale
 import { paymentMethodsAPI } from "../../../services/api";
 import { toast } from "sonner";
 import { useAuth } from "../../../contexts/AuthContext";
-
-interface PaymentPageProps {
-  bookingDetails: {
-    driverName: string;
-    rating: number;
-    departureTime: string;
-    destination: string;
-    quadrant: string;
-    seatNumber: number;
-    price: number;
-    car: string;
-    carType: string;
-    bookingDate: string;
-    rideId?: string;
-  };
-  onBack: () => void;
-  onConfirm: (paymentMethod: string, pickupAddress: string, pickupCity: string, pickupProvince: string, pickupPostalCode: string) => void;
-}
+import type { PaymentPageProps } from "../../../serviceInterface";
 
 export function PaymentPage({ bookingDetails, onBack, onConfirm }: PaymentPageProps) {
   const { user } = useAuth();

@@ -9,7 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from ".
 import { MapPin, Clock, DollarSign, AlertCircle } from "lucide-react";
 import { toast } from "sonner";
 import { bookingsAPI } from "../../../services/api";
-import { DriverPassengerCardProps } from "../../shared/constants/const";
+import type { DriverPassengerCardProps } from "../../../serviceInterface";
 import { timeSlots } from "../../../types/const";
 
 

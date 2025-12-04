@@ -1,5 +1,5 @@
 import universityImage from '../../../components/photos/UofC.jpg';
-import { DestinationListProps } from "../../../types/index";
+import type { DestinationListProps } from "../../../serviceInterface";
 import { UNIVERSITY_DESTINATION } from "../../../types/const";
 
 export function DestinationList({ onDestinationSelect }: DestinationListProps) {

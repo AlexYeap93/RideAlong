@@ -1,6 +1,6 @@
 import { Card } from "../../../../components/ui/card";
 import { Avatar, AvatarFallback } from "../../../../components/ui/avatar";
-import { StatusBadge } from "../../../shared/ui/StatusBadge";
+import { StatusBadge } from "../../../../components/StatusBadge";
 
 export interface UserCardProps { id: number; name: string; email: string; type: string; status: string; totalRides: number; rating: string | number; onClick?: () => void;}
 

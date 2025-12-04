@@ -1,4 +1,4 @@
-import { Card } from "../../../components/ui/card";
+import { Card } from "./ui/card";
 
 export function EmptyStateCard({ icon, message }: { icon: React.ReactNode; message: string }) {
   return (

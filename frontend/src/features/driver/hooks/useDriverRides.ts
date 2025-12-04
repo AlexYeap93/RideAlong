@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { toast } from 'sonner';
 import { useAuth } from '../../../contexts/AuthContext';
 import { ridesAPI, driversAPI, bookingsAPI, paymentsAPI } from '../../../services/api';
-import { ActiveRide, CompletedRide } from '../../shared/constants/const';
+import type { ActiveRide, CompletedRide } from '../../../types/api_interfaces';
 
 // Utility functions
 const formatTime = (time: string): string => {

@@ -3,7 +3,7 @@ import { Button } from "../../../../components/ui/button";
 import { Avatar, AvatarFallback } from "../../../../components/ui/avatar";
 import { Badge } from "../../../../components/ui/badge";
 import { Ban, CheckCircle2, MapPin } from "lucide-react";
-import type { AdminUserView } from "../../../../types/index";
+import type { adminUserDialogProps } from "../../../../serviceInterface";
 
 const getStatusColor = (status: string) => {
   switch (status.toLowerCase()) {
@@ -16,9 +16,8 @@ const getStatusColor = (status: string) => {
   }
 };
 
-interface Props { open: boolean; user: AdminUserView | null; onOpenChange: (open: boolean) => void; onSuspendUser: (u: AdminUserView) => void; onActivateUser: (u: AdminUserView) => void;}
 
-export function AdminUserDialog({ open, user, onOpenChange, onSuspendUser, onActivateUser,}: Props) 
+export function AdminUserDialog({ open, user, onOpenChange, onSuspendUser, onActivateUser,}: adminUserDialogProps) 
 {
   if (!user) return null;
 

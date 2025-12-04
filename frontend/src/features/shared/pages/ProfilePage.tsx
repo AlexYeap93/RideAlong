@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useReducer, useEffect } from "react";
 import { Card } from "../../../components/ui/card";
 import { Button } from "../../../components/ui/button";
 import { Avatar, AvatarFallback } from "../../../components/ui/avatar";
@@ -7,30 +7,81 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { Label } from "../../../components/ui/label";
 import { RadioGroup, RadioGroupItem } from "../../../components/ui/radio-group";
 import { Textarea } from "../../../components/ui/textarea";
-import { Star, Edit, Settings, CreditCard, History, HelpCircle, ChevronRight, Car, LogOut } from "lucide-react";
+import { Star, Edit, Settings, CreditCard, History, HelpCircle, ChevronRight, Car, LogOut, MapPin, Clock } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "../../../contexts/AuthContext";
 import { bookingsAPI, driversAPI, issuesAPI } from "../../../services/api";
-import { DriverApplicationDialog } from "../../driver/components/dialog/DriverApplicationDialog";
+import { DriverApplicationDialog } from "../../../features/driver/components/dialog/DriverApplicationDialog";
+import type { ProfilePageProps, ProfilePageState } from "../../../serviceInterface";
 
-interface ProfilePageProps {
-  onNavigateToPaymentMethods?: () => void;
-  onNavigateToRideHistory?: () => void;
-  onNavigateToSettings?: () => void;
+
+type ProfilePageAction =
+  | { type: 'SET_RIDES_TAKEN'; payload: number }
+  | { type: 'SET_RIDES_OFFERED'; payload: number }
+  | { type: 'SET_SHOW_DRIVER_APPLICATION'; payload: boolean }
+  | { type: 'SET_HAS_DRIVER_PROFILE'; payload: boolean }
+  | { type: 'SET_IS_APPROVED_DRIVER'; payload: boolean }
+  | { type: 'SET_DRIVER_ID'; payload: string | null }
+  | { type: 'SET_SHOW_HELP_DIALOG'; payload: boolean }
+  | { type: 'SET_ISSUE_TYPE'; payload: string }
+  | { type: 'SET_ISSUE_DESCRIPTION'; payload: string }
+  | { type: 'SET_AVERAGE_RATING'; payload: number | null }
+  | { type: 'SET_DRIVER_STATUS'; payload: { hasDriverProfile: boolean; isApprovedDriver: boolean; driverId: string | null; averageRating: number | null } }
+  | { type: 'RESET_ISSUE_FORM' };
+
+const initialState: ProfilePageState = {
+  ridesTaken: 0,
+  ridesOffered: 0,
+  showDriverApplication: false,
+  hasDriverProfile: false,
+  isApprovedDriver: false,
+  driverId: null,
+  showHelpDialog: false,
+  issueType: "",
+  issueDescription: "",
+  averageRating: null,
+};
+
+function profilePageReducer(state: ProfilePageState, action: ProfilePageAction): ProfilePageState {
+  switch (action.type) {
+    case 'SET_RIDES_TAKEN':
+      return { ...state, ridesTaken: action.payload };
+    case 'SET_RIDES_OFFERED':
+      return { ...state, ridesOffered: action.payload };
+    case 'SET_SHOW_DRIVER_APPLICATION':
+      return { ...state, showDriverApplication: action.payload };
+    case 'SET_HAS_DRIVER_PROFILE':
+      return { ...state, hasDriverProfile: action.payload };
+    case 'SET_IS_APPROVED_DRIVER':
+      return { ...state, isApprovedDriver: action.payload };
+    case 'SET_DRIVER_ID':
+      return { ...state, driverId: action.payload };
+    case 'SET_SHOW_HELP_DIALOG':
+      return { ...state, showHelpDialog: action.payload };
+    case 'SET_ISSUE_TYPE':
+      return { ...state, issueType: action.payload };
+    case 'SET_ISSUE_DESCRIPTION':
+      return { ...state, issueDescription: action.payload };
+    case 'SET_AVERAGE_RATING':
+      return { ...state, averageRating: action.payload };
+    case 'SET_DRIVER_STATUS':
+      return {
+        ...state,
+        hasDriverProfile: action.payload.hasDriverProfile,
+        isApprovedDriver: action.payload.isApprovedDriver,
+        driverId: action.payload.driverId,
+        averageRating: action.payload.averageRating,
+      };
+    case 'RESET_ISSUE_FORM':
+      return { ...state, issueType: "", issueDescription: "", showHelpDialog: false };
+    default:
+      return state;
+  }
 }
 
 export function ProfilePage({ onNavigateToPaymentMethods, onNavigateToRideHistory, onNavigateToSettings }: ProfilePageProps) {
   const { user, refreshUser, logout } = useAuth();
-  const [ridesTaken, setRidesTaken] = useState(0);
-  const [ridesOffered, setRidesOffered] = useState(0);
-  const [showDriverApplication, setShowDriverApplication] = useState(false);
-  const [hasDriverProfile, setHasDriverProfile] = useState(false);
-  const [isApprovedDriver, setIsApprovedDriver] = useState(false);
-  const [driverId, setDriverId] = useState<string | null>(null);
-  const [showHelpDialog, setShowHelpDialog] = useState(false);
-  const [issueType, setIssueType] = useState("");
-  const [issueDescription, setIssueDescription] = useState("");
-  const [averageRating, setAverageRating] = useState<number | null>(null);
+  const [state, dispatch] = useReducer(profilePageReducer, initialState);
 
   useEffect(() => {
     if (user?.id)
@@ -40,7 +91,8 @@ export function ProfilePage({ onNavigateToPaymentMethods, onNavigateToRideHistor
   useEffect(() => {
     if (user?.id)
       fetchUserStats();
-  }, [user?.id, driverId]);
+    }
+  }, [user?.id, state.driverId]);
 
   const checkDriverStatus = async () => {
     if (!user?.id) return;
@@ -48,16 +100,30 @@ export function ProfilePage({ onNavigateToPaymentMethods, onNavigateToRideHistor
     try {
       const driverResponse = await driversAPI.getMyDriverProfile();
       if (driverResponse.data) {
-        setHasDriverProfile(true);
-        setIsApprovedDriver(driverResponse.data.is_approved === true);
-        setDriverId(driverResponse.data.id);
-        const rating = driverResponse.data.average_rating ? parseFloat(driverResponse.data.average_rating) : null;
-        setAverageRating(rating);
+        const rating = driverResponse.data.average_rating 
+          ? parseFloat(driverResponse.data.average_rating) 
+          : null;
+        dispatch({
+          type: 'SET_DRIVER_STATUS',
+          payload: {
+            hasDriverProfile: true,
+            isApprovedDriver: driverResponse.data.is_approved === true,
+            driverId: driverResponse.data.id,
+            averageRating: rating,
+          },
+        });
       }
     } catch (error: any) {
-      setHasDriverProfile(false);
-      setIsApprovedDriver(false);
-      setDriverId(null);
+      // Driver profile doesn't exist
+      dispatch({
+        type: 'SET_DRIVER_STATUS',
+        payload: {
+          hasDriverProfile: false,
+          isApprovedDriver: false,
+          driverId: null,
+          averageRating: null,
+        },
+      });
     }
   };
   //Counts the number of rides taken and offered by the user
@@ -68,15 +134,20 @@ export function ProfilePage({ onNavigateToPaymentMethods, onNavigateToRideHistor
       // Get user bookings (rides taken)
       const bookingsResponse = await bookingsAPI.getBookingsByUser(user.id);
       const allBookings = bookingsResponse.data.filter((b: any) => b.status !== 'cancelled');
-      setRidesTaken(allBookings.length);
-      let currentDriverId = driverId;
+      dispatch({ type: 'SET_RIDES_TAKEN', payload: allBookings.length });
+      
+      // Don't store completed rides taken for display (removed per user request)
+
+      // If user is a driver, get completed rides offered
+      // Use driverId from state (set by checkDriverStatus) or try to fetch it
+      let currentDriverId = state.driverId;
       
       if (!currentDriverId) {
         try {
           const driverResponse = await driversAPI.getMyDriverProfile();
           if (driverResponse.data && driverResponse.data.id) {
             currentDriverId = driverResponse.data.id;
-            setDriverId(currentDriverId);
+            dispatch({ type: 'SET_DRIVER_ID', payload: currentDriverId });
           }
         } catch (error: any) {
           currentDriverId = null;
@@ -87,14 +158,17 @@ export function ProfilePage({ onNavigateToPaymentMethods, onNavigateToRideHistor
         try {
           const driverRidesResponse = await driversAPI.getDriverRides(currentDriverId);
           const completedRides = driverRidesResponse.data.filter((r: any) => r.status === 'completed');
-          setRidesOffered(completedRides.length);
+          // Count ALL completed rides for the driver (same as DriversPage)
+          dispatch({ type: 'SET_RIDES_OFFERED', payload: completedRides.length });
         } catch (error: any) {
           console.error("Failed to fetch driver rides:", error);
-          setRidesOffered(0);
+          dispatch({ type: 'SET_RIDES_OFFERED', payload: 0 });
         }
       } else {
-        if (hasDriverProfile === false) {
-          setRidesOffered(0);
+        // Only set to 0 if we're sure the user is not a driver
+        // (i.e., hasDriverProfile is false after checkDriverStatus has run)
+        if (state.hasDriverProfile === false) {
+          dispatch({ type: 'SET_RIDES_OFFERED', payload: 0 });
         }
       }
     } catch (error: any) {
@@ -103,20 +177,20 @@ export function ProfilePage({ onNavigateToPaymentMethods, onNavigateToRideHistor
   };
 
   const handleBecomeDriver = () => {
-    if (hasDriverProfile && !isApprovedDriver) {
+    if (state.hasDriverProfile && !state.isApprovedDriver) {
       toast.info("Your driver application is pending approval");
       return;
     }
-    if (hasDriverProfile && isApprovedDriver) {
+    if (state.hasDriverProfile && state.isApprovedDriver) {
       toast.info("You are already an approved driver");
       return;
     }
-    setShowDriverApplication(true);
+    dispatch({ type: 'SET_SHOW_DRIVER_APPLICATION', payload: true });
   };
 
   const handleApplicationSuccess = () => {
-    setHasDriverProfile(true);
-    setIsApprovedDriver(false);
+    dispatch({ type: 'SET_HAS_DRIVER_PROFILE', payload: true });
+    dispatch({ type: 'SET_IS_APPROVED_DRIVER', payload: false });
     refreshUser();
   };
 
@@ -137,12 +211,12 @@ export function ProfilePage({ onNavigateToPaymentMethods, onNavigateToRideHistor
           <div className="flex-1">
             <h2 className="text-xl font-medium">{user?.name || 'User'}</h2>
             <p className="text-primary-foreground/80">{user?.email || ''}</p>
-            {hasDriverProfile && (
+            {state.hasDriverProfile && (
               <div className="flex items-center gap-2 mt-2">
                 <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
                 <span>
-                  {averageRating !== null && averageRating > 0 
-                    ? `${averageRating.toFixed(1)} Rating` 
+                  {state.averageRating !== null && state.averageRating > 0 
+                    ? `${state.averageRating.toFixed(1)} Rating` 
                     : 'No Rating Yet'}
                 </span>
                 <Badge variant="secondary" className="ml-2">Verified</Badge>
@@ -158,11 +232,11 @@ export function ProfilePage({ onNavigateToPaymentMethods, onNavigateToRideHistor
       {/* Stats Cards */}
       <div className="grid grid-cols-2 gap-4 p-4">
         <Card className="p-4 text-center">
-          <p className="text-2xl font-medium text-primary">{ridesTaken}</p>
+          <p className="text-2xl font-medium text-primary">{state.ridesTaken}</p>
           <p className="text-sm text-muted-foreground">Rides Taken</p>
         </Card>
         <Card className="p-4 text-center">
-          <p className="text-2xl font-medium text-primary">{ridesOffered}</p>
+          <p className="text-2xl font-medium text-primary">{state.ridesOffered}</p>
           <p className="text-sm text-muted-foreground">Rides Offered</p>
         </Card>
       </div>
@@ -196,7 +270,7 @@ export function ProfilePage({ onNavigateToPaymentMethods, onNavigateToRideHistor
             <ChevronRight className="w-4 h-4 text-muted-foreground" />
           </button>
           <button 
-            onClick={() => setShowHelpDialog(true)}
+            onClick={() => dispatch({ type: 'SET_SHOW_HELP_DIALOG', payload: true })}
             className="flex items-center gap-3 w-full text-left hover:bg-accent/50 -mx-4 px-4 py-2 rounded transition-colors"
           >
             <HelpCircle className="w-5 h-5 text-muted-foreground" />
@@ -208,11 +282,15 @@ export function ProfilePage({ onNavigateToPaymentMethods, onNavigateToRideHistor
         {user?.role !== 'driver' && user?.role !== 'admin' && (
           <Button  variant="outline"  className="w-full" onClick={handleBecomeDriver}>
             <Car className="w-4 h-4 mr-2" />
-            {hasDriverProfile && !isApprovedDriver  ? "Application Pending"  : hasDriverProfile && isApprovedDriver ? "Driver (Approved)" : "Become a Driver"}
+            {state.hasDriverProfile && !state.isApprovedDriver 
+              ? "Application Pending" 
+              : state.hasDriverProfile && state.isApprovedDriver
+              ? "Driver (Approved)"
+              : "Become a Driver"}
           </Button>
         )}
 
-        {hasDriverProfile && !isApprovedDriver && (
+        {state.hasDriverProfile && !state.isApprovedDriver && (
           <Card className="p-4 mt-4 bg-yellow-50 border-yellow-200">
             <div className="flex items-start gap-3">
               <div className="flex-1">
@@ -242,10 +320,14 @@ export function ProfilePage({ onNavigateToPaymentMethods, onNavigateToRideHistor
         </Card>
       </div>
 
-      <DriverApplicationDialog open={showDriverApplication} onClose={() => setShowDriverApplication(false)} onSuccess={handleApplicationSuccess}/>
+      <DriverApplicationDialog
+        open={state.showDriverApplication}
+        onClose={() => dispatch({ type: 'SET_SHOW_DRIVER_APPLICATION', payload: false })}
+        onSuccess={handleApplicationSuccess}
+      />
 
-      {/* Help & Support */}
-      <Dialog open={showHelpDialog} onOpenChange={setShowHelpDialog}>
+      {/* Help & Support Dialog */}
+      <Dialog open={state.showHelpDialog} onOpenChange={(open: boolean) => dispatch({ type: 'SET_SHOW_HELP_DIALOG', payload: open })}>
         <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Report an Issue</DialogTitle>
@@ -257,7 +339,7 @@ export function ProfilePage({ onNavigateToPaymentMethods, onNavigateToRideHistor
           <div className="space-y-4 py-4">
             <div className="space-y-3">
               <Label>Issue Type</Label>
-              <RadioGroup value={issueType} onValueChange={setIssueType}>
+              <RadioGroup value={state.issueType} onValueChange={(value: string) => dispatch({ type: 'SET_ISSUE_TYPE', payload: value })}>
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="driver-late" id="driver-late" />
                   <Label htmlFor="driver-late" className="font-normal">Driver is late</Label>
@@ -287,16 +369,23 @@ export function ProfilePage({ onNavigateToPaymentMethods, onNavigateToRideHistor
 
             <div className="space-y-2">
               <Label htmlFor="description">Description</Label>
-              <Textarea id="description" placeholder="Please describe the issue in detail..." value={issueDescription} onChange={(e) => setIssueDescription(e.target.value)} rows={4} className="bg-input-background" />
+              <Textarea
+                id="description"
+                placeholder="Please describe the issue in detail..."
+                value={state.issueDescription}
+                onChange={(e) => dispatch({ type: 'SET_ISSUE_DESCRIPTION', payload: e.target.value })}
+                rows={4}
+                className="bg-input-background"
+              />
             </div>
           </div>
 
           <DialogFooter>
-            <Button variant="outline" onClick={() => { setShowHelpDialog(false); setIssueType(""); setIssueDescription(""); }}>
+            <Button variant="outline" onClick={() => dispatch({ type: 'RESET_ISSUE_FORM' })}>
               Cancel
             </Button>
             <Button onClick={async () => {
-              if (!issueType || !issueDescription.trim()) {
+              if (!state.issueType || !state.issueDescription.trim()) {
                 toast.error("Please fill in all required fields");
                 return;
               }
@@ -312,16 +401,16 @@ export function ProfilePage({ onNavigateToPaymentMethods, onNavigateToRideHistor
                 };
 
                 let priority = 'medium';
-                if (issueType === 'safety') {
+                if (state.issueType === 'safety') {
                   priority = 'critical';
-                } else if (issueType === 'driver-noshow' || issueType === 'payment') {
+                } else if (state.issueType === 'driver-noshow' || state.issueType === 'payment') {
                   priority = 'high';
                 }
 
                 await issuesAPI.createIssue({
-                  issueType: issueType,
-                  subject: issueTypeLabels[issueType] || 'Issue reported',
-                  description: issueDescription.trim(),
+                  issueType: state.issueType,
+                  subject: issueTypeLabels[state.issueType] || 'Issue reported',
+                  description: state.issueDescription.trim(),
                   priority: priority,
                 });
 
@@ -329,9 +418,7 @@ export function ProfilePage({ onNavigateToPaymentMethods, onNavigateToRideHistor
                   description: "An admin will review your report shortly.",
                 });
 
-                setIssueType("");
-                setIssueDescription("");
-                setShowHelpDialog(false);
+                dispatch({ type: 'RESET_ISSUE_FORM' });
               } catch (error: any) {
                 toast.error("Failed to submit issue", {
                   description: error.message || "Please try again.",

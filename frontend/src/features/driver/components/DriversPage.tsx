@@ -4,13 +4,12 @@ import { useAuth } from "../../../contexts/AuthContext";
 import { useDriverRides } from "../hooks/useDriverRides";
 import { DriverStatsSection, DriverCompletedRidesSection } from "./DriverStatsSection";
 import { DriverApprovalStatus } from "./DriverApprovalStatus";
-import { DriverLoadingStateProps } from "../../shared/constants/const";
 import { DriverActiveRidesSection } from "./DriverActiveRidesSection";
 import { DriverCompleteRideDialog } from "./dialog/DriverCompleteRideDialog";
 import { Button } from "../../../components/ui/button";
 import { Plus } from "lucide-react";
 import { toast } from "sonner";
-import { DriversPageHeaderProps } from "../../shared/constants/const";
+import type { DriverLoadingStateProps, DriversPageHeaderProps } from "../../../serviceInterface";
 
 
 export function DriversPage() {

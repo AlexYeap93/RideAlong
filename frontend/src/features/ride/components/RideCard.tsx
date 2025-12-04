@@ -1,19 +1,6 @@
 // Bootstrap implementation
 import { Star, Users, Clock, MapPin } from "lucide-react";
-
-interface RideCardProps {
-  driverName: string;
-  rating: number;
-  departureTime: string;
-  availableSeats: number;
-  price: number;
-  destination: string;
-  estimatedDuration: string;
-  carType?: "5-seater" | "7-seater";
-  quadrant?: string;
-  driverAddress?: string;
-  onSelect?: () => void;
-}
+import type { RideCardProps } from "../../../serviceInterface";
 
 export function RideCard({
   driverName,

@@ -1,15 +1,15 @@
 import { useState, useEffect, useRef } from "react";
-import { AppHeader } from "./features/shared/ui/AppHeader";
-import { HomePage } from "./components/HomePage";
+import { AppHeader } from "./components/AppHeader";
+import { HomePage } from "./features/home/pages/HomePage";
 import { DriversPage } from "./features/driver/components/DriversPage";
-import { UsersPage } from "./components/UsersPage";
-import { ProfilePage } from "./features/profile/pages/ProfilePage";
+import { UsersPage } from "./features/settings/pages/UsersPage";
+import { ProfilePage } from "./features/shared/pages/ProfilePage";
 import { AdminPage } from "./features/admin/pages/AdminPage";
 import { LoginPage } from "./features/auth/pages/LoginPage";
 import { RideHistory } from "./features/ride/components/RideHistory";
 import { PaymentMethods } from "./features/payments/pages/PaymentMethods";
-import { SettingsPage } from "./features/settings/pages/SettingsPage";
-import { BottomNavigation } from "./features/shared/ui/BottomNavigation";
+import { SettingsPage } from "./features/shared/pages/SettingsPage";
+import { BottomNavigation } from "./components/BottomNavigation";
 import { Toaster } from "./components/ui/sonner";
 import { useAuth } from "./contexts/AuthContext";
 

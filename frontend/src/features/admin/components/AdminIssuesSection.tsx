@@ -3,15 +3,8 @@ import { Card } from "../../../components/ui/card";
 import { Badge } from "../../../components/ui/badge";
 import { Button } from "../../../components/ui/button";
 import { Eye, AlertTriangle } from "lucide-react";
-import type { AdminIssueView } from "../../../types/index";
+import type { issueProps } from "../../../serviceInterface";
 
-interface Props {
-  complaints: AdminIssueView[];
-  isLoading: boolean;
-  complaintFilter: string;
-  onComplaintFilterChange: (value: string) => void;
-  onComplaintClick: (c: AdminIssueView) => void;
-}
 
 const getStatusColor = (status: string) => {
   switch (status.toLowerCase()) {
@@ -41,7 +34,7 @@ const getPriorityColor = (priority: string) => {
   }
 };
 
-export function AdminIssuesSection({ complaints, isLoading, complaintFilter, onComplaintFilterChange, onComplaintClick,}: Props) 
+export function AdminIssuesSection({ complaints, isLoading, complaintFilter, onComplaintFilterChange, onComplaintClick,}: issueProps) 
 {
   return (
     <>

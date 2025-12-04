@@ -6,7 +6,7 @@ import { Label } from "../../../../components/ui/label";
 import { Textarea } from "../../../../components/ui/textarea";
 import { toast } from "sonner";
 import { driversAPI } from "../../../../services/api";
-import { DriverApplicationDialogProps, FormState } from "../../../shared/constants/const";
+import type { DriverApplicationDialogProps, FormState } from "../../../../serviceInterface";
 
 type FormAction =
   | { type: 'SET_LICENSE_NUMBER'; payload: string }
