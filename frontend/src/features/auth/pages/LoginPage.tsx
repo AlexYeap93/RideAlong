@@ -1,9 +1,7 @@
-import { useState } from "react";
-import { Button } from "./ui/button";
-import { Tabs, TabsList, TabsTrigger } from "./ui/tabs";
+import { Button } from "../../../components/ui/button";
+import { Tabs, TabsList, TabsTrigger } from "../../../components/ui/tabs";
 import { Car, ArrowLeft } from "lucide-react";
-import { useAuth } from "../contexts/AuthContext";
-import { toast } from "sonner";
+import { useLoginForm } from "../hooks/useLoginForm";
 
 interface LoginPageProps {
   initialMode?: "login" | "signup";
@@ -12,123 +10,29 @@ interface LoginPageProps {
 }
 //Login Page for the app
 export function LoginPage({ initialMode = "login", initialUserType = "rider", onBack }: LoginPageProps) {
-  const { login, register } = useAuth();
-  const [isSignUp, setIsSignUp] = useState(initialMode === "signup");
-  const [userType, setUserType] = useState<"rider" | "driver">(initialUserType);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [name, setName] = useState("");
-  const [phone, setPhone] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
   
-  // Address fields
-  const [address, setAddress] = useState("");
-  const [latitude, setLatitude] = useState("");
-  const [longitude, setLongitude] = useState("");
+  const {
+    isSignUp, setIsSignUp,
+    userType, setUserType,
+    email, setEmail,
+    password, setPassword,
+    name, setName,
+    phone, setPhone,
+    address, setAddress,
+    latitude, setLatitude,
+    longitude, setLongitude,
+    licenseNumber, setLicenseNumber,
+    driversLicense, setDriversLicense,
+    insurance, setInsurance,
+    carPhoto, setCarPhoto,
+    numberOfSeats, setNumberOfSeats,
+    isLoading,
+    handleSubmit,
+    handleFileChange,
+  } = useLoginForm(initialMode, initialUserType, onBack);
   
-  // Driver-specific fields
-  const [licenseNumber, setLicenseNumber] = useState("");
-  const [driversLicense, setDriversLicense] = useState<File | null>(null);
-  const [insurance, setInsurance] = useState<File | null>(null);
-  const [carPhoto, setCarPhoto] = useState<File | null>(null);
-  const [numberOfSeats, setNumberOfSeats] = useState("");
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, setter: (file: File | null) => void) => {
-    if (e.target.files && e.target.files[0]) {
-      setter(e.target.files[0]);
-    }
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-
-    try {
-      if (isSignUp) {
-        // Validation
-        if (!email || !password || !name || !phone) {
-          toast.error("Please fill in all required fields");
-          setIsLoading(false);
-          return;
-        }
-
-        // Phone validation (basic format check)
-        const phoneRegex = /^[\d\s\-\+\(\)]+$/;
-        if (!phoneRegex.test(phone.trim()) || phone.trim().length < 10) {
-          toast.error("Please enter a valid phone number");
-          setIsLoading(false);
-          return;
-        }
-
-        // Email validation
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(email)) {
-          toast.error("Please enter a valid email address");
-          setIsLoading(false);
-          return;
-        }
-
-        // Password validation
-        if (password.length < 6) {
-          toast.error("Password must be at least 6 characters long");
-          setIsLoading(false);
-          return;
-        }
-
-        // Driver-specific validation
-        if (userType === "driver" && !licenseNumber) {
-          toast.error("License number is required for driver registration");
-          setIsLoading(false);
-          return;
-        }
-
-        // Registration
-        await register({
-          email,
-          password,
-          name,
-          phone: phone.trim(),
-          userType,
-          address: address.trim() || undefined,
-          latitude: latitude.trim() ? parseFloat(latitude.trim()) : undefined,
-          longitude: longitude.trim() ? parseFloat(longitude.trim()) : undefined,
-          licenseNumber: userType === "driver" ? licenseNumber : undefined,
-          insuranceProof: insurance ? insurance.name : undefined,
-          carPhoto: carPhoto ? carPhoto.name : undefined,
-          availableSeats: userType === "driver" ? parseInt(numberOfSeats) || 4 : undefined,
-        });
-        toast.success("Registration successful!", {
-          description: "Your account has been created.",
-        });
-        if (onBack) {
-          onBack();
-        }
-      } else {
-        // Login validation
-        if (!email || !password) {
-          toast.error("Please enter your email and password");
-          setIsLoading(false);
-          return;
-        }
-
-        // Login
-        await login(email, password);
-        toast.success("Login successful!", {
-          description: "Welcome back!",
-        });
-      }
-    } catch (error: any) {
-      // Show user-friendly error messages
-      const errorMessage = error.message || "An error occurred. Please try again.";
-      toast.error(errorMessage, {
-        description: errorMessage.includes("connect") 
-          ? "Make sure the backend server is running"
-          : "Please check your input and try again.",
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
