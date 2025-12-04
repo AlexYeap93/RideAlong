@@ -3,10 +3,10 @@ import { Card } from "../../../components/ui/card";
 import { Button } from "../../../components/ui/button";
 import { Avatar, AvatarFallback } from "../../../components/ui/avatar";
 import { Badge } from "../../../components/ui/badge";
-import { X, Star, MapPin } from "lucide-react";
+import { X, Star, MapPin, Car as CarIcon } from "lucide-react";
 import { bookingsAPI, usersAPI } from "../../../services/api";
 import { toast } from "sonner";
-import { SeatSelectionProps } from "../../../types/index";
+import type { SeatSelectionProps } from "../../../serviceInterface";
 import { TOTAL_SEATS } from "../../../types/const";
 
 // Seat Selection component for the ride checks for number of seat and shows the composition of the car

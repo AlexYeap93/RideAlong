@@ -3,7 +3,8 @@ import { Button } from "../../../components/ui/button";
 import { Avatar, AvatarFallback } from "../../../components/ui/avatar";
 import { Badge } from "../../../components/ui/badge";
 import { CheckCircle2, MapPin, Clock, Calendar, User, Car } from "lucide-react";
-import { BookingConfirmationProps, serviceFee } from "../../shared/constants/const";
+import type { BookingConfirmationProps } from "../../../serviceInterface";
+import { serviceFee } from "../../../types/const";
 
 
 export function BookingConfirmation({ 

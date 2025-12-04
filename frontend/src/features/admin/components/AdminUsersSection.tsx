@@ -4,9 +4,9 @@ import { Avatar, AvatarFallback } from "../../../components/ui/avatar";
 import { Badge } from "../../../components/ui/badge";
 import { Button } from "../../../components/ui/button";
 import { Eye } from "lucide-react";
-import type { AdminUserView } from "../pages/AdminPage";
+import type { adminUserProps } from "../../../serviceInterface";
 
-interface Props { users: AdminUserView[]; isLoading: boolean; userFilter: string; onUserFilterChange: (value: string) => void; onUserClick: (user: AdminUserView) => void;}
+
 
 const getStatusColor = (status: string) => {
   switch (status.toLowerCase()) {
@@ -25,7 +25,7 @@ export function AdminUsersSection({
   userFilter,
   onUserFilterChange,
   onUserClick,
-}: Props) {
+}: adminUserProps) {
   return (
     <>
       <Select value={userFilter} onValueChange={onUserFilterChange}>

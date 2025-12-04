@@ -5,10 +5,9 @@ import { Save } from "lucide-react";
 import { toast } from "sonner";
 import { bookingsAPI, usersAPI } from "../../../../services/api";
 import { useAuth } from "../../../../contexts/AuthContext";
-import { DriverRideDetailDialogProps } from "../../../../types";
 import { DriverRideInfoCard } from "../DriverRideInfoCard";
 import { DriverPassengerCard } from "../DriverPassengerCard";
-import { DialogState } from "../../../shared/constants/const";
+import type { DriverRideDetailDialogProps, DialogState } from "../../../../serviceInterface";
 
 
 type DialogAction =

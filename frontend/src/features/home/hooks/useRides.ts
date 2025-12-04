@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { ridesAPI, transformRideData } from "../../../services/api";
 import { toast } from "sonner";
 
@@ -6,8 +6,8 @@ export const useRides = (selectedDate: Date) => {
   const [rides, setRides] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
-  // Helper function to fetch rides for a time slot (defined early for use in useEffect)
-  const fetchRidesForTimeSlot = async (timeSlot: string, destination: string) => {
+  // Helper function to fetch rides for a time slot (memoized to prevent infinite loops)
+  const fetchRidesForTimeSlot = useCallback(async (timeSlot: string, destination: string) => {
     setIsLoading(true);
 
     try {
@@ -44,7 +44,7 @@ export const useRides = (selectedDate: Date) => {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [selectedDate]);
 
   return { rides, isLoading, fetchRidesForTimeSlot };
 };

@@ -145,3 +145,164 @@ export interface Issue {
   created_at?: string;
   updated_at?: string;
 }
+
+// Passenger interface
+export interface Passenger {
+  id: number | string;
+  name: string;
+  rating: number;
+  pickupLocation: string;
+  pickupTime: string;
+  quadrant?: string;
+  seatNumber?: number;
+  phone?: string;
+  additionalAmountRequested?: number | null;
+  additionalAmountStatus?: 'pending' | 'accepted' | 'declined' | null;
+}
+
+// Admin view interfaces
+export interface AdminUserView {
+  id: number;
+  name: string;
+  email: string;
+  type: "Driver" | "Admin" | "Rider";
+  status: "Active" | "Suspended";
+  is_suspended: boolean;
+  role: string;
+  address: string | null;
+  city: string | null;
+  province: string | null;
+  postalCode: string | null;
+  joinDate: string;
+  totalRides: number;
+  rating: number | "N/A";
+}
+
+export interface AdminIssueView {
+  id: number;
+  reporter: string;
+  reportedUser: string | "N/A";
+  type: string;
+  subject: string;
+  description: string;
+  date: string;
+  status: "Open" | "Under Review" | "Resolved" | "Closed";
+  priority: string;
+  dbStatus: string;
+}
+
+export interface AdminPendingDriverView {
+  id: number;
+  user_id: number;
+  name: string;
+  email: string;
+  phone: string;
+  appliedDate: string;
+  available_seats: number;
+  license_number: string | null;
+  insurance_proof: string | null;
+  car_photo: string | null;
+}
+
+// Driver ride interfaces
+export interface ActiveRide {
+  id: number;
+  destination: string;
+  date: string;
+  rideDate: string;
+  time: string;
+  passengers: Passenger[];
+}
+
+export interface CompletedRide {
+  id: number;
+  destination: string;
+  date: string;
+  rideDate: string;
+  time: string;
+  numberOfRiders: number;
+  totalEarnings: number;
+}
+
+export interface ListRideData {
+  date: Date;
+  time: string;
+  destination: string;
+}
+
+export interface DriverState {
+  showListDialog: boolean;
+  showDetailDialog: boolean;
+  showCompleteDialog: boolean;
+  selectedRide: ActiveRide | null;
+  rideToComplete: ActiveRide | null;
+  driverId: string | null;
+  isApprovedDriver: boolean;
+  isCheckingDriver: boolean;
+  hasDriverApplication: boolean;
+  totalEarnings: number;
+  activeRides: ActiveRide[];
+  completedRides: CompletedRide[];
+  isLoading: boolean;
+}
+
+// Frontend User interface (for AuthContext)
+export interface FrontendUser {
+  id: string;
+  email: string;
+  name: string;
+  role: 'user' | 'driver' | 'admin';
+  phone?: string;
+  address?: string;
+  city?: string;
+  province?: string;
+  postalCode?: string;
+  driverInfo?: any;
+}
+
+export interface AuthContextType {
+  user: FrontendUser | null;
+  isAuthenticated: boolean;
+  isLoading: boolean;
+  login: (email: string, password: string) => Promise<void>;
+  register: (data: {
+    email: string;
+    password: string;
+    name: string;
+    phone: string;
+    userType: 'rider' | 'driver';
+    address?: string;
+    city?: string;
+    province?: string;
+    postalCode?: string;
+    licenseNumber?: string;
+    insuranceProof?: string;
+    carPhoto?: string;
+    availableSeats?: number;
+  }) => Promise<void>;
+  logout: () => Promise<void>;
+  refreshUser: () => Promise<void>;
+  updateUser: (partial: Partial<FrontendUser>) => void;
+}
+
+// Frontend PaymentMethod interface (for component usage)
+export interface FrontendPaymentMethod {
+  id: string;
+  type: string;
+  brand?: string;
+  last4: string;
+  expiryMonth?: number;
+  expiryYear?: number;
+  cardholderName?: string;
+  isDefault?: boolean;
+}
+
+export interface AddCardInput {
+  type: string;
+  brand?: string;
+  last4: string;
+  expiryMonth?: number;
+  expiryYear?: number;
+  cardholderName?: string;
+  isDefault?: boolean;
+}

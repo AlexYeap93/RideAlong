@@ -1,6 +1,6 @@
 import { ReactNode } from "react";
+import type { PageHeaderProps } from "../serviceInterface";
 
-interface PageHeaderProps {title: string; icon?: ReactNode; children?: ReactNode;}
 
 export function PageHeader({ title, icon, children }: PageHeaderProps) {
   return (

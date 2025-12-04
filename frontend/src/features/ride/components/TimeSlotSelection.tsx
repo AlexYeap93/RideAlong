@@ -5,19 +5,11 @@ import { Button } from "../../../components/ui/button";
 import { Badge } from "../../../components/ui/badge";
 import { ridesAPI } from "../../../services/api";
 import { toast } from "sonner";
-import { ScrollableDatePicker } from "./ScrollableDatePicker";
-import { TimeSlot } from "../../../types/index";
+import { ScrollableDatePicker } from "../../../components/ScrollableDatePicker";
+import type { TimeSlot } from "../../../serviceInterface";
 import { UNIVERSITY_DESTINATION } from "../../../types/const";
+import type { TimeSlotSelectionProps } from "../../../serviceInterface";
 
-
-
-interface TimeSlotSelectionProps {
-  onTimeSlotSelect: (timeSlot: string) => void;
-  onBack: () => void;
-  destination?: string;
-  selectedDate?: Date;
-  onDateChange?: (date: Date) => void;
-}
 
 export function TimeSlotSelection({ onTimeSlotSelect, onBack, destination = UNIVERSITY_DESTINATION.name, selectedDate: propSelectedDate = new Date(), onDateChange }: TimeSlotSelectionProps) {
   const [timeSlots, setTimeSlots] = useState<TimeSlot[]>([]);

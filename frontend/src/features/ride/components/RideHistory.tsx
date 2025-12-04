@@ -7,10 +7,7 @@ import { ArrowLeft, MapPin, Calendar, Clock, Star, Download } from "lucide-react
 import { bookingsAPI, transformBookingData } from "../../../services/api";
 import { useAuth } from "../../../contexts/AuthContext";
 import { toast } from "sonner";
-
-interface RideHistoryProps {
-  onBack: () => void;
-}
+import type { RideHistoryProps } from "../../../serviceInterface";
 
 export function RideHistory({ onBack }: RideHistoryProps) {
   const { user } = useAuth();

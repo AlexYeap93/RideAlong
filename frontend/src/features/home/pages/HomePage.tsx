@@ -1,9 +1,9 @@
 import { useState, useRef } from "react";
-import { LocationHeader } from "../components/LocationHeader";
-import { DestinationList } from "../../shared/ui/DestinationList";
-import { TimeSlotSelection } from "../../../features/shared/ui/TimeSlotSelection";
+import { LocationHeader } from "../../../components/LocationHeader";
+import { DestinationList } from "../../ride/components/DestinationList";
+import { TimeSlotSelection } from "../../ride/components/TimeSlotSelection";
 import { RideCard } from "../../ride/components/RideCard";
-import { SeatSelection } from "../../shared/ui/SeatSelection";
+import { SeatSelection } from "../../ride/components/SeatSelection";
 import { PaymentPage } from "../../payments/pages/PaymentPage";
 import { BookingConfirmation } from "../../ride/components/BookingConfirmation";
 import { Button } from "../../../components/ui/button";
@@ -64,6 +64,7 @@ export function HomePage({ onNavigateToUsers, onBookingCreated, autoSelectDestin
   const handleTimeSlotSelect = async (timeSlot: string) => {
     setSelectedTimeSlot(timeSlot);
     setShowTimeSlots(false);
+    setShowRides(true);
     // Update hash
     isUpdatingHashRef.current = true;
     window.location.hash = `home/rides/${encodeURIComponent(selectedDestination || "University of Calgary")}/${encodeURIComponent(timeSlot)}`;

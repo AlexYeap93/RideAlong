@@ -2,7 +2,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Badge } from "../../../../components/ui/badge";
 import { Button } from "../../../../components/ui/button";
 import { CheckCircle2 } from "lucide-react";
-import type { AdminIssueView } from "../../../../types/index";
+import type { AdminIssueView } from "../../../../types/api_interfaces";
 
 const getStatusColor = (status: string) => {
   switch (status.toLowerCase()) {

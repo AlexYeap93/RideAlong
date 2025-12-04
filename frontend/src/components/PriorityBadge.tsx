@@ -1,4 +1,4 @@
-import { Badge } from "../../../components/ui/badge";
+import { Badge } from "./ui/badge";
 
 const colors: Record<string, string> = {
   critical: "bg-red-100 text-red-800",

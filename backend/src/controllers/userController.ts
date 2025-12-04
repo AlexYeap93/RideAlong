@@ -10,7 +10,7 @@ export const getUsers = async (
 ) => {
   try {
     const result = await query(
-      `SELECT u.id, u.email, u.name, u.role, u.is_suspended, u.phone, u.address, u.city, u.province, u.postal_code, u.created_at,
+      `SELECT u.id, u.email, u.name, u.role, u.is_suspended, u.phone, u.address, u.created_at,
               d.id as driver_id,
               CASE 
                 WHEN d.id IS NOT NULL THEN 
@@ -25,7 +25,7 @@ export const getUsers = async (
        FROM users u
        LEFT JOIN drivers d ON u.id = d.user_id
        LEFT JOIN ratings rat ON rat.driver_id = d.id
-       GROUP BY u.id, u.email, u.name, u.role, u.is_suspended, u.phone, u.address, u.city, u.province, u.postal_code, u.created_at, d.id
+       GROUP BY u.id, u.email, u.name, u.role, u.is_suspended, u.phone, u.address, u.created_at, d.id
        ORDER BY u.created_at DESC`
     );
     res.status(200).json({
@@ -53,7 +53,7 @@ export const getUserById = async (
     }
 
     const result = await query(
-      'SELECT id, email, name, role, is_suspended, phone, address, city, province, postal_code, created_at FROM users WHERE id = $1',
+      'SELECT id, email, name, role, is_suspended, phone, address, created_at FROM users WHERE id = $1',
       [id]
     );
 
@@ -79,7 +79,7 @@ export const updateUser = async (
 ) => {
   try {
     const { id } = req.params;
-    const { name, email, phone, address, city, province, postalCode } = req.body;
+    const { name, email, phone, address } = req.body;
 
     // Users can only update their own profile unless they're admin
     if (req.user && req.user.id !== id && req.user.role !== 'admin') {
@@ -127,15 +127,6 @@ export const updateUser = async (
       }
     }
 
-    // Validate postal code format if provided (Canadian format: A1A 1A1)
-    if (postalCode !== undefined && postalCode) {
-      const postalRegex = /^[A-Za-z]\d[A-Za-z][ -]?\d[A-Za-z]\d$/;
-      if (!postalRegex.test(postalCode.trim())) {
-        const error: CustomError = new Error('Invalid postal code format. Use format: A1A 1A1');
-        error.statusCode = 400;
-        throw error;
-      }
-    }
 
     // Normalize email if provided
     const normalizedEmail = email !== undefined ? email.trim().toLowerCase() : undefined;
@@ -146,20 +137,14 @@ export const updateUser = async (
            email = COALESCE($2, email), 
            phone = COALESCE($3, phone),
            address = COALESCE($4, address),
-           city = COALESCE($5, city),
-           province = COALESCE($6, province),
-           postal_code = COALESCE($7, postal_code),
            updated_at = NOW() 
-       WHERE id = $8 
-       RETURNING id, email, name, role, is_suspended, address, city, province, postal_code, phone, updated_at`,
+       WHERE id = $5 
+       RETURNING id, email, name, role, is_suspended, address, phone, updated_at`,
       [
         name !== undefined ? name.trim() : null,
         normalizedEmail !== undefined ? normalizedEmail : null,
         phone !== undefined ? (phone ? phone.trim() : null) : null,
         address !== undefined ? (address ? address.trim() : null) : null,
-        city !== undefined ? (city ? city.trim() : null) : null,
-        province !== undefined ? (province ? province.trim() : null) : null,
-        postalCode !== undefined ? (postalCode ? postalCode.trim() : null) : null,
         id
       ]
     );
