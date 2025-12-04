@@ -6,23 +6,8 @@ import { Badge } from "./ui/badge";
 import { X, Star, MapPin, Car as CarIcon } from "lucide-react";
 import { bookingsAPI, usersAPI } from "../services/api";
 import { toast } from "sonner";
-
-interface SeatSelectionProps {
-  driver: {
-    name: string;
-    rating: number;
-    car: string;
-    carType: "5-seater" | "7-seater";
-    price: number;
-    departureTime: string;
-    destination: string;
-    quadrant: string;
-    rideId?: string;
-    driverId?: string;
-  };
-  onBack: () => void;
-  onConfirm: (seat: number) => void;
-}
+import { SeatSelectionProps } from "../serviceInterface";
+import { TOTAL_SEATS } from "../const";
 
 // Seat Selection component for the ride checks for number of seat and shows the composition of the car
 //Checks if seat is taken and if it is, it is disabled and if it is not, it is enabled
@@ -32,7 +17,7 @@ export function SeatSelection({ driver, onBack, onConfirm }: SeatSelectionProps)
   const [isLoading, setIsLoading] = useState(true);
   const [driverAddress, setDriverAddress] = useState<string>("");
   
-  const totalSeats = driver.carType === "5-seater" ? 4 : 6; // Excluding driver
+  const totalSeats = TOTAL_SEATS[driver.carType];
   
   useEffect(() => {
     const fetchBookedSeats = async () => {

@@ -6,14 +6,10 @@ import { Badge } from "./ui/badge";
 import { ridesAPI } from "../services/api";
 import { toast } from "sonner";
 import { ScrollableDatePicker } from "./ScrollableDatePicker";
+import { TimeSlot } from "../serviceInterface";
+import { UNIVERSITY_DESTINATION } from "../const";
 
-interface TimeSlot {
-  id: string;
-  time: string;
-  period: string;
-  available: boolean;
-  driverCount: number;
-}
+
 
 interface TimeSlotSelectionProps {
   onTimeSlotSelect: (timeSlot: string) => void;
@@ -23,7 +19,7 @@ interface TimeSlotSelectionProps {
   onDateChange?: (date: Date) => void;
 }
 
-export function TimeSlotSelection({ onTimeSlotSelect, onBack, destination = "University of Calgary", selectedDate: propSelectedDate = new Date(), onDateChange }: TimeSlotSelectionProps) {
+export function TimeSlotSelection({ onTimeSlotSelect, onBack, destination = UNIVERSITY_DESTINATION.name, selectedDate: propSelectedDate = new Date(), onDateChange }: TimeSlotSelectionProps) {
   const [timeSlots, setTimeSlots] = useState<TimeSlot[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedDate, setSelectedDate] = useState<Date>(propSelectedDate);

@@ -1,11 +1,6 @@
 // Bootstrap implementation
 import { Search } from "lucide-react";
-
-interface SearchBarProps {
-  value: string;
-  onChange: (value: string) => void;
-  onSearch: () => void;
-}
+import { SearchBarProps } from "../serviceInterface";
 
 export function SearchBar({ value, onChange, onSearch }: SearchBarProps) {
   const handleKeyPress = (e: React.KeyboardEvent) => {
