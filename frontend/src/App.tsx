@@ -101,7 +101,7 @@ export default function App() {
   }, [isAuthenticated, activeTab, subPage, usersPageMode]);
 
   const isAdmin = user?.role === 'admin';
-  const isDriver = user?.role === 'driver' || user?.role === 'admin';
+  // const isDriver = user?.role === 'driver' || user?.role === 'admin';
 
   const renderPage = () => {
     // Handle sub-pages

@@ -364,16 +364,6 @@ export function useDriverRides() {
     fetchDriverInfo();
   }, [fetchDriverInfo]);
 
-  // Refresh driver status periodically (every 5 seconds) to catch approval updates from admin
-  useEffect(() => {
-    if (!user?.id || isCheckingDriver) return;
-
-    const interval = setInterval(() => {
-      fetchDriverInfo();
-    }, 5000); // Check every 5 seconds
-
-    return () => clearInterval(interval);
-  }, [user?.id, isCheckingDriver, fetchDriverInfo]);
 
   // Also refresh when page becomes visible (user switches tabs back)
   useEffect(() => {

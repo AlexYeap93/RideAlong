@@ -84,13 +84,12 @@ export function ProfilePage({ onNavigateToPaymentMethods, onNavigateToRideHistor
   const [state, dispatch] = useReducer(profilePageReducer, initialState);
 
   useEffect(() => {
-    if (user?.id) {
+    if (user?.id)
       checkDriverStatus();
-    }
   }, [user?.id]);
 
   useEffect(() => {
-    if (user?.id) {
+    if (user?.id)
       fetchUserStats();
     }
   }, [user?.id, state.driverId]);
@@ -132,7 +131,7 @@ export function ProfilePage({ onNavigateToPaymentMethods, onNavigateToRideHistor
     if (!user?.id) return;
     
     try {
-      // Get user bookings (rides taken) - count ALL bookings, not just completed
+      // Get user bookings (rides taken)
       const bookingsResponse = await bookingsAPI.getBookingsByUser(user.id);
       const allBookings = bookingsResponse.data.filter((b: any) => b.status !== 'cancelled');
       dispatch({ type: 'SET_RIDES_TAKEN', payload: allBookings.length });
@@ -143,7 +142,6 @@ export function ProfilePage({ onNavigateToPaymentMethods, onNavigateToRideHistor
       // Use driverId from state (set by checkDriverStatus) or try to fetch it
       let currentDriverId = state.driverId;
       
-      // If driverId is not set yet, try to get it (works for all users including admins)
       if (!currentDriverId) {
         try {
           const driverResponse = await driversAPI.getMyDriverProfile();
@@ -152,16 +150,13 @@ export function ProfilePage({ onNavigateToPaymentMethods, onNavigateToRideHistor
             dispatch({ type: 'SET_DRIVER_ID', payload: currentDriverId });
           }
         } catch (error: any) {
-          // User is not a driver or profile not found
           currentDriverId = null;
         }
       }
 
-      // Fetch completed rides if we have a driver ID
       if (currentDriverId) {
         try {
           const driverRidesResponse = await driversAPI.getDriverRides(currentDriverId);
-          // Filter for completed rides (same logic as DriversPage)
           const completedRides = driverRidesResponse.data.filter((r: any) => r.status === 'completed');
           // Count ALL completed rides for the driver (same as DriversPage)
           dispatch({ type: 'SET_RIDES_OFFERED', payload: completedRides.length });
@@ -175,14 +170,12 @@ export function ProfilePage({ onNavigateToPaymentMethods, onNavigateToRideHistor
         if (state.hasDriverProfile === false) {
           dispatch({ type: 'SET_RIDES_OFFERED', payload: 0 });
         }
-        // Otherwise, leave it as is (might still be loading)
       }
     } catch (error: any) {
       console.error("Failed to fetch user stats:", error);
     }
   };
 
-  // Handles the driver application process if the user is not a driver
   const handleBecomeDriver = () => {
     if (state.hasDriverProfile && !state.isApprovedDriver) {
       toast.info("Your driver application is pending approval");
@@ -195,7 +188,6 @@ export function ProfilePage({ onNavigateToPaymentMethods, onNavigateToRideHistor
     dispatch({ type: 'SET_SHOW_DRIVER_APPLICATION', payload: true });
   };
 
-  // Handles the driver application success which will remove the want to become a driver button and add the driver (approved) button
   const handleApplicationSuccess = () => {
     dispatch({ type: 'SET_HAS_DRIVER_PROFILE', payload: true });
     dispatch({ type: 'SET_IS_APPROVED_DRIVER', payload: false });
@@ -288,11 +280,7 @@ export function ProfilePage({ onNavigateToPaymentMethods, onNavigateToRideHistor
         </Card>
 
         {user?.role !== 'driver' && user?.role !== 'admin' && (
-          <Button 
-            variant="outline" 
-            className="w-full"
-            onClick={handleBecomeDriver}
-          >
+          <Button  variant="outline"  className="w-full" onClick={handleBecomeDriver}>
             <Car className="w-4 h-4 mr-2" />
             {state.hasDriverProfile && !state.isApprovedDriver 
               ? "Application Pending" 
@@ -315,19 +303,14 @@ export function ProfilePage({ onNavigateToPaymentMethods, onNavigateToRideHistor
           </Card>
         )}
 
-        {/* Logout Button */}
+        {/* Logout */}
         <Card className="p-4 mt-4">
-          <Button 
-            variant="destructive" 
-            className="w-full"
-            onClick={async () => {
+          <Button variant="destructive" className="w-full" onClick={async () => {
               try {
                 await logout();
                 toast.success("Logged out successfully");
               } catch (error: any) {
-                toast.error("Failed to logout", {
-                  description: error.message || "Please try again.",
-                });
+                toast.error("Failed to logout", { description: error.message || "Please try again.",});
               }
             }}
           >
