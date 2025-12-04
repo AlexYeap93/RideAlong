@@ -5,7 +5,7 @@ import { DriversPage } from "./features/driver/components/DriversPage";
 import { UsersPage } from "./components/UsersPage";
 import { ProfilePage } from "./components/ProfilePage";
 import { AdminPage } from "./features/admin/pages/AdminPage";
-import { LoginPage } from "./components/LoginPage";
+import { LoginPage } from "./features/auth/pages/LoginPage";
 import { RideHistory } from "./features/ride/components/RideHistory";
 import { PaymentMethods } from "./features/payments/pages/PaymentMethods";
 import { SettingsPage } from "./features/settings/pages/SettingsPage";

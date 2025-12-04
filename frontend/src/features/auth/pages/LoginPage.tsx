@@ -1,9 +1,7 @@
-import { useState } from "react";
-import { Button } from "./ui/button";
-import { Tabs, TabsList, TabsTrigger } from "./ui/tabs";
+import { Button } from "../../../components/ui/button";
+import { Tabs, TabsList, TabsTrigger } from "../../../components/ui/tabs";
 import { Car, ArrowLeft } from "lucide-react";
-import { useAuth } from "../contexts/AuthContext";
-import { toast } from "sonner";
+import { useLoginForm } from "../hooks/useLoginForm";
 
 interface LoginPageProps {
   initialMode?: "login" | "signup";
@@ -12,156 +10,29 @@ interface LoginPageProps {
 }
 //Login Page for the app
 export function LoginPage({ initialMode = "login", initialUserType = "rider", onBack }: LoginPageProps) {
-  const { login, register } = useAuth();
-  const [isSignUp, setIsSignUp] = useState(initialMode === "signup");
-  const [userType, setUserType] = useState<"rider" | "driver">(initialUserType);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [name, setName] = useState("");
-  const [phone, setPhone] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
   
-  // Address fields
-  const [address, setAddress] = useState("");
-  const [city, setCity] = useState("");
-  const [province, setProvince] = useState("");
-  const [postalCode, setPostalCode] = useState("");
+  const {
+    isSignUp, setIsSignUp,
+    userType, setUserType,
+    email, setEmail,
+    password, setPassword,
+    name, setName,
+    phone, setPhone,
+    address, setAddress,
+    latitude, setLatitude,
+    longitude, setLongitude,
+    licenseNumber, setLicenseNumber,
+    driversLicense, setDriversLicense,
+    insurance, setInsurance,
+    carPhoto, setCarPhoto,
+    numberOfSeats, setNumberOfSeats,
+    isLoading,
+    handleSubmit,
+    handleFileChange,
+  } = useLoginForm(initialMode, initialUserType, onBack);
   
-  // Driver-specific fields
-  const [licenseNumber, setLicenseNumber] = useState("");
-  const [driversLicense, setDriversLicense] = useState<File | null>(null);
-  const [insurance, setInsurance] = useState<File | null>(null);
-  const [carPhoto, setCarPhoto] = useState<File | null>(null);
-  const [numberOfSeats, setNumberOfSeats] = useState("");
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, setter: (file: File | null) => void) => {
-    if (e.target.files && e.target.files[0]) {
-      setter(e.target.files[0]);
-    }
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-
-    try {
-      if (isSignUp) {
-        // Validation
-        if (!email || !password || !name || !phone) {
-          toast.error("Please fill in all required fields");
-          setIsLoading(false);
-          return;
-        }
-
-        // Phone validation (basic format check)
-        const phoneRegex = /^[+]?[(]?[0-9]{1,4}[)]?[-\s\.]?[(]?[0-9]{1,4}[)]?[-\s\.]?[0-9]{1,9}$/;
-        if (!phoneRegex.test(phone.trim())) {
-          toast.error("Invalid phone number format");
-          setIsLoading(false);
-          return;
-        }
-
-        // Email validation
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(email)) {
-          toast.error("Please enter a valid email address");
-          setIsLoading(false);
-          return;
-        }
-
-        // Password validation
-        if (password.length < 8) {
-          toast.error("Password must be at least 8 characters long");
-          setIsLoading(false);
-          return;
-        }
-
-        // Check password complexity
-        const hasUpperCase = /[A-Z]/.test(password);
-        const hasLowerCase = /[a-z]/.test(password);
-        const hasNumber = /[0-9]/.test(password);
-        
-        if (!hasUpperCase || !hasLowerCase || !hasNumber) {
-          toast.error("Password must contain at least one uppercase letter, one lowercase letter, and one number");
-          setIsLoading(false);
-          return;
-        }
-
-        // Postal code validation if provided (Canadian format: A1A 1A1)
-        if (postalCode && postalCode.trim()) {
-          const postalRegex = /^[A-Za-z]\d[A-Za-z][ -]?\d[A-Za-z]\d$/;
-          if (!postalRegex.test(postalCode.trim())) {
-            toast.error("Invalid postal code format. Use format: A1A 1A1");
-            setIsLoading(false);
-            return;
-          }
-        }
-
-        // Validate that if any location field is provided, all are provided
-        const hasAnyLocation = address.trim() || city.trim() || province.trim() || postalCode.trim();
-        const hasAllLocation = address.trim() && city.trim() && province.trim() && postalCode.trim();
-        
-        if (hasAnyLocation && !hasAllLocation) {
-          toast.error("Please fill in all location fields (address, city, province, postal code)");
-          setIsLoading(false);
-          return;
-        }
-
-        // Driver-specific validation
-        if (userType === "driver" && !licenseNumber) {
-          toast.error("License number is required for driver registration");
-          setIsLoading(false);
-          return;
-        }
-
-        // Registration
-        await register({
-          email,
-          password,
-          name,
-          phone: phone.trim(),
-          userType,
-          address: address.trim() || undefined,
-          city: city.trim() || undefined,
-          province: province.trim() || undefined,
-          postalCode: postalCode.trim() || undefined,
-          licenseNumber: userType === "driver" ? licenseNumber : undefined,
-          insuranceProof: insurance ? insurance.name : undefined,
-          carPhoto: carPhoto ? carPhoto.name : undefined,
-          availableSeats: userType === "driver" ? parseInt(numberOfSeats) || 4 : undefined,
-        });
-        toast.success("Registration successful!", {
-          description: "Your account has been created.",
-        });
-        if (onBack) {
-          onBack();
-        }
-      } else {
-        // Login validation
-        if (!email || !password) {
-          toast.error("Please enter your email and password");
-          setIsLoading(false);
-          return;
-        }
-
-        // Login
-        await login(email, password);
-        toast.success("Login successful!", {
-          description: "Welcome back!",
-        });
-      }
-    } catch (error: any) {
-      // Show user-friendly error messages
-      const errorMessage = error.message || "An error occurred. Please try again.";
-      toast.error(errorMessage, {
-        description: errorMessage.includes("connect") 
-          ? "Make sure the backend server is running"
-          : "Please check your input and try again.",
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
