@@ -3,13 +3,8 @@ import { Calendar as CalendarIcon } from "lucide-react";
 import { Button } from "./ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 import { format } from "date-fns";
-
-interface ScrollableDatePickerProps {
-  selectedDate: Date;
-  onDateChange: (date: Date) => void;
-  minDate?: Date;
-  label?: string;
-}
+import { ScrollableDatePickerProps } from "../serviceInterface";
+import { MONTHS } from "../const";
 
 export function ScrollableDatePicker({ 
   selectedDate, 
@@ -30,10 +25,7 @@ export function ScrollableDatePicker({
   const min = minDate || today;
 
   // Generate months
-  const months = [
-    "January", "February", "March", "April", "May", "June",
-    "July", "August", "September", "October", "November", "December"
-  ];
+  const months = MONTHS;
 
   // Generate days (1-31, will be filtered based on month/year)
   const getDaysInMonth = (month: number, year: number) => {
