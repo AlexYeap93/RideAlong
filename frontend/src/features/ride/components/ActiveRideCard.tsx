@@ -1,20 +1,19 @@
 import { useState } from "react";
-import { Card } from "./ui/card";
-import { Button } from "./ui/button";
-import { Badge } from "./ui/badge";
-import { Avatar, AvatarFallback } from "./ui/avatar";
+import { Card } from "../../../components/ui/card";
+import { Button } from "../../../components/ui/button";
+import { Badge } from "../../../components/ui/badge";
+import { Avatar, AvatarFallback } from "../../../components/ui/avatar";
 import { MapPin, Clock, ChevronDown, ChevronUp, Star } from "lucide-react";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../../components/ui/select";
 import { toast } from "sonner";
-import { ActiveRideCardProps } from "../serviceInterface";
-import { TIME_SLOTS } from "../const";
+import type { ActiveRideCardProps } from "../../../serviceInterface";
+import { timeSlots } from "../../../types/const";
 
 // For Driver tab to display active rides
 export function ActiveRideCard({ rideId: _rideId, destination, date, time, passengers }: ActiveRideCardProps) {
   const [expanded, setExpanded] = useState(false);
   const [rideTime, setRideTime] = useState(time);
   // available time slots for the ride
-  const timeSlots = TIME_SLOTS;
 
   // handles update for ride pickup time for passenger
   const handleTimeChange = (newTime: string) => {

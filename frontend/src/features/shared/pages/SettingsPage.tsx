@@ -1,16 +1,11 @@
 import { ArrowLeft } from "lucide-react";
 import { Button } from "../../../components/ui/button";
 import { Card } from "../../../components/ui/card";
-import { SettingsSection } from "../components/SettingsSection";
-import { ProfileSettingsForm } from "../components/ProfileSettingsForm";
-import { LocationSettingsForm } from "../components/LocationSettingsForm";
-import { PasswordSettingsForm } from "../components/PasswordSettingsForm";
-
-interface SettingsPageProps {
-    user: any;
-    onBack: () => void;
-    onUserUpdated?: (updated: any) => void;
-}
+import { SettingsSection } from "../../settings/components/SettingsSection";
+import { ProfileSettingsForm } from "../../settings/components/ProfileSettingsForm";
+import { LocationSettingsForm } from "../../settings/components/LocationSettingsForm";
+import { PasswordSettingsForm } from "../../settings/components/PasswordSettingsForm";
+import type { SettingsPageProps } from "../../../serviceInterface";
 
 export function SettingsPage({
     user,

@@ -1,13 +1,13 @@
 import { useState, useEffect } from "react";
-import { Card } from "./ui/card";
-import { Button } from "./ui/button";
-import { Avatar, AvatarFallback } from "./ui/avatar";
-import { Badge } from "./ui/badge";
+import { Card } from "../../../components/ui/card";
+import { Button } from "../../../components/ui/button";
+import { Avatar, AvatarFallback } from "../../../components/ui/avatar";
+import { Badge } from "../../../components/ui/badge";
 import { X, Star, MapPin, Car as CarIcon } from "lucide-react";
-import { bookingsAPI, usersAPI } from "../services/api";
+import { bookingsAPI, usersAPI } from "../../../services/api";
 import { toast } from "sonner";
-import { SeatSelectionProps } from "../serviceInterface";
-import { TOTAL_SEATS } from "../const";
+import type { SeatSelectionProps } from "../../../serviceInterface";
+import { TOTAL_SEATS } from "../../../types/const";
 
 // Seat Selection component for the ride checks for number of seat and shows the composition of the car
 //Checks if seat is taken and if it is, it is disabled and if it is not, it is enabled

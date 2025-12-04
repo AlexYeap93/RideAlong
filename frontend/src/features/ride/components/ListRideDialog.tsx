@@ -7,12 +7,8 @@ import { MapPin, Clock } from "lucide-react";
 import { ScrollableDatePicker } from "../../../components/ScrollableDatePicker";
 import { toast } from "sonner";
 import { allTimeSlots } from "../../../types/const";
+import type { ListRideDialogProps } from "../../../serviceInterface";
 
-interface ListRideDialogProps {
-  open: boolean;
-  onClose: () => void;
-  onSubmit: (data: { date: Date; time: string; destination: string }) => void;
-}
 
 export function ListRideDialog({ open, onClose, onSubmit }: ListRideDialogProps) {
   const [date, setDate] = useState<Date | undefined>(new Date());
@@ -121,7 +117,7 @@ export function ListRideDialog({ open, onClose, onSubmit }: ListRideDialogProps)
             </Label>
             <ScrollableDatePicker
               selectedDate={date || new Date()}
-              onDateChange={(newDate) => {
+              onDateChange={(newDate: Date) => {
                 setDate(newDate);
                 // Reset time when date changes to ensure valid selection
                 setTime("");

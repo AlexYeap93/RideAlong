@@ -6,11 +6,10 @@ import { Card } from "../../../components/ui/card";
 import { Avatar, AvatarFallback } from "../../../components/ui/avatar";
 import { Badge } from "../../../components/ui/badge";
 import { Button } from "../../../components/ui/button";
-import type { AdminUserView } from "../../../types/index";
+import { settingsProps } from "../../../serviceInterface";
 
-interface Props { users: AdminUserView[]; isLoading: boolean; userFilter: string; onUserFilterChange: (v: string) => void; searchTerm: string; onSearchTermChange: (v: string) => void; onUserClick: (u: AdminUserView) => void;}
 
-export function AdminSettingsSection({ users, isLoading, userFilter, onUserFilterChange, searchTerm, onSearchTermChange, onUserClick,}: Props) 
+export function AdminSettingsSection({ users, isLoading, userFilter, onUserFilterChange, searchTerm, onSearchTermChange, onUserClick,}: settingsProps) 
 {
   return (
     <div className="bg-white rounded-lg shadow-sm border p-6">

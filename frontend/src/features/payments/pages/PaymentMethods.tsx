@@ -7,10 +7,8 @@ import { Label } from "../../../components/ui/label";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger,} from "../../../components/ui/dialog";
 import { Badge } from "../../../components/ui/badge";
 import { usePaymentMethods } from "../hooks/usePaymentMethods";
+import type { PaymentMethodsProps } from "../../../serviceInterface";
 
-interface PaymentMethodsProps {
-  onBack: () => void;
-}
 
 const formatCardNumber = (value: string) => {
   const v = value.replace(/\s+/g, "").replace(/[^0-9]/gi, "");

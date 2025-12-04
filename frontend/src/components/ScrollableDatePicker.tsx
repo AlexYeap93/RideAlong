@@ -3,8 +3,8 @@ import { Calendar as CalendarIcon } from "lucide-react";
 import { Button } from "./ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 import { format } from "date-fns";
-import { ScrollableDatePickerProps } from "../serviceInterface";
-import { MONTHS } from "../const";
+import type { ScrollableDatePickerProps } from "../serviceInterface";
+import { MONTHS } from "../types/const";
 
 export function ScrollableDatePicker({ 
   selectedDate, 

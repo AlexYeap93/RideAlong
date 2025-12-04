@@ -1,7 +1,7 @@
 import { Card } from "../../../components/ui/card";
 import { Badge } from "../../../components/ui/badge";
 import { MapPin, Clock } from "lucide-react";
-import { DriverRideInfoCardProps} from "../../shared/constants/const";
+import type { DriverRideInfoCardProps } from "../../../serviceInterface";
 
 export function DriverRideInfoCard({ 
   destination, 

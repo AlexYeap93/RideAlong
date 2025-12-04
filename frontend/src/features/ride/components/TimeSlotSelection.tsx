@@ -1,23 +1,15 @@
 import { useState, useEffect } from "react";
 import { Clock } from "lucide-react";
-import { Card } from "./ui/card";
-import { Button } from "./ui/button";
-import { Badge } from "./ui/badge";
-import { ridesAPI } from "../services/api";
+import { Card } from "../../../components/ui/card";
+import { Button } from "../../../components/ui/button";
+import { Badge } from "../../../components/ui/badge";
+import { ridesAPI } from "../../../services/api";
 import { toast } from "sonner";
-import { ScrollableDatePicker } from "./ScrollableDatePicker";
-import { TimeSlot } from "../serviceInterface";
-import { UNIVERSITY_DESTINATION } from "../const";
+import { ScrollableDatePicker } from "../../../components/ScrollableDatePicker";
+import type { TimeSlot } from "../../../serviceInterface";
+import { UNIVERSITY_DESTINATION } from "../../../types/const";
+import type { TimeSlotSelectionProps } from "../../../serviceInterface";
 
-
-
-interface TimeSlotSelectionProps {
-  onTimeSlotSelect: (timeSlot: string) => void;
-  onBack: () => void;
-  destination?: string;
-  selectedDate?: Date;
-  onDateChange?: (date: Date) => void;
-}
 
 export function TimeSlotSelection({ onTimeSlotSelect, onBack, destination = UNIVERSITY_DESTINATION.name, selectedDate: propSelectedDate = new Date(), onDateChange }: TimeSlotSelectionProps) {
   const [timeSlots, setTimeSlots] = useState<TimeSlot[]>([]);

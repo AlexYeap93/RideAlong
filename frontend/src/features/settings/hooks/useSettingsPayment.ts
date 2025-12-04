@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { paymentMethodsAPI } from "../../../services/api";
 import { toast } from "sonner";
-import type { AddCardInput, PaymentMethod } from "../../../types";
+import type { AddCardInput, FrontendPaymentMethod as PaymentMethod } from "../../../types/api_interfaces";
 
 export function useSettingsPayment() {
   const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>([]);

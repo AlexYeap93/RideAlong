@@ -1,43 +1,6 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { authAPI } from '../services/api';
-
-interface User {
-  id: string;
-  email: string;
-  name: string;
-  role: 'user' | 'driver' | 'admin';
-  phone?: string;
-  address?: string;
-  city?: string;
-  province?: string;
-  postalCode?: string;
-  driverInfo?: any;
-}
-
-interface AuthContextType {
-  user: User | null;
-  isAuthenticated: boolean;
-  isLoading: boolean;
-  login: (email: string, password: string) => Promise<void>;
-  register: (data: {
-    email: string;
-    password: string;
-    name: string;
-    phone: string;
-    userType: 'rider' | 'driver';
-    address?: string;
-    city?: string;
-    province?: string;
-    postalCode?: string;
-    licenseNumber?: string;
-    insuranceProof?: string;
-    carPhoto?: string;
-    availableSeats?: number;
-  }) => Promise<void>;
-  logout: () => Promise<void>;
-  refreshUser: () => Promise<void>;
-  updateUser: (partial: Partial<User>) => void;
-}
+import type { AuthContextType, FrontendUser as User } from '../types/api_interfaces';
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 

@@ -1,9 +1,8 @@
 import { Card } from "../../../../components/ui/card";
-import { PriorityBadge } from "../../../shared/ui/PriorityBadge";
-import { StatusBadge } from "../../../shared/ui/StatusBadge";
+import { PriorityBadge } from "../../../../components/PriorityBadge";
+import { StatusBadge } from "../../../../components/StatusBadge";
 import { AlertTriangle } from "lucide-react";
-
-export interface IssueCardProps { subject: string; description: string; date: string; reporter: string; priority: string; status: string; onClick?: () => void;}
+import type { IssueCardProps } from "../../../../serviceInterface";
 
 export function IssueCard(props: IssueCardProps) {
   const { subject, description, date, reporter, priority, status, onClick } = props;

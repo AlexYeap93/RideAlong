@@ -1,12 +1,12 @@
 import { useState } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "./ui/dialog";
-import { Button } from "./ui/button";
-import { Calendar } from "./ui/calendar";
-import { Label } from "./ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "../../../components/ui/dialog";
+import { Button } from "../../../components/ui/button";
+import { Calendar } from "../../../components/ui/calendar";
+import { Label } from "../../../components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../../components/ui/select";
 import { MapPin, Clock, Calendar as CalendarIcon } from "lucide-react";
-import { RequestRideDialogProps } from "../serviceInterface";
-import { TIME_SLOTS, DESTINATIONS } from "../const";
+import type { RequestRideDialogProps } from "../../../serviceInterface";
+import { TIME_SLOTS, DESTINATIONS } from "../../../types/const";
 
 export function RequestRideDialog({ open, onClose, onSubmit }: RequestRideDialogProps) {
   const [date, setDate] = useState<Date | undefined>(new Date());

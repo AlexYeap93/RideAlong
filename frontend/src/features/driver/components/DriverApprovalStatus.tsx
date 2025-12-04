@@ -1,5 +1,5 @@
 import { Card } from "../../../components/ui/card";
-import { DriverApprovalStatusProps } from "../../shared/constants/const";
+import type { DriverApprovalStatusProps } from "../../../serviceInterface";
 export function DriverApprovalStatus({ hasDriverApplication, isApprovedDriver, isCheckingDriver }: DriverApprovalStatusProps) {
   if (isCheckingDriver || !hasDriverApplication || isApprovedDriver) {
     return null;

@@ -1,5 +1,5 @@
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "../../../../components/ui/alert-dialog";
-import { DriverCompleteRideDialogProps } from "../../../shared/constants/const";
+import type { DriverCompleteRideDialogProps } from "../../../../serviceInterface";
 
 
 export function DriverCompleteRideDialog({ open, onOpenChange, rideToComplete, onConfirm }: DriverCompleteRideDialogProps) {

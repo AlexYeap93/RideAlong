@@ -15,7 +15,7 @@ import { AdminDriversSection } from "../components/AdminDriversSection";
 import { AdminUserDialog } from "../components/dialogs/AdminUserDialog";
 import { AdminIssueDialog } from "../components/dialogs/AdminIssueDialog";
 import { AdminDriverDialog } from "../components/dialogs/AdminDriverDialog";
-import type { AdminUserView, AdminIssueView, AdminPendingDriverView} from "../../../types/index"; 
+import type { AdminUserView, AdminIssueView, AdminPendingDriverView} from "../../../types/api_interfaces"; 
 
 export function AdminPage() {
     const { user } = useAuth();

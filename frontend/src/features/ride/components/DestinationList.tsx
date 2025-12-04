@@ -1,6 +1,6 @@
-import universityImage from './photos/UofC.jpg';
-import { DestinationListProps } from "../serviceInterface";
-import { UNIVERSITY_DESTINATION } from "../const";
+import universityImage from '../../../components/photos/UofC.jpg';
+import type { DestinationListProps } from "../../../serviceInterface";
+import { UNIVERSITY_DESTINATION } from "../../../types/const";
 
 export function DestinationList({ onDestinationSelect }: DestinationListProps) {
   // Currently only one destination is available for our project

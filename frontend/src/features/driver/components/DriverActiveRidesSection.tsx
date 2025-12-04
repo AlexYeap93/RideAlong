@@ -3,7 +3,8 @@ import { Button } from "../../../components/ui/button";
 import { Avatar, AvatarFallback } from "../../../components/ui/avatar";
 import { Badge } from "../../../components/ui/badge";
 import { MapPin, Clock, CheckCircle } from "lucide-react";
-import { DriverActiveRidesSectionProps, Passenger, ActiveRide } from "../../shared/constants/const";
+import type { DriverActiveRidesSectionProps } from "../../../serviceInterface";
+import type { Passenger, ActiveRide } from "../../../types/api_interfaces";
 import { toast } from "sonner";
 import { ridesAPI } from "../../../services/api";
 

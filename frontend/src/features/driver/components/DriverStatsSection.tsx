@@ -1,9 +1,8 @@
 import { Card } from "../../../components/ui/card";
-import { DriverStatsSectionProps } from "../../shared/constants/const";
 import { Badge } from "../../../components/ui/badge";
 import { MapPin, Clock } from "lucide-react";
-import { CompletedRide } from "../../shared/constants/const";
-import { DriverCompletedRidesSectionProps } from "../../shared/constants/const";
+import type { DriverStatsSectionProps, DriverCompletedRidesSectionProps } from "../../../serviceInterface";
+import type { CompletedRide } from "../../../types/api_interfaces";
 
 
 export function DriverCompletedRidesSection({ completedRides }: DriverCompletedRidesSectionProps) {
