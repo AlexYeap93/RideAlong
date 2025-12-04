@@ -1,6 +1,6 @@
-import { Button } from "./ui/button";
-import { BottomNavigationProps } from "../serviceInterface";
-import { BASE_NAV_ITEMS, ADMIN_NAV_ITEM } from "../const";
+import { Button } from "../../../components/ui/button";
+import { BottomNavigationProps } from "../../../types/index";
+import { BASE_NAV_ITEMS, ADMIN_NAV_ITEM } from "../../../types/const";
 
 // For the Tabs at the bottom of the page
 export function BottomNavigation({ activeTab, onTabChange, isAdmin = false }: BottomNavigationProps) {

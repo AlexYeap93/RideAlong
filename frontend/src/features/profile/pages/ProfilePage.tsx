@@ -1,17 +1,17 @@
 import { useState, useEffect } from "react";
-import { Card } from "./ui/card";
-import { Button } from "./ui/button";
-import { Avatar, AvatarFallback } from "./ui/avatar";
-import { Badge } from "./ui/badge";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "./ui/dialog";
-import { Label } from "./ui/label";
-import { RadioGroup, RadioGroupItem } from "./ui/radio-group";
-import { Textarea } from "./ui/textarea";
-import { Star, Edit, Settings, CreditCard, History, HelpCircle, ChevronRight, Car, LogOut, MapPin, Clock } from "lucide-react";
+import { Card } from "../../../components/ui/card";
+import { Button } from "../../../components/ui/button";
+import { Avatar, AvatarFallback } from "../../../components/ui/avatar";
+import { Badge } from "../../../components/ui/badge";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "../../../components/ui/dialog";
+import { Label } from "../../../components/ui/label";
+import { RadioGroup, RadioGroupItem } from "../../../components/ui/radio-group";
+import { Textarea } from "../../../components/ui/textarea";
+import { Star, Edit, Settings, CreditCard, History, HelpCircle, ChevronRight, Car, LogOut } from "lucide-react";
 import { toast } from "sonner";
-import { useAuth } from "../contexts/AuthContext";
-import { bookingsAPI, driversAPI, issuesAPI } from "../services/api";
-import { DriverApplicationDialog } from "../features/driver/components/dialog/DriverApplicationDialog";
+import { useAuth } from "../../../contexts/AuthContext";
+import { bookingsAPI, driversAPI, issuesAPI } from "../../../services/api";
+import { DriverApplicationDialog } from "../../driver/components/dialog/DriverApplicationDialog";
 
 interface ProfilePageProps {
   onNavigateToPaymentMethods?: () => void;
@@ -33,15 +33,13 @@ export function ProfilePage({ onNavigateToPaymentMethods, onNavigateToRideHistor
   const [averageRating, setAverageRating] = useState<number | null>(null);
 
   useEffect(() => {
-    if (user?.id) {
+    if (user?.id)
       checkDriverStatus();
-    }
   }, [user?.id]);
 
   useEffect(() => {
-    if (user?.id) {
+    if (user?.id)
       fetchUserStats();
-    }
   }, [user?.id, driverId]);
 
   const checkDriverStatus = async () => {
@@ -53,14 +51,10 @@ export function ProfilePage({ onNavigateToPaymentMethods, onNavigateToRideHistor
         setHasDriverProfile(true);
         setIsApprovedDriver(driverResponse.data.is_approved === true);
         setDriverId(driverResponse.data.id);
-        // Get average rating from database
-        const rating = driverResponse.data.average_rating 
-          ? parseFloat(driverResponse.data.average_rating) 
-          : null;
+        const rating = driverResponse.data.average_rating ? parseFloat(driverResponse.data.average_rating) : null;
         setAverageRating(rating);
       }
     } catch (error: any) {
-      // Driver profile doesn't exist
       setHasDriverProfile(false);
       setIsApprovedDriver(false);
       setDriverId(null);
@@ -71,18 +65,12 @@ export function ProfilePage({ onNavigateToPaymentMethods, onNavigateToRideHistor
     if (!user?.id) return;
     
     try {
-      // Get user bookings (rides taken) - count ALL bookings, not just completed
+      // Get user bookings (rides taken)
       const bookingsResponse = await bookingsAPI.getBookingsByUser(user.id);
       const allBookings = bookingsResponse.data.filter((b: any) => b.status !== 'cancelled');
       setRidesTaken(allBookings.length);
-      
-      // Don't store completed rides taken for display (removed per user request)
-
-      // If user is a driver, get completed rides offered
-      // Use driverId from state (set by checkDriverStatus) or try to fetch it
       let currentDriverId = driverId;
       
-      // If driverId is not set yet, try to get it (works for all users including admins)
       if (!currentDriverId) {
         try {
           const driverResponse = await driversAPI.getMyDriverProfile();
@@ -91,37 +79,29 @@ export function ProfilePage({ onNavigateToPaymentMethods, onNavigateToRideHistor
             setDriverId(currentDriverId);
           }
         } catch (error: any) {
-          // User is not a driver or profile not found
           currentDriverId = null;
         }
       }
 
-      // Fetch completed rides if we have a driver ID
       if (currentDriverId) {
         try {
           const driverRidesResponse = await driversAPI.getDriverRides(currentDriverId);
-          // Filter for completed rides (same logic as DriversPage)
           const completedRides = driverRidesResponse.data.filter((r: any) => r.status === 'completed');
-          // Count ALL completed rides for the driver (same as DriversPage)
           setRidesOffered(completedRides.length);
         } catch (error: any) {
           console.error("Failed to fetch driver rides:", error);
           setRidesOffered(0);
         }
       } else {
-        // Only set to 0 if we're sure the user is not a driver
-        // (i.e., hasDriverProfile is false after checkDriverStatus has run)
         if (hasDriverProfile === false) {
           setRidesOffered(0);
         }
-        // Otherwise, leave it as is (might still be loading)
       }
     } catch (error: any) {
       console.error("Failed to fetch user stats:", error);
     }
   };
 
-  // Handles the driver application process if the user is not a driver
   const handleBecomeDriver = () => {
     if (hasDriverProfile && !isApprovedDriver) {
       toast.info("Your driver application is pending approval");
@@ -134,7 +114,6 @@ export function ProfilePage({ onNavigateToPaymentMethods, onNavigateToRideHistor
     setShowDriverApplication(true);
   };
 
-  // Handles the driver application success which will remove the want to become a driver button and add the driver (approved) button
   const handleApplicationSuccess = () => {
     setHasDriverProfile(true);
     setIsApprovedDriver(false);
@@ -227,17 +206,9 @@ export function ProfilePage({ onNavigateToPaymentMethods, onNavigateToRideHistor
         </Card>
 
         {user?.role !== 'driver' && user?.role !== 'admin' && (
-          <Button 
-            variant="outline" 
-            className="w-full"
-            onClick={handleBecomeDriver}
-          >
+          <Button  variant="outline"  className="w-full" onClick={handleBecomeDriver}>
             <Car className="w-4 h-4 mr-2" />
-            {hasDriverProfile && !isApprovedDriver 
-              ? "Application Pending" 
-              : hasDriverProfile && isApprovedDriver
-              ? "Driver (Approved)"
-              : "Become a Driver"}
+            {hasDriverProfile && !isApprovedDriver  ? "Application Pending"  : hasDriverProfile && isApprovedDriver ? "Driver (Approved)" : "Become a Driver"}
           </Button>
         )}
 
@@ -254,19 +225,14 @@ export function ProfilePage({ onNavigateToPaymentMethods, onNavigateToRideHistor
           </Card>
         )}
 
-        {/* Logout Button */}
+        {/* Logout */}
         <Card className="p-4 mt-4">
-          <Button 
-            variant="destructive" 
-            className="w-full"
-            onClick={async () => {
+          <Button variant="destructive" className="w-full" onClick={async () => {
               try {
                 await logout();
                 toast.success("Logged out successfully");
               } catch (error: any) {
-                toast.error("Failed to logout", {
-                  description: error.message || "Please try again.",
-                });
+                toast.error("Failed to logout", { description: error.message || "Please try again.",});
               }
             }}
           >
@@ -276,13 +242,9 @@ export function ProfilePage({ onNavigateToPaymentMethods, onNavigateToRideHistor
         </Card>
       </div>
 
-      <DriverApplicationDialog
-        open={showDriverApplication}
-        onClose={() => setShowDriverApplication(false)}
-        onSuccess={handleApplicationSuccess}
-      />
+      <DriverApplicationDialog open={showDriverApplication} onClose={() => setShowDriverApplication(false)} onSuccess={handleApplicationSuccess}/>
 
-      {/* Help & Support Dialog */}
+      {/* Help & Support */}
       <Dialog open={showHelpDialog} onOpenChange={setShowHelpDialog}>
         <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto">
           <DialogHeader>
@@ -325,23 +287,12 @@ export function ProfilePage({ onNavigateToPaymentMethods, onNavigateToRideHistor
 
             <div className="space-y-2">
               <Label htmlFor="description">Description</Label>
-              <Textarea
-                id="description"
-                placeholder="Please describe the issue in detail..."
-                value={issueDescription}
-                onChange={(e) => setIssueDescription(e.target.value)}
-                rows={4}
-                className="bg-input-background"
-              />
+              <Textarea id="description" placeholder="Please describe the issue in detail..." value={issueDescription} onChange={(e) => setIssueDescription(e.target.value)} rows={4} className="bg-input-background" />
             </div>
           </div>
 
           <DialogFooter>
-            <Button variant="outline" onClick={() => {
-              setShowHelpDialog(false);
-              setIssueType("");
-              setIssueDescription("");
-            }}>
+            <Button variant="outline" onClick={() => { setShowHelpDialog(false); setIssueType(""); setIssueDescription(""); }}>
               Cancel
             </Button>
             <Button onClick={async () => {

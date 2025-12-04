@@ -4,9 +4,9 @@ import { Button } from "./ui/button";
 import { Avatar, AvatarFallback } from "./ui/avatar";
 import { Badge } from "./ui/badge";
 import { Star, MapPin, Clock, HelpCircle, DollarSign, CheckCircle, XCircle } from "lucide-react";
-import { TimeSlotSelection } from "./TimeSlotSelection";
+import { TimeSlotSelection } from "../features/shared/ui/TimeSlotSelection";
 import { RideCard } from "../features/ride/components/RideCard";
-import { SeatSelection } from "./SeatSelection";
+import { SeatSelection } from "../features/shared/ui/SeatSelection";
 import { PaymentPage } from "../features/payments/pages/PaymentPage";
 import { BookingConfirmation } from "../features/ride/components/BookingConfirmation";
 import {

@@ -1,11 +1,10 @@
 import { useState, useEffect, useRef } from "react";
 import { Calendar as CalendarIcon } from "lucide-react";
-import { Button } from "./ui/button";
-import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
+import { Button } from "../../../components/ui//button";
+import { Popover, PopoverContent, PopoverTrigger } from "../../../components/ui//popover";
 import { format } from "date-fns";
-import { ScrollableDatePickerProps } from "../serviceInterface";
-import { MONTHS } from "../const";
-
+import { ScrollableDatePickerProps } from "../../../types/index";
+import { MONTHS } from "../../../types/const";
 export function ScrollableDatePicker({ 
   selectedDate, 
   onDateChange, 

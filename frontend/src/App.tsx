@@ -3,13 +3,13 @@ import { AppHeader } from "./features/shared/ui/AppHeader";
 import { HomePage } from "./components/HomePage";
 import { DriversPage } from "./features/driver/components/DriversPage";
 import { UsersPage } from "./components/UsersPage";
-import { ProfilePage } from "./components/ProfilePage";
+import { ProfilePage } from "./features/profile/pages/ProfilePage";
 import { AdminPage } from "./features/admin/pages/AdminPage";
 import { LoginPage } from "./features/auth/pages/LoginPage";
 import { RideHistory } from "./features/ride/components/RideHistory";
 import { PaymentMethods } from "./features/payments/pages/PaymentMethods";
 import { SettingsPage } from "./features/settings/pages/SettingsPage";
-import { BottomNavigation } from "./components/BottomNavigation";
+import { BottomNavigation } from "./features/shared/ui/BottomNavigation";
 import { Toaster } from "./components/ui/sonner";
 import { useAuth } from "./contexts/AuthContext";
 
@@ -101,7 +101,7 @@ export default function App() {
   }, [isAuthenticated, activeTab, subPage, usersPageMode]);
 
   const isAdmin = user?.role === 'admin';
-  const isDriver = user?.role === 'driver' || user?.role === 'admin';
+  // const isDriver = user?.role === 'driver' || user?.role === 'admin';
 
   const renderPage = () => {
     // Handle sub-pages
