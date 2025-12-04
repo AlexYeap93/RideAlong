@@ -12,13 +12,8 @@ import {  bookingsAPI, paymentsAPI } from "../../../services/api";
 import { useAuth } from "../../../contexts/AuthContext";
 import { useRides } from "../hooks/useRides"; 
 import { useHomeNavigation } from "../hooks/useHomeNavigation";
-
-
-interface HomePageProps {
-  onNavigateToUsers?: () => void;
-  onBookingCreated?: () => void; // Callback when booking is created
-  autoSelectDestination?: string; // Auto-select destination when navigating from Users tab
-}
+import { HomePageProps } from "../../../serviceInterface";
+  
 
 export function HomePage({ onNavigateToUsers, onBookingCreated, autoSelectDestination }: HomePageProps) {
   const { user } = useAuth();

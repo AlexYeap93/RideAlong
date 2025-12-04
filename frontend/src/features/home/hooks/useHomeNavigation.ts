@@ -1,17 +1,8 @@
 import { useState, useEffect, useRef } from "react";
 import { useRides } from "../hooks/useRides";
+import { UseHomeNavigationProps } from "../../../serviceInterface";
 
-interface UseHomeNavigationProps {
-  autoSelectDestination?: string;
-  showSeatSelection?: boolean;
-  showPayment?: boolean;
-  showConfirmation?: boolean;
-  setShowSeatSelection: (value: boolean) => void;
-  setShowPayment: (value: boolean) => void;
-  setShowConfirmation: (value: boolean) => void;
-  isUpdatingHashRef: React.RefObject<boolean>; 
 
-}
 
 export function useHomeNavigation({
   autoSelectDestination,

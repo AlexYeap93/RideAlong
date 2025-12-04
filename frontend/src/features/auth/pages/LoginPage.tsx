@@ -2,12 +2,8 @@ import { Button } from "../../../components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "../../../components/ui/tabs";
 import { Car, ArrowLeft } from "lucide-react";
 import { useLoginForm } from "../hooks/useLoginForm";
+import { LoginPageProps } from "../../../serviceInterface";
 
-interface LoginPageProps {
-  initialMode?: "login" | "signup";
-  initialUserType?: "rider" | "driver";
-  onBack?: () => void;
-}
 //Login Page for the app
 export function LoginPage({ initialMode = "login", initialUserType = "rider", onBack }: LoginPageProps) {
   
