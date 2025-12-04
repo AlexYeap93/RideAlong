@@ -3,7 +3,7 @@ import { Button } from "../../../../components/ui/button";
 import { Avatar, AvatarFallback } from "../../../../components/ui/avatar";
 import { Badge } from "../../../../components/ui/badge";
 import { Ban, CheckCircle2, MapPin } from "lucide-react";
-import type { AdminUserView } from "../../pages/AdminPage";
+import type { AdminUserView } from "../../../../types/index";
 
 const getStatusColor = (status: string) => {
   switch (status.toLowerCase()) {
@@ -79,24 +79,30 @@ export function AdminUserDialog({ open, user, onOpenChange, onSuspendUser, onAct
                   {user.address || <span className="text-muted-foreground">Not set</span>}
                 </p>
               </div>
-              {user.latitude && user.longitude ? (
-                <div className="grid grid-cols-2 gap-3">
+              {user.city || user.province || user.postalCode ? (
+                <div className="grid grid-cols-3 gap-3">
                   <div>
-                    <p className="text-sm text-muted-foreground">Latitude</p>
-                    <p className="font-mono text-sm">
-                      {parseFloat(user.latitude).toFixed(6)}
+                    <p className="text-sm text-muted-foreground">City</p>
+                    <p className="text-sm">
+                      {user.city || <span className="text-muted-foreground">N/A</span>}
                     </p>
                   </div>
                   <div>
-                    <p className="text-sm text-muted-foreground">Longitude</p>
-                    <p className="font-mono text-sm">
-                      {parseFloat(user.longitude).toFixed(6)}
+                    <p className="text-sm text-muted-foreground">Province</p>
+                    <p className="text-sm">
+                      {user.province || <span className="text-muted-foreground">N/A</span>}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-muted-foreground">Postal Code</p>
+                    <p className="text-sm">
+                      {user.postalCode || <span className="text-muted-foreground">N/A</span>}
                     </p>
                   </div>
                 </div>
               ) : (
                 <div>
-                  <p className="text-sm text-muted-foreground">Coordinates</p>
+                  <p className="text-sm text-muted-foreground">Location Details</p>
                   <p className="text-sm text-muted-foreground">Not set</p>
                 </div>
               )}

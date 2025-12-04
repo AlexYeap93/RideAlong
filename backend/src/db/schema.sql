@@ -11,10 +11,11 @@ CREATE TABLE IF NOT EXISTS users (
     password VARCHAR(255) NOT NULL,
     name VARCHAR(255) NOT NULL,
     phone VARCHAR(20),
-    role VARCHAR(20) DEFAULT 'user' CHECK (role IN ('user', 'driver', 'admin')),
     address VARCHAR(255),
-    latitude DECIMAL(10, 8),
-    longitude DECIMAL(11, 8),
+    city VARCHAR(100),
+    postal_code VARCHAR(20),
+    province VARCHAR(100),
+    role VARCHAR(20) DEFAULT 'user' CHECK (role IN ('user', 'driver', 'admin')),
     is_suspended BOOLEAN DEFAULT FALSE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -55,9 +56,10 @@ CREATE TABLE IF NOT EXISTS bookings (
     ride_id UUID NOT NULL REFERENCES rides(id) ON DELETE CASCADE,
     number_of_seats INTEGER NOT NULL DEFAULT 1,
     seat_number INTEGER,
-    pickup_location VARCHAR(255),
-    pickup_latitude DECIMAL(10, 8),
-    pickup_longitude DECIMAL(11, 8),
+    pickup_address VARCHAR(255),
+    pickup_city VARCHAR(100),
+    pickup_postal_code VARCHAR(20),
+    pickup_province VARCHAR(100),
     pickup_time TIME,
     additional_amount_requested DECIMAL(10, 2),
     additional_amount_status VARCHAR(20) DEFAULT NULL CHECK (additional_amount_status IN ('pending', 'accepted', 'declined')),
@@ -97,7 +99,7 @@ CREATE TABLE IF NOT EXISTS issues (
 
 -- Create indexes for better performance
 CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
-CREATE INDEX IF NOT EXISTS idx_users_latitude_longitude ON users(latitude, longitude);
+CREATE INDEX IF NOT EXISTS idx_users_city_postal ON users(city, postal_code);
 CREATE INDEX IF NOT EXISTS idx_users_is_suspended ON users(is_suspended);
 CREATE INDEX IF NOT EXISTS idx_drivers_user_id ON drivers(user_id);
 CREATE INDEX IF NOT EXISTS idx_drivers_total_earnings ON drivers(total_earnings);
@@ -108,7 +110,7 @@ CREATE INDEX IF NOT EXISTS idx_rides_status ON rides(status);
 CREATE INDEX IF NOT EXISTS idx_bookings_user_id ON bookings(user_id);
 CREATE INDEX IF NOT EXISTS idx_bookings_ride_id ON bookings(ride_id);
 CREATE INDEX IF NOT EXISTS idx_bookings_status ON bookings(status);
-CREATE INDEX IF NOT EXISTS idx_bookings_pickup_latitude_longitude ON bookings(pickup_latitude, pickup_longitude);
+CREATE INDEX IF NOT EXISTS idx_bookings_pickup_city_postal ON bookings(pickup_city, pickup_postal_code);
 CREATE INDEX IF NOT EXISTS idx_bookings_additional_amount_status ON bookings(additional_amount_status) WHERE additional_amount_status = 'pending';
 CREATE INDEX IF NOT EXISTS idx_payments_booking_id ON payments(booking_id);
 CREATE INDEX IF NOT EXISTS idx_issues_user_id ON issues(user_id);

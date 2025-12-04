@@ -3,7 +3,7 @@ import { Card } from "../../../components/ui/card";
 import { Badge } from "../../../components/ui/badge";
 import { Button } from "../../../components/ui/button";
 import { Eye, AlertTriangle } from "lucide-react";
-import type { AdminIssueView } from "../pages/AdminPage";
+import type { AdminIssueView } from "../../../types/index";
 
 interface Props {
   complaints: AdminIssueView[];

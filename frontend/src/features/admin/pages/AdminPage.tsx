@@ -15,10 +15,8 @@ import { AdminDriversSection } from "../components/AdminDriversSection";
 import { AdminUserDialog } from "../components/dialogs/AdminUserDialog";
 import { AdminIssueDialog } from "../components/dialogs/AdminIssueDialog";
 import { AdminDriverDialog } from "../components/dialogs/AdminDriverDialog";
+import type { AdminUserView, AdminIssueView, AdminPendingDriverView} from "../../../types/index"; 
 
-export interface AdminUserView { id: number; name: string; email: string; type: "Driver" | "Admin" | "Rider"; status: "Active" | "Suspended"; is_suspended: boolean; role: string; address: string | null; latitude: string | null; longitude: string | null; joinDate: string; totalRides: number; rating: number | "N/A"; }
-export interface AdminIssueView { id: number; reporter: string; reportedUser: string | "N/A"; type: string; subject: string; description: string; date: string; status: "Open" | "Under Review" | "Resolved" | "Closed"; priority: string; dbStatus: string; }
-export interface AdminPendingDriverView { id: number; user_id: number; name: string; email: string; phone: string; appliedDate: string; available_seats: number; license_number: string | null; insurance_proof: string | null; car_photo: string | null; }
 export function AdminPage() {
     const { user } = useAuth();
     const [searchTerm, setSearchTerm] = useState("");
@@ -192,8 +190,9 @@ export function AdminPage() {
                 is_suspended: !!userItem.is_suspended,
                 role: userItem.role,
                 address: userItem.address || null,
-                latitude: userItem.latitude || null,
-                longitude: userItem.longitude || null,
+                city: userItem.city || null,
+                province: userItem.province || null,
+                postalCode: userItem.postal_code || null,
                 joinDate: new Date(userItem.created_at).toISOString().split("T")[0],
                 totalRides: userItem.total_rides_offered || 0,
                 rating,

@@ -9,6 +9,7 @@ interface UserToCreate {
   password: string;
   name: string;
   role: 'admin' | 'user' | 'driver';
+  phone?: string;
 }
 
 const usersToSeed: UserToCreate[] = [
@@ -16,103 +17,120 @@ const usersToSeed: UserToCreate[] = [
     email: 'admin@ridealong.com',
     password: 'admin123',
     name: 'Admin User',
-    role: 'admin'
+    role: 'admin',
+    phone: '+1-403-555-0001'
   },
   {
     email: 'rider@ridealong.com',
     password: 'rider',
     name: 'Rider User',
-    role: 'user'
+    role: 'user',
+    phone: '+1-403-555-0002'
   },
   {
     email: 'rider1@ridealong.com',
     password: 'rider',
     name: 'Olivia Martin',
-    role: 'user'
+    role: 'user',
+    phone: '+1-403-555-0101'
   },
   {
     email: 'rider2@ridealong.com',
     password: 'rider',
     name: 'Noah Davis',
-    role: 'user'
+    role: 'user',
+    phone: '+1-403-555-0102'
   },
   {
     email: 'rider3@ridealong.com',
     password: 'rider',
     name: 'Ava Thompson',
-    role: 'user'
+    role: 'user',
+    phone: '+1-403-555-0103'
   },
   {
     email: 'rider4@ridealong.com',
     password: 'rider',
     name: 'James Wilson',
-    role: 'user'
+    role: 'user',
+    phone: '+1-403-555-0104'
   },
   {
     email: 'rider5@ridealong.com',
     password: 'rider',
     name: 'Isabella Moore',
-    role: 'user'
+    role: 'user',
+    phone: '+1-403-555-0105'
   },
   {
     email: 'rider6@ridealong.com',
     password: 'rider',
     name: 'Lucas Garcia',
-    role: 'user'
+    role: 'user',
+    phone: '+1-403-555-0106'
   },
   {
     email: 'rider7@ridealong.com',
     password: 'rider',
     name: 'Mia Rodriguez',
-    role: 'user'
+    role: 'user',
+    phone: '+1-403-555-0107'
   },
   {
     email: 'rider8@ridealong.com',
     password: 'rider',
     name: 'Benjamin Lee',
-    role: 'user'
+    role: 'user',
+    phone: '+1-403-555-0108'
   },
   {
     email: 'rider9@ridealong.com',
     password: 'rider',
     name: 'Charlotte Kim',
-    role: 'user'
+    role: 'user',
+    phone: '+1-403-555-0109'
   },
   {
     email: 'rider10@ridealong.com',
     password: 'rider',
     name: 'Henry Patel',
-    role: 'user'
+    role: 'user',
+    phone: '+1-403-555-0110'
   },
   {
     email: 'driver1@ridealong.com',
     password: 'driver',
     name: 'Alex Johnson',
-    role: 'driver'
+    role: 'driver',
+    phone: '+1-403-555-0201'
   },
   {
     email: 'driver2@ridealong.com',
     password: 'driver',
     name: 'Maya Patel',
-    role: 'driver'
+    role: 'driver',
+    phone: '+1-403-555-0202'
   },
   {
     email: 'driver3@ridealong.com',
     password: 'driver',
     name: 'Liam Smith',
-    role: 'driver'
+    role: 'driver',
+    phone: '+1-403-555-0203'
   },
   {
     email: 'driver4@ridealong.com',
     password: 'driver',
     name: 'Sophia Brown',
-    role: 'driver'
+    role: 'driver',
+    phone: '+1-403-555-0204'
   },
   {
     email: 'driver5@ridealong.com',
     password: 'driver',
     name: 'Ethan Williams',
-    role: 'driver'
+    role: 'driver',
+    phone: '+1-403-555-0205'
   }
 ];
 
@@ -124,7 +142,7 @@ async function seedUsers() {
     const skippedUsers: UserToCreate[] = [];
 
     for (const userData of usersToSeed) {
-      const { email, password, name, role } = userData;
+      const { email, password, name, role, phone } = userData;
       
       const normalizedEmail = email.trim().toLowerCase();
 
@@ -134,7 +152,7 @@ async function seedUsers() {
       );
 
       if (existingUser.rows.length > 0) {
-        console.log(`user already exists: ${normalizedEmail} (${role})`);
+        console.log(`User already exists: ${normalizedEmail} (${role})`);
         skippedUsers.push(userData);
         continue;
       }
@@ -142,16 +160,16 @@ async function seedUsers() {
       const hashedPassword = await bcrypt.hash(password, 10);
 
       const result = await query(
-        `INSERT INTO users (email, password, name, role) 
-         VALUES ($1, $2, $3, $4) 
-         RETURNING id, email, name, role, created_at`,
-        [normalizedEmail, hashedPassword, name, role]
+        `INSERT INTO users (email, password, name, role, phone) 
+         VALUES ($1, $2, $3, $4, $5) 
+         RETURNING id, email, name, role, phone, created_at`,
+        [normalizedEmail, hashedPassword, name, role, phone || null]
       );
 
       const user = result.rows[0];
       createdUsers.push(userData);
 
-      console.log(`Created ${role}: ${user.email}`);
+      console.log(`Created ${role}: ${user.email} (ID: ${user.id})`);
     }
     // Seed drivers and their rides
     await seedDriverAndRides();

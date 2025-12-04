@@ -7,8 +7,9 @@ export interface User {
     phone: string;
     userType: 'rider' | 'driver';
     address?: string;
-    latitude?: number;
-    longitude?: number;
+    city?: string;
+    province?: string;
+    postalCode?: string;
     licenseNumber?: string;
     insuranceProof?: string;
     carPhoto?: string;
@@ -82,8 +83,9 @@ export interface Booking {
   number_of_seats: number;
   seat_number?: number;
   pickup_location?: string;
-  pickup_latitude?: number;
-  pickup_longitude?: number;
+  pickup_city?: string;
+  pickup_province?: string;
+  pickup_postal_code?: string;
   pickup_time?: string;
   additional_amount_requested?: number;
   additional_amount_status?: 'pending' | 'accepted' | 'declined' | null;

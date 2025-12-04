@@ -8,7 +8,7 @@ import { AdminPage } from "./features/admin/pages/AdminPage";
 import { LoginPage } from "./components/LoginPage";
 import { RideHistory } from "./features/ride/components/RideHistory";
 import { PaymentMethods } from "./components/PaymentMethods";
-import { SettingsPage } from "./components/SettingsPage";
+import { SettingsPage } from "./features/settings/pages/SettingsPage";
 import { BottomNavigation } from "./components/BottomNavigation";
 import { Toaster } from "./components/ui/sonner";
 import { useAuth } from "./contexts/AuthContext";
@@ -16,7 +16,7 @@ import { useAuth } from "./contexts/AuthContext";
 type SubPage = "rideHistory" | "paymentMethods" | "settings" | null;
 
 export default function App() {
-  const { user, isAuthenticated, isLoading } = useAuth();
+  const { user, isAuthenticated, isLoading, updateUser, refreshUser } = useAuth();
   const [activeTab, setActiveTab] = useState("home");
   const [showDriverSignup, setShowDriverSignup] = useState(false);
   const [subPage, setSubPage] = useState<SubPage>(null);
@@ -112,7 +112,7 @@ export default function App() {
       return <PaymentMethods onBack={() => handleSubPageChange(null)} />;
     }
     if (subPage === "settings") {
-      return <SettingsPage onBack={() => handleSubPageChange(null)} />;
+      return (<SettingsPage user={user} onBack={() => handleSubPageChange(null)} onUserUpdated={(updated) => { updateUser(updated); refreshUser();}}/>);
     }
 
     // Handle main pages

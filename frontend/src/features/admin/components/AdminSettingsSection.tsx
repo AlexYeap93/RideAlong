@@ -6,7 +6,7 @@ import { Card } from "../../../components/ui/card";
 import { Avatar, AvatarFallback } from "../../../components/ui/avatar";
 import { Badge } from "../../../components/ui/badge";
 import { Button } from "../../../components/ui/button";
-import type { AdminUserView } from "../pages/AdminPage";
+import type { AdminUserView } from "../../../types/index";
 
 interface Props { users: AdminUserView[]; isLoading: boolean; userFilter: string; onUserFilterChange: (v: string) => void; searchTerm: string; onSearchTermChange: (v: string) => void; onUserClick: (u: AdminUserView) => void;}
 
@@ -107,10 +107,10 @@ export function AdminSettingsSection({ users, isLoading, userFilter, onUserFilte
                         )}
                       </TableCell>
                       <TableCell>
-                        {u.latitude && u.longitude ? (
-                          <div className="text-xs font-mono">
-                            <div>{parseFloat(u.latitude).toFixed(6)},</div>
-                            <div>{parseFloat(u.longitude).toFixed(6)}</div>
+                        {u.city || u.province || u.postalCode ? (
+                          <div className="text-xs">
+                            <div>{u.city || 'N/A'}, {u.province || 'N/A'}</div>
+                            <div>{u.postalCode || 'N/A'}</div>
                           </div>
                         ) : (
                           <span className="text-muted-foreground text-sm">Not set</span>
@@ -149,7 +149,7 @@ export function AdminSettingsSection({ users, isLoading, userFilter, onUserFilte
             <Card className="p-4">
               <div className="text-sm text-muted-foreground">With Coordinates</div>
               <div className="text-2xl font-bold mt-1">
-                {users.filter((u) => u.latitude && u.longitude).length}
+                {users.filter((u) => u.city || u.province || u.postalCode).length}
               </div>
             </Card>
           </div>

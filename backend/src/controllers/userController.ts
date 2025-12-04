@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
+import bcrypt from 'bcryptjs';
 import { query } from '../config/database';
 import { CustomError } from '../middleware/errorHandler';
 
@@ -9,7 +10,7 @@ export const getUsers = async (
 ) => {
   try {
     const result = await query(
-      `SELECT u.id, u.email, u.name, u.role, u.is_suspended, u.phone, u.address, u.latitude, u.longitude, u.created_at,
+      `SELECT u.id, u.email, u.name, u.role, u.is_suspended, u.phone, u.address, u.city, u.province, u.postal_code, u.created_at,
               d.id as driver_id,
               CASE 
                 WHEN d.id IS NOT NULL THEN 
@@ -24,7 +25,7 @@ export const getUsers = async (
        FROM users u
        LEFT JOIN drivers d ON u.id = d.user_id
        LEFT JOIN ratings rat ON rat.driver_id = d.id
-       GROUP BY u.id, u.email, u.name, u.role, u.is_suspended, u.phone, u.address, u.latitude, u.longitude, u.created_at, d.id
+       GROUP BY u.id, u.email, u.name, u.role, u.is_suspended, u.phone, u.address, u.city, u.province, u.postal_code, u.created_at, d.id
        ORDER BY u.created_at DESC`
     );
     res.status(200).json({
@@ -52,7 +53,7 @@ export const getUserById = async (
     }
 
     const result = await query(
-      'SELECT id, email, name, role, is_suspended, phone, address, latitude, longitude, created_at FROM users WHERE id = $1',
+      'SELECT id, email, name, role, is_suspended, phone, address, city, province, postal_code, created_at FROM users WHERE id = $1',
       [id]
     );
 
@@ -78,7 +79,7 @@ export const updateUser = async (
 ) => {
   try {
     const { id } = req.params;
-    const { name, email, phone, address, latitude, longitude } = req.body;
+    const { name, email, phone, address, city, province, postalCode } = req.body;
 
     // Users can only update their own profile unless they're admin
     if (req.user && req.user.id !== id && req.user.role !== 'admin') {
@@ -116,6 +117,26 @@ export const updateUser = async (
       }
     }
 
+    // Validate phone number format if provided
+    if (phone !== undefined && phone) {
+      const phoneRegex = /^[+]?[(]?[0-9]{1,4}[)]?[-\s\.]?[(]?[0-9]{1,4}[)]?[-\s\.]?[0-9]{1,9}$/;
+      if (!phoneRegex.test(phone.trim())) {
+        const error: CustomError = new Error('Invalid phone number format');
+        error.statusCode = 400;
+        throw error;
+      }
+    }
+
+    // Validate postal code format if provided (Canadian format: A1A 1A1)
+    if (postalCode !== undefined && postalCode) {
+      const postalRegex = /^[A-Za-z]\d[A-Za-z][ -]?\d[A-Za-z]\d$/;
+      if (!postalRegex.test(postalCode.trim())) {
+        const error: CustomError = new Error('Invalid postal code format. Use format: A1A 1A1');
+        error.statusCode = 400;
+        throw error;
+      }
+    }
+
     // Normalize email if provided
     const normalizedEmail = email !== undefined ? email.trim().toLowerCase() : undefined;
 
@@ -125,18 +146,20 @@ export const updateUser = async (
            email = COALESCE($2, email), 
            phone = COALESCE($3, phone),
            address = COALESCE($4, address),
-           latitude = COALESCE($5, latitude),
-           longitude = COALESCE($6, longitude),
+           city = COALESCE($5, city),
+           province = COALESCE($6, province),
+           postal_code = COALESCE($7, postal_code),
            updated_at = NOW() 
-       WHERE id = $7 
-       RETURNING id, email, name, role, is_suspended, address, latitude, longitude, phone, updated_at`,
+       WHERE id = $8 
+       RETURNING id, email, name, role, is_suspended, address, city, province, postal_code, phone, updated_at`,
       [
         name !== undefined ? name.trim() : null,
         normalizedEmail !== undefined ? normalizedEmail : null,
-        phone !== undefined ? (phone.trim() || null) : null,
-        address !== undefined ? (address.trim() || null) : null,
-        latitude !== undefined ? (latitude || null) : null,
-        longitude !== undefined ? (longitude || null) : null,
+        phone !== undefined ? (phone ? phone.trim() : null) : null,
+        address !== undefined ? (address ? address.trim() : null) : null,
+        city !== undefined ? (city ? city.trim() : null) : null,
+        province !== undefined ? (province ? province.trim() : null) : null,
+        postalCode !== undefined ? (postalCode ? postalCode.trim() : null) : null,
         id
       ]
     );
@@ -302,6 +325,83 @@ export const unsuspendUser = async (
       status: 'success',
       message: 'User unsuspended successfully',
       data: result.rows[0],
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const updatePassword = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { id } = req.params;
+    const { currentPassword, oldPassword, newPassword } = req.body;
+    
+    const currentPwd = currentPassword || oldPassword;
+
+    if (req.user && req.user.id !== id && req.user.role !== 'admin') {
+      const error: CustomError = new Error('Unauthorized to update this password');
+      error.statusCode = 403;
+      throw error;
+    }
+    if (!currentPwd || !newPassword) {
+      const error: CustomError = new Error('Current password and new password are required');
+      error.statusCode = 400;
+      throw error;
+    }
+
+    if (newPassword.length < 8) {
+      const error: CustomError = new Error('New password must be at least 8 characters long');
+      error.statusCode = 400;
+      throw error;
+    }
+    //validate
+    const hasUpperCase = /[A-Z]/.test(newPassword);
+    const hasLowerCase = /[a-z]/.test(newPassword);
+    const hasNumber = /[0-9]/.test(newPassword);
+    
+    if (!hasUpperCase || !hasLowerCase || !hasNumber) {
+      const error: CustomError = new Error('Password must contain at least one uppercase letter, one lowercase letter, and one number');
+      error.statusCode = 400;
+      throw error;
+    }
+
+    const userResult = await query(
+      'SELECT id, password FROM users WHERE id = $1',
+      [id]
+    );
+
+    if (userResult.rows.length === 0) {
+      const error: CustomError = new Error('User not found');
+      error.statusCode = 404;
+      throw error;
+    }
+
+    const user = userResult.rows[0];
+
+
+    if (req.user?.role !== 'admin') {
+      const isPasswordValid = await bcrypt.compare(currentPwd, user.password);
+      if (!isPasswordValid) {
+        const error: CustomError = new Error('Current password is incorrect');
+        error.statusCode = 401;
+        throw error;
+      }
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    await query(
+      'UPDATE users SET password = $1, updated_at = NOW() WHERE id = $2',
+      [hashedPassword, id]
+    );
+
+    res.status(200).json({
+      status: 'success',
+      message: 'Password updated successfully',
     });
   } catch (error) {
     next(error);

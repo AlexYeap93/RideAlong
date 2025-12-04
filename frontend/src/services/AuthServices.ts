@@ -70,11 +70,14 @@ export const authAPI = {
     if (data.address) {
       formData.address = data.address.trim();
     }
-    if (data.latitude !== undefined) {
-      formData.latitude = data.latitude;
+    if (data.city !== undefined) {
+      formData.city = data.city;
     }
-    if (data.longitude !== undefined) {
-      formData.longitude = data.longitude;
+    if (data.province !== undefined) {
+      formData.province = data.province;
+    }
+    if (data.postalCode !== undefined) {
+      formData.postalCode = data.postalCode;
     }
 
     if (data.userType === 'driver') {

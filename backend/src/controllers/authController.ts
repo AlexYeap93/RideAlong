@@ -8,7 +8,7 @@ import { CustomError } from '../middleware/errorHandler';
 export const register = async (req: Request, res: Response, next: NextFunction) => {
   
   try {
-    const { email, password, name, userType, phone, address, latitude, longitude } = req.body;
+    const { email, password, name, userType, phone, address, city, province, postalCode } = req.body;
     // Validate email, password, name, and phone are required
     if (!email || !password || !name || !phone) {
       const error: CustomError = new Error('Email, password, name, and phone are required');
@@ -52,9 +52,9 @@ export const register = async (req: Request, res: Response, next: NextFunction) 
 
     // Create user (normalize email, include phone and address if provided)
     const userResult = await query(
-      `INSERT INTO users (email, password, name, role, phone, address, latitude, longitude) 
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8) 
-       RETURNING id, email, name, role, phone, address, latitude, longitude, created_at`,
+      `INSERT INTO users (email, password, name, role, phone, address, city, province, postal_code) 
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) 
+       RETURNING id, email, name, role, phone, address, city, province, postal_code, created_at`,
       [
         normalizedEmail, 
         hashedPassword, 
@@ -62,8 +62,9 @@ export const register = async (req: Request, res: Response, next: NextFunction) 
         finalRole,
         phone ? phone.trim() : null,
         address ? address.trim() : null,
-        latitude ? parseFloat(latitude) : null,
-        longitude ? parseFloat(longitude) : null
+        city ? city.trim() : null,
+        province ? province.trim() : null,
+        postalCode ? postalCode.trim() : null
       ]
     );
 
@@ -112,6 +113,11 @@ export const register = async (req: Request, res: Response, next: NextFunction) 
           email: user.email,
           name: user.name,
           role: user.role,
+          phone: user.phone,
+          address: user.address,
+          city: user.city,
+          province: user.province,
+          postal_code: user.postal_code,
           driverInfo,
         },
         token: token,
@@ -138,7 +144,7 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
 
     // Find user
     const result = await query(
-      'SELECT id, email, password, name, role FROM users WHERE email = $1',
+      'SELECT id, email, password, name, role, phone, address, city, province, postal_code FROM users WHERE email = $1',
       [normalizedEmail]
     );
 
@@ -187,6 +193,11 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
           email: user.email,
           name: user.name,
           role: user.role,
+          phone: user.phone,
+          address: user.address,
+          city: user.city,
+          province: user.province,
+          postal_code: user.postal_code,
           driverInfo,
         },
         token: token,
@@ -219,7 +230,7 @@ export const getCurrentUser = async (req: Request, res: Response, next: NextFunc
     }
 
     const result = await query(
-      'SELECT id, email, name, role, created_at FROM users WHERE id = $1',
+      'SELECT id, email, name, role, phone, address, city, province, postal_code, created_at FROM users WHERE id = $1',
       [req.user.id]
     );
 

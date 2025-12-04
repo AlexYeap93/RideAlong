@@ -144,11 +144,11 @@ export const createBooking = async (req: Request,res: Response,next: NextFunctio
       throw error;
     }
 
-    const { seatNumber, pickupLocation, pickupLatitude, pickupLongitude } = req.body;
+    const { seatNumber, pickupLocation, pickupCity, pickupProvince, pickupPostalCode } = req.body;
     
     const result = await query(
-      `INSERT INTO bookings (user_id, ride_id, number_of_seats, seat_number, pickup_location, pickup_latitude, pickup_longitude, status) 
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8) 
+      `INSERT INTO bookings (user_id, ride_id, number_of_seats, seat_number, pickup_location, pickup_city, pickup_province, pickup_postal_code, status) 
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) 
        RETURNING *`,
       [
         req.user.id, 
@@ -156,8 +156,9 @@ export const createBooking = async (req: Request,res: Response,next: NextFunctio
         numberOfSeats, 
         seatNumber || null, 
         pickupLocation || null,
-        pickupLatitude || null,
-        pickupLongitude || null,
+        pickupCity || null,
+        pickupProvince || null,
+        pickupPostalCode || null,
         'confirmed'
       ]
     );

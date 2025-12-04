@@ -23,8 +23,9 @@ export function LoginPage({ initialMode = "login", initialUserType = "rider", on
   
   // Address fields
   const [address, setAddress] = useState("");
-  const [latitude, setLatitude] = useState("");
-  const [longitude, setLongitude] = useState("");
+  const [city, setCity] = useState("");
+  const [province, setProvince] = useState("");
+  const [postalCode, setPostalCode] = useState("");
   
   // Driver-specific fields
   const [licenseNumber, setLicenseNumber] = useState("");
@@ -53,9 +54,9 @@ export function LoginPage({ initialMode = "login", initialUserType = "rider", on
         }
 
         // Phone validation (basic format check)
-        const phoneRegex = /^[\d\s\-\+\(\)]+$/;
-        if (!phoneRegex.test(phone.trim()) || phone.trim().length < 10) {
-          toast.error("Please enter a valid phone number");
+        const phoneRegex = /^[+]?[(]?[0-9]{1,4}[)]?[-\s\.]?[(]?[0-9]{1,4}[)]?[-\s\.]?[0-9]{1,9}$/;
+        if (!phoneRegex.test(phone.trim())) {
+          toast.error("Invalid phone number format");
           setIsLoading(false);
           return;
         }
@@ -69,8 +70,39 @@ export function LoginPage({ initialMode = "login", initialUserType = "rider", on
         }
 
         // Password validation
-        if (password.length < 6) {
-          toast.error("Password must be at least 6 characters long");
+        if (password.length < 8) {
+          toast.error("Password must be at least 8 characters long");
+          setIsLoading(false);
+          return;
+        }
+
+        // Check password complexity
+        const hasUpperCase = /[A-Z]/.test(password);
+        const hasLowerCase = /[a-z]/.test(password);
+        const hasNumber = /[0-9]/.test(password);
+        
+        if (!hasUpperCase || !hasLowerCase || !hasNumber) {
+          toast.error("Password must contain at least one uppercase letter, one lowercase letter, and one number");
+          setIsLoading(false);
+          return;
+        }
+
+        // Postal code validation if provided (Canadian format: A1A 1A1)
+        if (postalCode && postalCode.trim()) {
+          const postalRegex = /^[A-Za-z]\d[A-Za-z][ -]?\d[A-Za-z]\d$/;
+          if (!postalRegex.test(postalCode.trim())) {
+            toast.error("Invalid postal code format. Use format: A1A 1A1");
+            setIsLoading(false);
+            return;
+          }
+        }
+
+        // Validate that if any location field is provided, all are provided
+        const hasAnyLocation = address.trim() || city.trim() || province.trim() || postalCode.trim();
+        const hasAllLocation = address.trim() && city.trim() && province.trim() && postalCode.trim();
+        
+        if (hasAnyLocation && !hasAllLocation) {
+          toast.error("Please fill in all location fields (address, city, province, postal code)");
           setIsLoading(false);
           return;
         }
@@ -90,8 +122,9 @@ export function LoginPage({ initialMode = "login", initialUserType = "rider", on
           phone: phone.trim(),
           userType,
           address: address.trim() || undefined,
-          latitude: latitude.trim() ? parseFloat(latitude.trim()) : undefined,
-          longitude: longitude.trim() ? parseFloat(longitude.trim()) : undefined,
+          city: city.trim() || undefined,
+          province: province.trim() || undefined,
+          postalCode: postalCode.trim() || undefined,
           licenseNumber: userType === "driver" ? licenseNumber : undefined,
           insuranceProof: insurance ? insurance.name : undefined,
           carPhoto: carPhoto ? carPhoto.name : undefined,
@@ -201,12 +234,13 @@ export function LoginPage({ initialMode = "login", initialUserType = "rider", on
                       id="phone"
                       type="tel"
                       className="form-control"
-                      placeholder="e.g., (403) 555-1234"
+                      placeholder="e.g., +1-403-555-1234"
                       value={phone}
                       onChange={(e) => setPhone(e.target.value)}
                       required
                       style={{ backgroundColor: '#f3f3f5', borderColor: 'rgba(0, 0, 0, 0.1)' }}
                     />
+                    <p className="text-muted text-sm mt-1 mb-0">Format: +1-XXX-XXX-XXXX or (XXX) XXX-XXXX</p>
                   </div>
                 </>
               )}
@@ -237,8 +271,14 @@ export function LoginPage({ initialMode = "login", initialUserType = "rider", on
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
+                  minLength={8}
                   style={{ backgroundColor: '#f3f3f5', borderColor: 'rgba(0, 0, 0, 0.1)' }}
                 />
+                {isSignUp && (
+                  <p className="text-muted text-sm mt-1 mb-0">
+                    Must be at least 8 characters with uppercase, lowercase, and number
+                  </p>
+                )}
               </div>
 
               {/* Address fields - for all users */}
@@ -262,37 +302,49 @@ export function LoginPage({ initialMode = "login", initialUserType = "rider", on
                       <p className="text-muted text-sm mt-1 mb-0">Your home or primary location address</p>
                     </div>
 
-                    {/* Latitude/Longitude - Bootstrap Grid */}
+                    {/* City/Province/Postal Code - Bootstrap Grid */}
                     <div className="row g-3 mb-3">
-                      <div className="col-6">
-                        <label htmlFor="latitude" className="form-label">Latitude (Optional)</label>
+                      <div className="col-4">
+                        <label htmlFor="city" className="form-label">City</label>
                         <input
-                          id="latitude"
-                          type="number"
-                          step="any"
+                          id="city"
+                          type="text"
                           className="form-control"
-                          placeholder="e.g., 51.0447"
-                          value={latitude}
-                          onChange={(e) => setLatitude(e.target.value)}
+                          placeholder="e.g., Calgary"
+                          value={city}
+                          onChange={(e) => setCity(e.target.value)}
                           style={{ backgroundColor: '#f3f3f5', borderColor: 'rgba(0, 0, 0, 0.1)' }}
                         />
                       </div>
-                      <div className="col-6">
-                        <label htmlFor="longitude" className="form-label">Longitude (Optional)</label>
+                      <div className="col-4">
+                        <label htmlFor="province" className="form-label">Province</label>
                         <input
-                          id="longitude"
-                          type="number"
-                          step="any"
+                          id="province"
+                          type="text"
                           className="form-control"
-                          placeholder="e.g., -114.0719"
-                          value={longitude}
-                          onChange={(e) => setLongitude(e.target.value)}
+                          placeholder="e.g., AB"
+                          value={province}
+                          onChange={(e) => setProvince(e.target.value)}
                           style={{ backgroundColor: '#f3f3f5', borderColor: 'rgba(0, 0, 0, 0.1)' }}
                         />
+                      </div>
+                      <div className="col-4">
+                        <label htmlFor="postalCode" className="form-label">Postal Code</label>
+                        <input
+                          id="postalCode"
+                          type="text"
+                          className="form-control"
+                          placeholder="A1A 1A1"
+                          value={postalCode}
+                          onChange={(e) => setPostalCode(e.target.value.toUpperCase())}
+                          maxLength={7}
+                          style={{ backgroundColor: '#f3f3f5', borderColor: 'rgba(0, 0, 0, 0.1)' }}
+                        />
+                        <p className="text-muted text-sm mt-1 mb-0" style={{ fontSize: '0.75rem' }}>Format: A1A 1A1</p>
                       </div>
                     </div>
               <p className="text-muted-foreground text-sm">
-                Optional coordinates. You can find them using Google Maps or leave blank.
+                Optional location details for better ride matching.
               </p>
                   </div>
                 </>

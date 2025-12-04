@@ -3,7 +3,7 @@ import { Avatar, AvatarFallback } from "../../../components/ui/avatar";
 import { Badge } from "../../../components/ui/badge";
 import { Button } from "../../../components/ui/button";
 import { Car, FileText, Eye, UserCheck } from "lucide-react";
-import type { AdminPendingDriverView } from "../pages/AdminPage";
+import type { AdminPendingDriverView } from "../../../types/index";
 
 interface Props { pendingDrivers: AdminPendingDriverView[]; onDriverClick: (driver: AdminPendingDriverView) => void;}
 

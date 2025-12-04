@@ -3,6 +3,7 @@ import {
   getUsers,
   getUserById,
   updateUser,
+  updatePassword,
   deleteUser,
   getUserRides,
   suspendUser,
@@ -23,6 +24,9 @@ router.get('/:id', getUserById);
 
 // PUT /api/users/:id - Update user
 router.put('/:id', updateUser);
+
+// PUT /api/users/:id/password - Update user password
+router.put('/:id/password', updatePassword);
 
 // DELETE /api/users/:id - Delete user
 router.delete('/:id', deleteUser);

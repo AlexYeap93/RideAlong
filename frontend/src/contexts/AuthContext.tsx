@@ -6,6 +6,11 @@ interface User {
   email: string;
   name: string;
   role: 'user' | 'driver' | 'admin';
+  phone?: string;
+  address?: string;
+  city?: string;
+  province?: string;
+  postalCode?: string;
   driverInfo?: any;
 }
 
@@ -21,8 +26,9 @@ interface AuthContextType {
     phone: string;
     userType: 'rider' | 'driver';
     address?: string;
-    latitude?: number;
-    longitude?: number;
+    city?: string;
+    province?: string;
+    postalCode?: string;
     licenseNumber?: string;
     insuranceProof?: string;
     carPhoto?: string;
@@ -30,6 +36,7 @@ interface AuthContextType {
   }) => Promise<void>;
   logout: () => Promise<void>;
   refreshUser: () => Promise<void>;
+  updateUser: (partial: Partial<User>) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -59,12 +66,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           try {
             const response = await authAPI.getCurrentUser();
             if (response.data.user) {
+              const userData: any = response.data.user;
               setUser({
-                id: response.data.user.id,
-                email: response.data.user.email,
-                name: response.data.user.name,
-                role: response.data.user.role as 'user' | 'driver' | 'admin',
-                driverInfo: response.data.user.driverInfo,
+                id: userData.id,
+                email: userData.email,
+                name: userData.name,
+                role: userData.role as 'user' | 'driver' | 'admin',
+                phone: userData.phone,
+                address: userData.address,
+                city: userData.city,
+                province: userData.province,
+                postalCode: userData.postal_code,
+                driverInfo: userData.driverInfo,
               });
             }
           } catch (error) {
@@ -92,12 +105,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       const response = await authAPI.login(email, password);
       if (response.data.user) {
+        const userData: any = response.data.user;
         setUser({
-          id: response.data.user.id,
-          email: response.data.user.email,
-          name: response.data.user.name,
-          role: response.data.user.role as 'user' | 'driver' | 'admin',
-          driverInfo: response.data.user.driverInfo,
+          id: userData.id,
+          email: userData.email,
+          name: userData.name,
+          role: userData.role as 'user' | 'driver' | 'admin',
+          phone: userData.phone,
+          address: userData.address,
+          city: userData.city,
+          province: userData.province,
+          postalCode: userData.postal_code,
+          driverInfo: userData.driverInfo,
         });
       }
     } catch (error: any) {
@@ -112,8 +131,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     phone: string;
     userType: 'rider' | 'driver';
     address?: string;
-    latitude?: number;
-    longitude?: number;
+    city?: string;
+    province?: string;
+    postalCode?: string;
     licenseNumber?: string;
     insuranceProof?: string;
     carPhoto?: string;
@@ -122,11 +142,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       const response = await authAPI.register(data);
       if (response.data.user) {
+        const userData: any = response.data.user;
         setUser({
-          id: response.data.user.id,
-          email: response.data.user.email,
-          name: response.data.user.name,
-          role: response.data.user.role as 'user' | 'driver' | 'admin',
+          id: userData.id,
+          email: userData.email,
+          name: userData.name,
+          role: userData.role as 'user' | 'driver' | 'admin',
+          phone: userData.phone,
+          address: userData.address,
+          city: userData.city,
+          province: userData.province,
+          postalCode: userData.postal_code,
+          driverInfo: userData.driverInfo,
         });
       }
     } catch (error: any) {
@@ -149,17 +176,26 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       const response = await authAPI.getCurrentUser();
       if (response.data.user) {
+        const userData: any = response.data.user;
         setUser({
-          id: response.data.user.id,
-          email: response.data.user.email,
-          name: response.data.user.name,
-          role: response.data.user.role as 'user' | 'driver' | 'admin',
-          driverInfo: response.data.user.driverInfo,
+          id: userData.id,
+          email: userData.email,
+          name: userData.name,
+          phone: userData.phone,
+          address: userData.address,
+          city: userData.city,
+          province: userData.province,
+          postalCode: userData.postal_code,
+          role: userData.role as 'user' | 'driver' | 'admin',
+          driverInfo: userData.driverInfo,
         });
       }
     } catch (error) {
       console.error('Error refreshing user:', error);
     }
+  };
+  const updateUser = (partial: any) => {
+    setUser((prev: any) => ({ ...prev, ...partial }));
   };
 
   return (
@@ -172,6 +208,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         register,
         logout,
         refreshUser,
+        updateUser
       }}
     >
       {children}

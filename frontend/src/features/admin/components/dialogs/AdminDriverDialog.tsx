@@ -3,7 +3,7 @@ import { Button } from "../../../../components/ui/button";
 import { Avatar, AvatarFallback } from "../../../../components/ui/avatar";
 import { Badge } from "../../../../components/ui/badge";
 import { Car, CheckCircle2, FileText, XCircle } from "lucide-react";
-import type { AdminPendingDriverView } from "../../pages/AdminPage";
+import type { AdminPendingDriverView } from "../../../../types/index";
 
 interface Props { open: boolean; driver: AdminPendingDriverView | null; onOpenChange: (o: boolean) => void; onApprove: (d: AdminPendingDriverView) => void; onReject: (d: AdminPendingDriverView) => void;}
 

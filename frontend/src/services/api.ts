@@ -1,6 +1,6 @@
 
 import { API_BASE_URL } from '../types/const';
-import { User,APIUser } from '../types/api_interfaces';
+import { User, APIUser } from '../types/api_interfaces';
 
 
 // Helper function to get auth token
@@ -71,11 +71,14 @@ export const authAPI = {
     if (data.address) {
       formData.address = data.address.trim();
     }
-    if (data.latitude !== undefined) {
-      formData.latitude = data.latitude;
+    if (data.city !== undefined) {
+      formData.city = data.city;
     }
-    if (data.longitude !== undefined) {
-      formData.longitude = data.longitude;
+    if (data.province !== undefined) {
+      formData.province = data.province;
+    }
+    if (data.postalCode !== undefined) {
+      formData.postalCode = data.postalCode;
     }
 
     if (data.userType === 'driver') {
@@ -159,7 +162,7 @@ export const usersAPI = {
     return apiRequest<{ status: string; data: any }>(`/users/${id}`);
   },
 
-  updateUser: async (id: string, data: { name?: string; email?: string; phone?: string; address?: string; latitude?: number; longitude?: number }) => {
+  updateUser: async (id: string, data: { name?: string; email?: string; phone?: string; address?: string; city?: string; province?: string; postalCode?: string }) => {
     return apiRequest<{ status: string; data: any }>(`/users/${id}`, {
       method: 'PUT',
       body: JSON.stringify(data),
@@ -179,6 +182,13 @@ export const usersAPI = {
   unsuspendUser: async (userId: string) => {
     return apiRequest<{ status: string; message: string; data: any }>(`/users/${userId}/unsuspend`, {
       method: 'POST',
+    });
+  },
+
+  updatePassword: async (userId: string, data: { oldPassword: string; newPassword: string }) => {
+    return apiRequest<{ status: string; message: string }>(`/users/${userId}/password`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
     });
   },
 };
@@ -305,8 +315,9 @@ export const bookingsAPI = {
     numberOfSeats: number;
     seatNumber?: number;
     pickupLocation?: string;
-    pickupLatitude?: number | null;
-    pickupLongitude?: number | null;
+    pickupCity?: string;
+    pickupProvince?: string;
+    pickupPostalCode?: string;
   }) => {
     return apiRequest<{ status: string; data: any }>('/bookings', {
       method: 'POST',
@@ -452,7 +463,7 @@ export const transformRideData = (ride: any) => {
   // Format time - backend returns TIME type as "HH:MM:SS" or "HH:MM:SS.mmm"
   const timeStr = ride.ride_time || ride.time || '12:00:00';
   let time = timeStr;
-  
+
   // Convert 24-hour format to 12-hour format if needed
   if (timeStr.includes(':') && !timeStr.includes('AM') && !timeStr.includes('PM')) {
     const [hours, minutes] = timeStr.split(':').map(Number);
@@ -463,8 +474,8 @@ export const transformRideData = (ride: any) => {
 
   // Use rating from backend - this is the average rating given by riders to the driver
   // Parse as float and ensure it's a valid number
-  const rating = ride.average_rating != null && ride.average_rating !== undefined 
-    ? parseFloat(ride.average_rating) 
+  const rating = ride.average_rating != null && ride.average_rating !== undefined
+    ? parseFloat(ride.average_rating)
     : 0;
 
   // Get driver address from backend (this is the address they entered in settings)
@@ -491,31 +502,31 @@ export const transformRideData = (ride: any) => {
   };
 };
 
-  // Ratings API
-  export const ratingsAPI = {
-    createRating: async (data: {
-      bookingId: string;
-      rating: number;
-      comment?: string;
-    }) => {
-      return apiRequest<{ status: string; message: string; data: any }>('/ratings', {
-        method: 'POST',
-        body: JSON.stringify(data),
-      });
-    },
+// Ratings API
+export const ratingsAPI = {
+  createRating: async (data: {
+    bookingId: string;
+    rating: number;
+    comment?: string;
+  }) => {
+    return apiRequest<{ status: string; message: string; data: any }>('/ratings', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  },
 
-    getDriverRatings: async (driverId: string) => {
-      return apiRequest<{ status: string; data: { ratings: any[]; averageRating: number; totalRatings: number } }>(`/ratings/driver/${driverId}`);
-    },
+  getDriverRatings: async (driverId: string) => {
+    return apiRequest<{ status: string; data: { ratings: any[]; averageRating: number; totalRatings: number } }>(`/ratings/driver/${driverId}`);
+  },
 
-    getRatingByBooking: async (bookingId: string) => {
-      return apiRequest<{ status: string; data: any }>(`/ratings/booking/${bookingId}`);
-    },
-  };
+  getRatingByBooking: async (bookingId: string) => {
+    return apiRequest<{ status: string; data: any }>(`/ratings/booking/${bookingId}`);
+  },
+};
 
 
-  // Issues API
-  export const issuesAPI = {
+// Issues API
+export const issuesAPI = {
   createIssue: async (data: {
     bookingId?: string;
     issueType: string;
