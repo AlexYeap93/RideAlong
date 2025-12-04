@@ -4,7 +4,7 @@ import { DestinationList } from "./DestinationList";
 import { TimeSlotSelection } from "./TimeSlotSelection";
 import { RideCard } from "../features/ride/components/RideCard";
 import { SeatSelection } from "./SeatSelection";
-import { PaymentPage } from "./PaymentPage";
+import { PaymentPage } from "../features/payments/pages/PaymentPage";
 import { BookingConfirmation } from "../features/ride/components/BookingConfirmation";
 import { Button } from "./ui/button";
 import { toast } from "sonner";
@@ -292,7 +292,10 @@ export function HomePage({ onNavigateToUsers, onBookingCreated, autoSelectDestin
 
   const handlePaymentConfirm = async (
     paymentMethod: string,
-    pickupAddress: string
+    pickupAddress: string,
+    pickupCity: string,
+    pickupProvince: string,
+    pickupPostalCode: string
   ) => {
     if (!user || !selectedDriver || !selectedSeat) {
       toast.error("Missing information", {
@@ -301,20 +304,21 @@ export function HomePage({ onNavigateToUsers, onBookingCreated, autoSelectDestin
       return;
     }
 
-    if (!pickupAddress.trim()) {
-      toast.error("Pickup address is required", {
-        description: "Please enter your pickup address.",
+    if (!pickupAddress.trim() || !pickupCity.trim() || !pickupProvince.trim() || !pickupPostalCode.trim()) {
+      toast.error("Complete pickup address is required", {
+        description: "Please enter all address fields.",
       });
       return;
     }
 
     try {
-      // Create booking with pickup address
+      // Create booking with complete pickup address
+      const fullPickupAddress = `${pickupAddress}, ${pickupCity}, ${pickupProvince} ${pickupPostalCode}`;
       const bookingResponse = await bookingsAPI.createBooking({
         rideId: selectedDriver.rideId || selectedDriver.id,
         numberOfSeats: 1,
         seatNumber: selectedSeat,
-        pickupLocation: pickupAddress,
+        pickupLocation: fullPickupAddress,
       });
 
       const booking = bookingResponse.data;

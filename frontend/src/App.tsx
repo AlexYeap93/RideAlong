@@ -7,7 +7,7 @@ import { ProfilePage } from "./components/ProfilePage";
 import { AdminPage } from "./features/admin/pages/AdminPage";
 import { LoginPage } from "./components/LoginPage";
 import { RideHistory } from "./features/ride/components/RideHistory";
-import { PaymentMethods } from "./components/PaymentMethods";
+import { PaymentMethods } from "./features/payments/pages/PaymentMethods";
 import { SettingsPage } from "./features/settings/pages/SettingsPage";
 import { BottomNavigation } from "./components/BottomNavigation";
 import { Toaster } from "./components/ui/sonner";

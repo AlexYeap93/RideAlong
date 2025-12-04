@@ -147,7 +147,7 @@ export const createBooking = async (req: Request,res: Response,next: NextFunctio
     const { seatNumber, pickupLocation, pickupCity, pickupProvince, pickupPostalCode } = req.body;
     
     const result = await query(
-      `INSERT INTO bookings (user_id, ride_id, number_of_seats, seat_number, pickup_location, pickup_city, pickup_province, pickup_postal_code, status) 
+      `INSERT INTO bookings (user_id, ride_id, number_of_seats, seat_number, pickup_address, pickup_city, pickup_province, pickup_postal_code, status) 
        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) 
        RETURNING *`,
       [
@@ -203,7 +203,7 @@ export const updateBooking = async (req: Request,res: Response,next: NextFunctio
        SET number_of_seats = COALESCE($1, number_of_seats),
            status = COALESCE($2, status),
            pickup_time = COALESCE($3, pickup_time),
-           pickup_location = COALESCE($4, pickup_location),
+           pickup_address = COALESCE($4, pickup_address),
            updated_at = NOW()
        WHERE id = $5 
        RETURNING *`,
@@ -279,7 +279,7 @@ export const updatePickupTimes = async (req: Request,res: Response,next: NextFun
       const result = await query(
         `UPDATE bookings 
          SET pickup_time = $1,
-             pickup_location = COALESCE($2, pickup_location),
+             pickup_address = COALESCE($2, pickup_address),
              updated_at = NOW()
          WHERE id = $3 AND ride_id = $4
          RETURNING *`,

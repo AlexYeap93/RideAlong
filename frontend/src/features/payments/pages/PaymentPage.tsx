@@ -1,15 +1,16 @@
 import { useState, useEffect } from "react";
-import { Card } from "./ui/card";
-import { Button } from "./ui/button";
-import { Input } from "./ui/input";
-import { Label } from "./ui/label";
-import { Avatar, AvatarFallback } from "./ui/avatar";
-import { Badge } from "./ui/badge";
-import { RadioGroup, RadioGroupItem } from "./ui/radio-group";
-import { Checkbox } from "./ui/checkbox";
+import { Card } from "../../../components/ui/card";
+import { Button } from "../../../components/ui/button";
+import { Input } from "../../../components/ui/input";
+import { Label } from "../../../components/ui/label";
+import { Avatar, AvatarFallback } from "../../../components/ui/avatar";
+import { Badge } from "../../../components/ui/badge";
+import { RadioGroup, RadioGroupItem } from "../../../components/ui/radio-group";
+import { Checkbox } from "../../../components/ui/checkbox";
 import { CreditCard, ArrowLeft, MapPin, Clock, User, Calendar, CheckCircle2, AlertCircle } from "lucide-react";
-import { paymentMethodsAPI } from "../services/api";
+import { paymentMethodsAPI } from "../../../services/api";
 import { toast } from "sonner";
+import { useAuth } from "../../../contexts/AuthContext";
 
 interface PaymentPageProps {
   bookingDetails: {
@@ -26,10 +27,11 @@ interface PaymentPageProps {
     rideId?: string;
   };
   onBack: () => void;
-  onConfirm: (paymentMethod: string, pickupAddress: string) => void;
+  onConfirm: (paymentMethod: string, pickupAddress: string, pickupCity: string, pickupProvince: string, pickupPostalCode: string) => void;
 }
 
 export function PaymentPage({ bookingDetails, onBack, onConfirm }: PaymentPageProps) {
+  const { user } = useAuth();
   const [paymentSource, setPaymentSource] = useState<"saved" | "manual">("saved");
   const [selectedSavedMethod, setSelectedSavedMethod] = useState<string>("");
   const [savedPaymentMethods, setSavedPaymentMethods] = useState<any[]>([]);
@@ -40,28 +42,39 @@ export function PaymentPage({ bookingDetails, onBack, onConfirm }: PaymentPagePr
   const [cardName, setCardName] = useState("");
   const [savePaymentMethod, setSavePaymentMethod] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
-  
-  // Address fields
+
+  const [addressSource, setAddressSource] = useState<"saved" | "manual">("saved");
   const [pickupAddress, setPickupAddress] = useState("");
+  const [pickupCity, setPickupCity] = useState("");
+  const [pickupProvince, setPickupProvince] = useState("");
+  const [pickupPostalCode, setPickupPostalCode] = useState("");
+
+  // Load saved address on mount
+  useEffect(() => {
+    if (user?.address && user?.city && user?.province && user?.postalCode) {
+      setAddressSource("saved");
+      setPickupAddress(user.address);
+      setPickupCity(user.city);
+      setPickupProvince(user.province);
+      setPickupPostalCode(user.postalCode);
+    } else
+      setAddressSource("manual");
+  }, [user]);
 
   useEffect(() => {
     const fetchPaymentMethods = async () => {
       try {
         const response = await paymentMethodsAPI.getPaymentMethods();
         setSavedPaymentMethods(response.data || []);
-        // Auto-select default payment method if available
         const defaultMethod = response.data?.find((m: any) => m.is_default);
-        if (defaultMethod) {
+        if (defaultMethod)
           setSelectedSavedMethod(defaultMethod.id);
-        } else if (response.data?.length > 0) {
+        else if (response.data?.length > 0) 
           setSelectedSavedMethod(response.data[0].id);
-        } else {
-          // No saved methods, switch to manual entry
+        else 
           setPaymentSource("manual");
-        }
       } catch (error: any) {
         console.error("Failed to fetch payment methods:", error);
-        // If no saved methods, default to manual entry
         setPaymentSource("manual");
       } finally {
         setIsLoadingMethods(false);
@@ -71,53 +84,42 @@ export function PaymentPage({ bookingDetails, onBack, onConfirm }: PaymentPagePr
     fetchPaymentMethods();
   }, []);
 
-  // Formats the card number to be displayed in the UI
   const formatCardNumber = (value: string) => {
     const v = value.replace(/\s+/g, "").replace(/[^0-9]/gi, "");
     const matches = v.match(/\d{4,16}/g);
     const match = (matches && matches[0]) || "";
     const parts = [];
 
-    for (let i = 0, len = match.length; i < len; i += 4) {
+    for (let i = 0, len = match.length; i < len; i += 4)
       parts.push(match.substring(i, i + 4));
-    }
 
-    if (parts.length) {
+    if (parts.length) 
       return parts.join(" ");
-    } else {
+    else 
       return value;
-    }
   };
 
   const formatExpiryDate = (value: string) => {
     const v = value.replace(/\s+/g, "").replace(/[^0-9]/gi, "");
-    if (v.length >= 2) {
+    if (v.length >= 2)
       return v.slice(0, 2) + "/" + v.slice(2, 4);
-    }
     return v;
   };
-// Formats the card number to be displayed in the UI
   const handleCardNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const formatted = formatCardNumber(e.target.value);
-    if (formatted.replace(/\s/g, "").length <= 16) {
+    if (formatted.replace(/\s/g, "").length <= 16)
       setCardNumber(formatted);
-    }
   };
-// Formats the expiry date to be displayed in the UI
   const handleExpiryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const formatted = formatExpiryDate(e.target.value);
-    if (formatted.length <= 5) {
+    if (formatted.length <= 5) 
       setExpiryDate(formatted);
-    }
   };
-// Formats the CVV to be displayed in the UI
   const handleCvvChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value.replace(/[^0-9]/gi, "");
-    if (value.length <= 3) {
+    if (value.length <= 3)
       setCvv(value);
-    }
   };
-// Handles the payment process
   const handlePayment = async () => {
     setIsProcessing(true);
     try {
@@ -125,11 +127,9 @@ export function PaymentPage({ bookingDetails, onBack, onConfirm }: PaymentPagePr
 
       if (paymentSource === "saved" && selectedSavedMethod) {
         const selectedMethod = savedPaymentMethods.find(m => m.id === selectedSavedMethod);
-        if (selectedMethod) {
+        if (selectedMethod)
           paymentMethodString = `${selectedMethod.brand || 'Card'} •••• ${selectedMethod.last4}`;
-        }
       } else {
-        // Manual entry
         if (!isFormValid()) {
           toast.error("Please fill in all card details");
           setIsProcessing(false);
@@ -138,39 +138,43 @@ export function PaymentPage({ bookingDetails, onBack, onConfirm }: PaymentPagePr
 
         paymentMethodString = `Card •••• ${cardNumber.slice(-4)}`;
 
-        // Save payment method if user opted to save
         if (savePaymentMethod) {
           try {
             const cardNumberClean = cardNumber.replace(/\s/g, "");
             const [expMonth, expYear] = expiryDate.split("/");
-            
+
             await paymentMethodsAPI.createPaymentMethod({
               type: "credit",
               brand: "Card",
               last4: cardNumberClean.slice(-4),
               expiryMonth: parseInt(expMonth),
-              expiryYear: 2000 + parseInt(expYear), // Convert YY to YYYY
+              expiryYear: 2000 + parseInt(expYear), 
               cardholderName: cardName,
-              isDefault: savedPaymentMethods.length === 0, // Set as default if first card
+              isDefault: savedPaymentMethods.length === 0,
             });
           } catch (error: any) {
             console.error("Failed to save payment method:", error);
-            // Continue with payment even if saving fails
           }
         }
       }
 
-      // Validate address is entered
-      if (!pickupAddress.trim()) {
-        toast.error("Please enter your pickup address to proceed");
+      if (!pickupAddress.trim() || !pickupCity.trim() || !pickupProvince.trim() || !pickupPostalCode.trim()) {
+        toast.error("Please enter your complete pickup address to proceed");
         setIsProcessing(false);
         return;
       }
 
-      // Simulate payment processing
+      // Validate postal code format
+      const postalRegex = /^[A-Za-z]\d[A-Za-z][ -]?\d[A-Za-z]\d$/;
+      if (!postalRegex.test(pickupPostalCode.trim())) {
+        toast.error("Invalid postal code format. Use format: A1A 1A1");
+        setIsProcessing(false);
+        return;
+      }
+
       setTimeout(() => {
         setIsProcessing(false);
-        onConfirm(paymentMethodString, pickupAddress.trim());
+        onConfirm(paymentMethodString, pickupAddress.trim(), pickupCity.trim(), pickupProvince.trim(), pickupPostalCode.trim());
       }, 1500);
     } catch (error: any) {
       setIsProcessing(false);
@@ -180,13 +184,19 @@ export function PaymentPage({ bookingDetails, onBack, onConfirm }: PaymentPagePr
     }
   };
 
-  // Validates the form for user inputs 
+  //validate
   const isFormValid = () => {
-    // Address is required
-    if (!pickupAddress.trim()) {
+    // Address is required - all fields must be filled
+    if (!pickupAddress.trim() || !pickupCity.trim() || !pickupProvince.trim() || !pickupPostalCode.trim()) {
       return false;
     }
-    
+
+    // Validate postal code format
+    const postalRegex = /^[A-Za-z]\d[A-Za-z][ -]?\d[A-Za-z]\d$/;
+    if (!postalRegex.test(pickupPostalCode.trim())) {
+      return false;
+    }
+
     // Payment method validation
     if (paymentSource === "saved") {
       return selectedSavedMethod !== "";
@@ -222,30 +232,76 @@ export function PaymentPage({ bookingDetails, onBack, onConfirm }: PaymentPagePr
             <h2 className="font-medium">Pickup Address <span className="text-red-500">*</span></h2>
           </div>
           <p className="text-sm text-muted-foreground mb-4">
-            Enter your pickup location address. This will be your pickup location for the ride.
+            Enter your pickup location. This will be your pickup point for the ride.
           </p>
-          
+
+          {/* Address Source Selection */}
+          {user?.address && user?.city && user?.province && user?.postalCode && (
+            <RadioGroup value={addressSource} onValueChange={(value: string) => {
+              setAddressSource(value as "saved" | "manual");
+              if (value === "saved" && user) {
+                setPickupAddress(user.address || "");
+                setPickupCity(user.city || "");
+                setPickupProvince(user.province || "");
+                setPickupPostalCode(user.postalCode || "");
+              } else if (value === "manual") {
+                setPickupAddress("");
+                setPickupCity("");
+                setPickupProvince("");
+                setPickupPostalCode("");
+              }
+            }} className="mb-4">
+              <div className="space-y-3">
+                <div className="flex items-center space-x-3 p-3 border rounded-lg cursor-pointer hover:bg-accent">
+                  <RadioGroupItem value="saved" id="savedAddress" />
+                  <Label htmlFor="savedAddress" className="cursor-pointer flex-1">
+                    <div>
+                      <p className="font-medium">Use Saved Address</p>
+                      <p className="text-sm text-muted-foreground">
+                        {user.address}, {user.city}, {user.province} {user.postalCode}
+                      </p>
+                    </div>
+                  </Label>
+                </div>
+                <div className="flex items-center space-x-3 p-3 border rounded-lg cursor-pointer hover:bg-accent">
+                  <RadioGroupItem value="manual" id="manualAddress" />
+                  <Label htmlFor="manualAddress" className="cursor-pointer flex-1">
+                    <p className="font-medium">Enter Different Address</p>
+                  </Label>
+                </div>
+              </div>
+            </RadioGroup>
+          )}
+
+          {/* Address Input Fields */}
           <div className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="pickupAddress">Address</Label>
-              <Input
-                id="pickupAddress"
-                type="text"
-                placeholder="e.g., 123 Main St, Calgary, AB"
-                value={pickupAddress}
-                onChange={(e) => setPickupAddress(e.target.value)}
-                required
-                className="bg-input-background"
-              />
-              <p className="text-xs text-muted-foreground">
-                This address will be used as your pickup location
-              </p>
+              <Label htmlFor="pickupAddress">Street Address</Label>
+              <Input id="pickupAddress" type="text" placeholder="e.g., 123 Main St" value={pickupAddress} onChange={(e) => setPickupAddress(e.target.value)} required disabled={addressSource === "saved"} className="bg-input-background" />
             </div>
 
-            {!pickupAddress.trim() && (
+            <div className="grid grid-cols-3 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="pickupCity">City</Label>
+                <Input id="pickupCity" type="text" placeholder="Calgary" value={pickupCity} onChange={(e) => setPickupCity(e.target.value)} required disabled={addressSource === "saved"} className="bg-input-background"/>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="pickupProvince">Province</Label>
+                <Input id="pickupProvince" type="text" placeholder="AB" value={pickupProvince} onChange={(e) => setPickupProvince(e.target.value)} required disabled={addressSource === "saved"} className="bg-input-background"/>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="pickupPostalCode">Postal Code</Label>
+                <Input id="pickupPostalCode" type="text" placeholder="A1A 1A1" value={pickupPostalCode} onChange={(e) => setPickupPostalCode(e.target.value.toUpperCase())} required maxLength={7} disabled={addressSource === "saved"} className="bg-input-background"/>
+                <p className="text-xs text-muted-foreground">Format: A1A 1A1</p>
+              </div>
+            </div>
+
+            {(!pickupAddress.trim() || !pickupCity.trim() || !pickupProvince.trim() || !pickupPostalCode.trim()) && (
               <div className="flex items-center gap-2 text-sm text-red-600 p-2 bg-red-50 border border-red-200 rounded">
                 <AlertCircle className="w-4 h-4" />
-                <span>Address is required to proceed with booking</span>
+                <span>All address fields are required to proceed with booking</span>
               </div>
             )}
           </div>
@@ -254,7 +310,7 @@ export function PaymentPage({ bookingDetails, onBack, onConfirm }: PaymentPagePr
         {/* Booking Summary */}
         <Card className="p-4">
           <h2 className="font-medium mb-4">Booking Summary</h2>
-          
+
           {/* Driver Info */}
           <div className="flex items-center gap-3 mb-4 pb-4 border-b">
             <Avatar className="w-12 h-12">
@@ -279,10 +335,14 @@ export function PaymentPage({ bookingDetails, onBack, onConfirm }: PaymentPagePr
               <MapPin className="w-4 h-4 text-muted-foreground mt-0.5" />
               <div className="flex-1">
                 <p className="text-sm text-muted-foreground">Pickup Location</p>
-                <p className="font-medium">{pickupAddress || "Not set"}</p>
+                <p className="font-medium">
+                  {pickupAddress && pickupCity && pickupProvince && pickupPostalCode
+                    ? `${pickupAddress}, ${pickupCity}, ${pickupProvince} ${pickupPostalCode}`
+                    : "Not set"}
+                </p>
               </div>
             </div>
-            
+
             <div className="flex items-start gap-3">
               <MapPin className="w-4 h-4 text-primary mt-0.5" />
               <div className="flex-1">
@@ -320,7 +380,7 @@ export function PaymentPage({ bookingDetails, onBack, onConfirm }: PaymentPagePr
         {/* Payment Method */}
         <Card className="p-4">
           <h2 className="font-medium mb-4">Payment Method</h2>
-          
+
           <RadioGroup value={paymentSource} onValueChange={(value: string) => setPaymentSource(value as "saved" | "manual")}>
             <div className="space-y-3 mb-4">
               <div className="flex items-center space-x-3 p-3 border rounded-lg cursor-pointer hover:bg-accent">
@@ -357,10 +417,7 @@ export function PaymentPage({ bookingDetails, onBack, onConfirm }: PaymentPagePr
                 <RadioGroup value={selectedSavedMethod} onValueChange={setSelectedSavedMethod}>
                   <div className="space-y-2">
                     {savedPaymentMethods.map((method) => (
-                      <div
-                        key={method.id}
-                        className="flex items-center space-x-3 p-3 border rounded-lg cursor-pointer hover:bg-accent"
-                      >
+                      <div key={method.id} className="flex items-center space-x-3 p-3 border rounded-lg cursor-pointer hover:bg-accent">
                         <RadioGroupItem value={method.id} id={`saved-${method.id}`} />
                         <Label htmlFor={`saved-${method.id}`} className="flex items-center gap-2 cursor-pointer flex-1">
                           <CreditCard className="w-4 h-4" />
@@ -369,13 +426,9 @@ export function PaymentPage({ bookingDetails, onBack, onConfirm }: PaymentPagePr
                               <span className="font-medium">
                                 {method.brand || 'Card'} •••• {method.last4}
                               </span>
-                              {method.is_default && (
-                                <Badge variant="secondary" className="text-xs">Default</Badge>
-                              )}
+                              {method.is_default && (<Badge variant="secondary" className="text-xs">Default</Badge> )}
                             </div>
-                            {method.cardholder_name && (
-                              <p className="text-xs text-muted-foreground">{method.cardholder_name}</p>
-                            )}
+                            {method.cardholder_name && (<p className="text-xs text-muted-foreground">{method.cardholder_name}</p>)}
                             {method.expiry_month && method.expiry_year && (
                               <p className="text-xs text-muted-foreground">
                                 Expires {String(method.expiry_month).padStart(2, '0')}/{String(method.expiry_year).slice(-2)}
@@ -391,61 +444,31 @@ export function PaymentPage({ bookingDetails, onBack, onConfirm }: PaymentPagePr
             </div>
           )}
 
-          {/* Manual Card Details Form */}
           {paymentSource === "manual" && (
             <div className="mt-4 space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="cardNumber">Card Number</Label>
-                <Input
-                  id="cardNumber"
-                  placeholder="1234 5678 9012 3456"
-                  value={cardNumber}
-                  onChange={handleCardNumberChange}
-                  maxLength={19}
-                />
+                <Input id="cardNumber" placeholder="1234 5678 9012 3456" value={cardNumber} onChange={handleCardNumberChange} maxLength={19}/>
               </div>
 
               <div className="space-y-2">
                 <Label htmlFor="cardName">Cardholder Name</Label>
-                <Input
-                  id="cardName"
-                  placeholder="John Doe"
-                  value={cardName}
-                  onChange={(e) => setCardName(e.target.value)}
-                />
+                <Input id="cardName" placeholder="John Doe" value={cardName} onChange={(e) => setCardName(e.target.value)}/>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="expiry">Expiry Date</Label>
-                  <Input
-                    id="expiry"
-                    placeholder="MM/YY"
-                    value={expiryDate}
-                    onChange={handleExpiryChange}
-                    maxLength={5}
-                  />
+                  <Input id="expiry" placeholder="MM/YY" value={expiryDate} onChange={handleExpiryChange} maxLength={5}/>
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="cvv">CVV</Label>
-                  <Input
-                    id="cvv"
-                    type="password"
-                    placeholder="123"
-                    value={cvv}
-                    onChange={handleCvvChange}
-                    maxLength={3}
-                  />
+                  <Input id="cvv" type="password" placeholder="123" value={cvv} onChange={handleCvvChange} maxLength={3}/>
                 </div>
               </div>
 
-              {/* Save Payment Method Option */}
-              <div className="flex items-center space-x-2 pt-2">
-                <Checkbox
-                  id="savePayment"
-                  checked={savePaymentMethod}
-                  onCheckedChange={(checked: boolean) => setSavePaymentMethod(checked)}
-                />
+              <div className="flex items-center gap-3 pt-2">
+                <Checkbox id="savePayment" checked={savePaymentMethod} onCheckedChange={(checked: boolean) => setSavePaymentMethod(checked)} className="mr-1"/>
                 <Label htmlFor="savePayment" className="text-sm cursor-pointer">
                   Save this payment method for future use
                 </Label>
@@ -454,10 +477,9 @@ export function PaymentPage({ bookingDetails, onBack, onConfirm }: PaymentPagePr
           )}
         </Card>
 
-        {/* Price Breakdown */}
         <Card className="p-4">
           <h2 className="font-medium mb-4">Price Details</h2>
-          
+
           <div className="space-y-2">
             <div className="flex justify-between text-sm">
               <span className="text-muted-foreground">Ride fare</span>
@@ -477,13 +499,8 @@ export function PaymentPage({ bookingDetails, onBack, onConfirm }: PaymentPagePr
         </Card>
       </div>
 
-      {/* Fixed Payment Button */}
       <div className="fixed bottom-16 left-0 right-0 p-4 bg-white border-t">
-        <Button 
-          className="w-full" 
-          onClick={handlePayment}
-          disabled={!isFormValid() || isProcessing}
-        >
+        <Button className="w-full" onClick={handlePayment} disabled={!isFormValid() || isProcessing}>
           {isProcessing ? (
             <span className="flex items-center gap-2">
               <span className="animate-spin">⏳</span>

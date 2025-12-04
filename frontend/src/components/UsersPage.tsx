@@ -7,7 +7,7 @@ import { Star, MapPin, Clock, HelpCircle, DollarSign, CheckCircle, XCircle } fro
 import { TimeSlotSelection } from "./TimeSlotSelection";
 import { RideCard } from "../features/ride/components/RideCard";
 import { SeatSelection } from "./SeatSelection";
-import { PaymentPage } from "./PaymentPage";
+import { PaymentPage } from "../features/payments/pages/PaymentPage";
 import { BookingConfirmation } from "../features/ride/components/BookingConfirmation";
 import {
   Dialog,
