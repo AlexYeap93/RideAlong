@@ -1,41 +1,12 @@
-import { Home, Users, User, Car, Shield } from "lucide-react";
 import { Button } from "./ui/button";
+import { BottomNavigationProps } from "../serviceInterface";
+import { BASE_NAV_ITEMS, ADMIN_NAV_ITEM } from "../const";
 
-interface BottomNavigationProps {
-  activeTab: string;
-  onTabChange: (tab: string) => void;
-  isAdmin?: boolean;
-}
 // For the Tabs at the bottom of the page
 export function BottomNavigation({ activeTab, onTabChange, isAdmin = false }: BottomNavigationProps) {
-  const baseNavItems = [
-    {
-      id: "home",
-      label: "Home",
-      icon: Home
-    },
-    {
-      id: "drivers",
-      label: "For Drivers",
-      icon: Car
-    },
-    {
-      id: "users",
-      label: "For Riders",
-      icon: Users
-    },
-    {
-      id: "profile",
-      label: "Profile",
-      icon: User
-    }
-  ];
+  const baseNavItems = BASE_NAV_ITEMS;
 
-  const adminNavItem = {
-    id: "admin",
-    label: "Admin",
-    icon: Shield
-  };
+  const adminNavItem = ADMIN_NAV_ITEM;
 
   const navItems = isAdmin ? [...baseNavItems, adminNavItem] : baseNavItems;
 

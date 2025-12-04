@@ -6,27 +6,15 @@ import { Avatar, AvatarFallback } from "./ui/avatar";
 import { MapPin, Clock, ChevronDown, ChevronUp, Star } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 import { toast } from "sonner";
-import { Passenger } from "../types";
+import { ActiveRideCardProps } from "../serviceInterface";
+import { TIME_SLOTS } from "../const";
 
-interface ActiveRideCardProps {
-  rideId: number;
-  destination: string;
-  date: string;
-  time: string;
-  passengers: Passenger[];
-}
 // For Driver tab to display active rides
 export function ActiveRideCard({ rideId: _rideId, destination, date, time, passengers }: ActiveRideCardProps) {
   const [expanded, setExpanded] = useState(false);
   const [rideTime, setRideTime] = useState(time);
   // available time slots for the ride
-  const timeSlots = [
-    "8:00 AM", "8:30 AM", "9:00 AM", "9:30 AM", "10:00 AM",
-    "10:30 AM", "11:00 AM", "11:30 AM", "12:00 PM", "12:30 PM",
-    "1:00 PM", "1:30 PM", "2:00 PM", "2:30 PM", "3:00 PM",
-    "3:30 PM", "4:00 PM", "4:30 PM", "5:00 PM", "5:30 PM",
-    "6:00 PM", "6:30 PM", "7:00 PM", "7:30 PM", "8:00 PM"
-  ];
+  const timeSlots = TIME_SLOTS;
 
   // handles update for ride pickup time for passenger
   const handleTimeChange = (newTime: string) => {

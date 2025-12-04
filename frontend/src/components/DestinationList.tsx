@@ -1,16 +1,10 @@
 import universityImage from './photos/UofC.jpg';
-
-interface DestinationListProps {
-  onDestinationSelect: (destination: string) => void;
-}
+import { DestinationListProps } from "../serviceInterface";
+import { UNIVERSITY_DESTINATION } from "../const";
 
 export function DestinationList({ onDestinationSelect }: DestinationListProps) {
   // Currently only one destination is available for our project
-  const destination = {
-    id: "uofcalgary",
-    name: "University of Calgary",
-    description: "Main Campus"
-  };
+  const destination = UNIVERSITY_DESTINATION;
 
   return (
     <div className="bg-background p-4">
