@@ -271,7 +271,7 @@ export function LoginPage({ initialMode = "login", initialUserType = "rider", on
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
-                  minLength={8}
+                  minLength={isSignUp ? 8 : undefined}
                   style={{ backgroundColor: '#f3f3f5', borderColor: 'rgba(0, 0, 0, 0.1)' }}
                 />
                 {isSignUp && (
