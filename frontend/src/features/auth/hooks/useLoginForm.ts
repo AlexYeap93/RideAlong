@@ -16,8 +16,9 @@ export function useLoginForm(initialMode: "login" | "signup", initialUserType: "
 
   // address
   const [address, setAddress] = useState("");
-  const [latitude, setLatitude] = useState("");
-  const [longitude, setLongitude] = useState("");
+  const [city, setCity] = useState("");
+  const [province, setProvince] = useState("");
+  const [postalCode, setPostalCode] = useState("");
 
   // driver
   const [licenseNumber, setLicenseNumber] = useState("");
@@ -49,8 +50,9 @@ export function useLoginForm(initialMode: "login" | "signup", initialUserType: "
           phone,
           userType,
           address,
-          latitude: latitude ? parseFloat(latitude) : undefined,
-          longitude: longitude ? parseFloat(longitude) : undefined,
+          city: city || undefined,
+          province: province || undefined,
+          postalCode: postalCode || undefined,
           licenseNumber: userType === "driver" ? licenseNumber : undefined,
           insuranceProof: insurance?.name,
           carPhoto: carPhoto?.name,
@@ -80,14 +82,23 @@ export function useLoginForm(initialMode: "login" | "signup", initialUserType: "
     isSignUp,
     userType,
     email, password, name, phone,
-    address, latitude, longitude,
+    // address states (UPDATED)
+    address,
+    city,
+    province,
+    postalCode,
     licenseNumber, driversLicense, insurance, carPhoto, numberOfSeats,
     isLoading,
 
     // setters  
     setIsSignUp, setUserType,
     setEmail, setPassword, setName, setPhone,
-    setAddress, setLatitude, setLongitude,
+    // address setters (UPDATED)
+    setAddress,
+    setCity,
+    setProvince,
+    setPostalCode,
+    
     setLicenseNumber, setDriversLicense, setInsurance, setCarPhoto, setNumberOfSeats,
 
     handleFileChange,
