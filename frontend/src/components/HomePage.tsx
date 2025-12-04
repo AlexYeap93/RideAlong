@@ -1,55 +1,217 @@
-import { useState, useRef } from "react";
-import { LocationHeader } from "../components/LocationHeader";
-import { DestinationList } from "../../shared/ui/DestinationList";
-import { TimeSlotSelection } from "../../ride/components/TimeSlotSelection";
-import { RideCard } from "../../ride/components/RideCard";
-import { SeatSelection } from "../../ride/components/SeatSelection";
-import { PaymentPage } from "../../payments/pages/PaymentPage";
-import { BookingConfirmation } from "../../ride/components/BookingConfirmation";
-import { Button } from "../../../components/ui/button";
+import { useState, useEffect, useRef } from "react";
+import { LocationHeader } from "../features/home/components/LocationHeader";
+import { DestinationList } from "../features/shared/ui/DestinationList";
+import { TimeSlotSelection } from "../features/ride/components/TimeSlotSelection";
+import { RideCard } from "../features/ride/components/RideCard";
+import { SeatSelection } from "../components/SeatSelection";
+import { PaymentPage } from "../features/payments/pages/PaymentPage";
+import { BookingConfirmation } from "../features/ride/components/BookingConfirmation";
+import { Button } from "./ui/button";
 import { toast } from "sonner";
-import {  bookingsAPI, paymentsAPI } from "../../../services/api";
-import { useAuth } from "../../../contexts/AuthContext";
-import { useRides } from "../hooks/useRides"; 
-import { useHomeNavigation } from "../hooks/useHomeNavigation";
-import { HomePageProps } from "../../../types/index";
-  
+import { ridesAPI, bookingsAPI, paymentsAPI, transformRideData } from "../services/api";
+import { useAuth } from "../contexts/AuthContext";
+
+interface HomePageProps {
+  onNavigateToUsers?: () => void;
+  onBookingCreated?: () => void; // Callback when booking is created
+  autoSelectDestination?: string; // Auto-select destination when navigating from Users tab
+}
 
 export function HomePage({ onNavigateToUsers, onBookingCreated, autoSelectDestination }: HomePageProps) {
   const { user } = useAuth();
-  
+  const [selectedDestination, setSelectedDestination] = useState("");
+  const [selectedTimeSlot, setSelectedTimeSlot] = useState("");
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+  const [showTimeSlots, setShowTimeSlots] = useState(false);
+  const [showRides, setShowRides] = useState(false);
+  const [selectedDriver, setSelectedDriver] = useState<any>(null);
   const [showSeatSelection, setShowSeatSelection] = useState(false);
   const [showPayment, setShowPayment] = useState(false);
   const [showConfirmation, setShowConfirmation] = useState(false);
+  const [selectedSeat, setSelectedSeat] = useState<number | null>(null);
   const [bookingId, setBookingId] = useState("");
-
-  const { rides, isLoading, fetchRidesForTimeSlot } = useRides(selectedDate);
+  const [rides, setRides] = useState<any[]>([]);
+  const [isLoadingRides, setIsLoadingRides] = useState(false);
   const isUpdatingHashRef = useRef(false);
 
-  const {
-    selectedDestination,
-    setSelectedDestination,
-    selectedTimeSlot,
-    setSelectedTimeSlot,
-    showTimeSlots,
-    setShowTimeSlots,
-    showRides,
-    setShowRides,
-    selectedDriver,
-    setSelectedDriver,
-    selectedSeat,
-    setSelectedSeat,
-  } = useHomeNavigation({
-    autoSelectDestination,
-    showSeatSelection,
-    showPayment,
-    showConfirmation,
-    setShowSeatSelection,
-    setShowPayment,
-    setShowConfirmation,
-    isUpdatingHashRef
-  });
+  // Helper function to convert 12-hour to 24-hour format
+  const convertTo24Hour = (time12h: string): string => {
+    const [time, modifier] = time12h.split(' ');
+    let [hours, minutes] = time.split(':');
+    if (hours === '12') hours = '00';
+    if (modifier === 'PM') hours = String(parseInt(hours) + 12);
+    return `${hours.padStart(2, '0')}:${(minutes || '00').padStart(2, '0')}:00`;
+  };
+
+  // Helper function to get time difference in minutes
+  const getTimeDifference = (time1: string, time2: string): number => {
+    // Handle both "HH:MM" and "HH:MM:SS" formats
+    const parts1 = time1.split(':').map(Number);
+    const parts2 = time2.split(':').map(Number);
+    const h1 = parts1[0] || 0;
+    const m1 = parts1[1] || 0;
+    const h2 = parts2[0] || 0;
+    const m2 = parts2[1] || 0;
+    return Math.abs((h1 * 60 + m1) - (h2 * 60 + m2));
+  };
+
+  // Helper function to fetch rides for a time slot (defined early for use in useEffect)
+  const fetchRidesForTimeSlot = async (timeSlot: string, destination: string) => {
+    setSelectedTimeSlot(timeSlot);
+    setIsLoadingRides(true);
+    setShowRides(true);
+
+    try {
+      // Convert time slot to 24-hour format for backend
+      const time24 = convertTo24Hour(timeSlot);
+      const dateStr = selectedDate.toISOString().split('T')[0];
+      
+      // Fetch available rides from backend
+      const response = await ridesAPI.getAvailableRides({
+        destination: destination || "University of Calgary",
+        date: dateStr,
+      });
+
+      const transformedRides = response.data.map(transformRideData);
+      
+      // Filter by time slot (approximate match)
+      const filteredRides = transformedRides.filter(ride => {
+        const rawRide = response.data.find((r: any) => r.id === ride.id);
+        if (!rawRide) return false;
+        
+        const backendTime = rawRide.ride_time || rawRide.time || '12:00:00';
+        const backendTimeHM = backendTime.split(':').slice(0, 2).join(':');
+        const selectedTimeHM = time24.split(':').slice(0, 2).join(':');
+        
+        return Math.abs(getTimeDifference(backendTimeHM, selectedTimeHM)) <= 30;
+      });
+
+      setRides(filteredRides);
+    } catch (error: any) {
+      toast.error("Failed to load rides", {
+        description: error.message || "Please try again.",
+      });
+      setRides([]);
+    } finally {
+      setIsLoadingRides(false);
+    }
+  };
+
+  // Auto-show time slots when navigating from Users tab (only one destination available)
+  useEffect(() => {
+    if (autoSelectDestination && !selectedDestination && !showTimeSlots) {
+      setSelectedDestination("University of Calgary");
+      setShowTimeSlots(true);
+      setShowRides(false);
+      isUpdatingHashRef.current = true;
+      window.location.hash = `home/timeslots/${encodeURIComponent("University of Calgary")}`;
+    }
+  }, [autoSelectDestination, selectedDestination, showTimeSlots]);
+
+  // Initialize from URL hash on mount
+  useEffect(() => {
+    const hash = window.location.hash.slice(1);
+    if (hash.startsWith('home/')) {
+      const parts = hash.split('/');
+      if (parts[1] === 'destination') {
+        // Already on destination selection (default state)
+      } else if (parts[1] === 'timeslots') {
+        const dest = decodeURIComponent(parts[2] || "University of Calgary");
+        setSelectedDestination(dest);
+        setShowTimeSlots(true);
+      } else if (parts[1] === 'rides') {
+        const dest = decodeURIComponent(parts[2] || "University of Calgary");
+        const timeSlot = decodeURIComponent(parts[3] || "");
+               setSelectedDestination(dest);
+        setSelectedTimeSlot(timeSlot);
+        setShowTimeSlots(false);
+        setShowRides(true);
+        // Fetch rides if we have the time slot
+        if (timeSlot) {
+          fetchRidesForTimeSlot(timeSlot, dest);
+        }
+      }
+    }
+  }, []);
+
+  // Listen to browser back/forward buttons
+  useEffect(() => {
+    const handleHashChange = () => {
+      if (!isUpdatingHashRef.current) {
+        const hash = window.location.hash.slice(1);
+        if (hash.startsWith('home/')) {
+          const parts = hash.split('/');
+          if (parts[1] === 'destination' || parts.length === 1 || hash === 'home') {
+            // Go back to destination selection
+            setShowTimeSlots(false);
+            setShowRides(false);
+            setShowSeatSelection(false);
+            setShowPayment(false);
+            setShowConfirmation(false);
+            setSelectedDestination("");
+            setSelectedTimeSlot("");
+            setSelectedDriver(null);
+            setSelectedSeat(null);
+          } else if (parts[1] === 'timeslots') {
+            const dest = decodeURIComponent(parts[2] || "University of Calgary");
+            setSelectedDestination(dest);
+            setShowTimeSlots(true);
+            setShowRides(false);
+            setShowSeatSelection(false);
+            setShowPayment(false);
+            setShowConfirmation(false);
+            setSelectedTimeSlot("");
+            setSelectedDriver(null);
+            setSelectedSeat(null);
+          } else if (parts[1] === 'rides') {
+            const dest = decodeURIComponent(parts[2] || "University of Calgary");
+            const timeSlot = decodeURIComponent(parts[3] || "");
+            setSelectedDestination(dest);
+            setSelectedTimeSlot(timeSlot);
+            setShowTimeSlots(false);
+            setShowRides(true);
+            setShowSeatSelection(false);
+            setShowPayment(false);
+            setShowConfirmation(false);
+            setSelectedDriver(null);
+            setSelectedSeat(null);
+            // Re-fetch rides if we have the time slot
+            if (timeSlot) {
+              fetchRidesForTimeSlot(timeSlot, dest);
+            }
+          }
+        }
+      }
+      isUpdatingHashRef.current = false;
+    };
+
+    window.addEventListener('hashchange', handleHashChange);
+    return () => window.removeEventListener('hashchange', handleHashChange);
+  }, []);
+
+  // Update URL hash when navigation state changes
+  useEffect(() => {
+    let hash = 'home';
+    if (showTimeSlots && selectedDestination) {
+      hash = `home/timeslots/${encodeURIComponent(selectedDestination)}`;
+    } else if (showRides && selectedDestination && selectedTimeSlot) {
+      hash = `home/rides/${encodeURIComponent(selectedDestination)}/${encodeURIComponent(selectedTimeSlot)}`;
+    } else if (!showTimeSlots && !showRides) {
+      hash = 'home/destination';
+    }
+    
+    // Don't update hash if we're in booking flow (seat selection, payment, confirmation)
+    // These are modal-like states that should maintain the rides hash for browser back button
+    if (showSeatSelection || showPayment || showConfirmation) {
+      return;
+    }
+
+    const currentHash = window.location.hash.slice(1);
+    if (currentHash !== hash) {
+      isUpdatingHashRef.current = true;
+      window.location.hash = hash;
+    }
+  }, [showTimeSlots, showRides, selectedDestination, selectedTimeSlot, showSeatSelection, showPayment, showConfirmation]);
 
   const handleDestinationSelect = (destination: string) => {
     setSelectedDestination(destination);
@@ -64,7 +226,6 @@ export function HomePage({ onNavigateToUsers, onBookingCreated, autoSelectDestin
   const handleTimeSlotSelect = async (timeSlot: string) => {
     setSelectedTimeSlot(timeSlot);
     setShowTimeSlots(false);
-    setShowRides(true);
     // Update hash
     isUpdatingHashRef.current = true;
     window.location.hash = `home/rides/${encodeURIComponent(selectedDestination || "University of Calgary")}/${encodeURIComponent(timeSlot)}`;
@@ -202,6 +363,7 @@ export function HomePage({ onNavigateToUsers, onBookingCreated, autoSelectDestin
     setSelectedSeat(null);
     setSelectedTimeSlot(""); // Reset time slot so user can choose a different one
     setBookingId("");
+    setRides([]); // Clear rides list to ensure fresh data is loaded
     // Keep destination and date so user can easily book another ride
     setShowTimeSlots(true);
     // Update hash to go back to time slots with the same destination
@@ -307,7 +469,7 @@ export function HomePage({ onNavigateToUsers, onBookingCreated, autoSelectDestin
           onBack={handleBackToDestinations}
           destination={selectedDestination || "University of Calgary"}
           selectedDate={selectedDate}
-          onDateChange={(date) => setSelectedDate(date)}
+          onDateChange={(date: any) => setSelectedDate(date)}
         />
       ) : (
         <div className="bg-background">
@@ -316,7 +478,7 @@ export function HomePage({ onNavigateToUsers, onBookingCreated, autoSelectDestin
               <h2 className="font-medium">Rides to {selectedDestination || "University of Calgary"}</h2>
               <p className="text-sm text-muted-foreground">
                 {selectedTimeSlot && `Departing at ${selectedTimeSlot} • `}
-                {isLoading ? "Loading..." : `${rides.length} rides available`}
+                {isLoadingRides ? "Loading..." : `${rides.length} rides available`}
               </p>
             </div>
             <Button 
@@ -328,7 +490,7 @@ export function HomePage({ onNavigateToUsers, onBookingCreated, autoSelectDestin
             </Button>
           </div>
           
-          {isLoading ? (
+          {isLoadingRides ? (
             <div className="p-8 text-center">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
               <p className="mt-4 text-muted-foreground">Loading rides...</p>

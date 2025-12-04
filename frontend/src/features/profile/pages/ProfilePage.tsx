@@ -1,8 +1,4 @@
-<<<<<<<< HEAD:frontend/src/features/shared/pages/ProfilePage.tsx
 import { useReducer, useEffect } from "react";
-========
-import { useState, useEffect } from "react";
->>>>>>>> 4b76f6d4 (refactored profile page, clean up of components):frontend/src/features/profile/pages/ProfilePage.tsx
 import { Card } from "../../../components/ui/card";
 import { Button } from "../../../components/ui/button";
 import { Avatar, AvatarFallback } from "../../../components/ui/avatar";
@@ -11,20 +7,12 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { Label } from "../../../components/ui/label";
 import { RadioGroup, RadioGroupItem } from "../../../components/ui/radio-group";
 import { Textarea } from "../../../components/ui/textarea";
-<<<<<<<< HEAD:frontend/src/features/shared/pages/ProfilePage.tsx
-import { Star, Edit, Settings, CreditCard, History, HelpCircle, ChevronRight, Car, LogOut, MapPin, Clock } from "lucide-react";
-import { toast } from "sonner";
-import { useAuth } from "../../../contexts/AuthContext";
-import { bookingsAPI, driversAPI, issuesAPI } from "../../../services/api";
-import { DriverApplicationDialog } from "../../../features/driver/components/dialog/DriverApplicationDialog";
-import type { ProfilePageProps, ProfilePageState } from "../../../serviceInterface";
-========
 import { Star, Edit, Settings, CreditCard, History, HelpCircle, ChevronRight, Car, LogOut } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "../../../contexts/AuthContext";
 import { bookingsAPI, driversAPI, issuesAPI } from "../../../services/api";
 import { DriverApplicationDialog } from "../../driver/components/dialog/DriverApplicationDialog";
->>>>>>>> 4b76f6d4 (refactored profile page, clean up of components):frontend/src/features/profile/pages/ProfilePage.tsx
+import type { ProfilePageProps, ProfilePageState } from "../../../serviceInterface";
 
 
 type ProfilePageAction =
@@ -103,12 +91,7 @@ export function ProfilePage({ onNavigateToPaymentMethods, onNavigateToRideHistor
   useEffect(() => {
     if (user?.id)
       fetchUserStats();
-<<<<<<<< HEAD:frontend/src/features/shared/pages/ProfilePage.tsx
-    }
   }, [user?.id, state.driverId]);
-========
-  }, [user?.id, driverId]);
->>>>>>>> 4b76f6d4 (refactored profile page, clean up of components):frontend/src/features/profile/pages/ProfilePage.tsx
 
   const checkDriverStatus = async () => {
     if (!user?.id) return;
@@ -116,7 +99,6 @@ export function ProfilePage({ onNavigateToPaymentMethods, onNavigateToRideHistor
     try {
       const driverResponse = await driversAPI.getMyDriverProfile();
       if (driverResponse.data) {
-<<<<<<<< HEAD:frontend/src/features/shared/pages/ProfilePage.tsx
         const rating = driverResponse.data.average_rating 
           ? parseFloat(driverResponse.data.average_rating) 
           : null;
@@ -141,18 +123,6 @@ export function ProfilePage({ onNavigateToPaymentMethods, onNavigateToRideHistor
           averageRating: null,
         },
       });
-========
-        setHasDriverProfile(true);
-        setIsApprovedDriver(driverResponse.data.is_approved === true);
-        setDriverId(driverResponse.data.id);
-        const rating = driverResponse.data.average_rating ? parseFloat(driverResponse.data.average_rating) : null;
-        setAverageRating(rating);
-      }
-    } catch (error: any) {
-      setHasDriverProfile(false);
-      setIsApprovedDriver(false);
-      setDriverId(null);
->>>>>>>> 4b76f6d4 (refactored profile page, clean up of components):frontend/src/features/profile/pages/ProfilePage.tsx
     }
   };
   //Counts the number of rides taken and offered by the user
@@ -163,7 +133,6 @@ export function ProfilePage({ onNavigateToPaymentMethods, onNavigateToRideHistor
       // Get user bookings (rides taken)
       const bookingsResponse = await bookingsAPI.getBookingsByUser(user.id);
       const allBookings = bookingsResponse.data.filter((b: any) => b.status !== 'cancelled');
-<<<<<<<< HEAD:frontend/src/features/shared/pages/ProfilePage.tsx
       dispatch({ type: 'SET_RIDES_TAKEN', payload: allBookings.length });
       
       // Don't store completed rides taken for display (removed per user request)
@@ -171,10 +140,6 @@ export function ProfilePage({ onNavigateToPaymentMethods, onNavigateToRideHistor
       // If user is a driver, get completed rides offered
       // Use driverId from state (set by checkDriverStatus) or try to fetch it
       let currentDriverId = state.driverId;
-========
-      setRidesTaken(allBookings.length);
-      let currentDriverId = driverId;
->>>>>>>> 4b76f6d4 (refactored profile page, clean up of components):frontend/src/features/profile/pages/ProfilePage.tsx
       
       if (!currentDriverId) {
         try {
@@ -192,26 +157,17 @@ export function ProfilePage({ onNavigateToPaymentMethods, onNavigateToRideHistor
         try {
           const driverRidesResponse = await driversAPI.getDriverRides(currentDriverId);
           const completedRides = driverRidesResponse.data.filter((r: any) => r.status === 'completed');
-<<<<<<<< HEAD:frontend/src/features/shared/pages/ProfilePage.tsx
           // Count ALL completed rides for the driver (same as DriversPage)
           dispatch({ type: 'SET_RIDES_OFFERED', payload: completedRides.length });
-========
-          setRidesOffered(completedRides.length);
->>>>>>>> 4b76f6d4 (refactored profile page, clean up of components):frontend/src/features/profile/pages/ProfilePage.tsx
         } catch (error: any) {
           console.error("Failed to fetch driver rides:", error);
           dispatch({ type: 'SET_RIDES_OFFERED', payload: 0 });
         }
       } else {
-<<<<<<<< HEAD:frontend/src/features/shared/pages/ProfilePage.tsx
         // Only set to 0 if we're sure the user is not a driver
         // (i.e., hasDriverProfile is false after checkDriverStatus has run)
         if (state.hasDriverProfile === false) {
           dispatch({ type: 'SET_RIDES_OFFERED', payload: 0 });
-========
-        if (hasDriverProfile === false) {
-          setRidesOffered(0);
->>>>>>>> 4b76f6d4 (refactored profile page, clean up of components):frontend/src/features/profile/pages/ProfilePage.tsx
         }
       }
     } catch (error: any) {
@@ -325,15 +281,11 @@ export function ProfilePage({ onNavigateToPaymentMethods, onNavigateToRideHistor
         {user?.role !== 'driver' && user?.role !== 'admin' && (
           <Button  variant="outline"  className="w-full" onClick={handleBecomeDriver}>
             <Car className="w-4 h-4 mr-2" />
-<<<<<<<< HEAD:frontend/src/features/shared/pages/ProfilePage.tsx
             {state.hasDriverProfile && !state.isApprovedDriver 
               ? "Application Pending" 
               : state.hasDriverProfile && state.isApprovedDriver
               ? "Driver (Approved)"
               : "Become a Driver"}
-========
-            {hasDriverProfile && !isApprovedDriver  ? "Application Pending"  : hasDriverProfile && isApprovedDriver ? "Driver (Approved)" : "Become a Driver"}
->>>>>>>> 4b76f6d4 (refactored profile page, clean up of components):frontend/src/features/profile/pages/ProfilePage.tsx
           </Button>
         )}
 
@@ -367,7 +319,6 @@ export function ProfilePage({ onNavigateToPaymentMethods, onNavigateToRideHistor
         </Card>
       </div>
 
-<<<<<<<< HEAD:frontend/src/features/shared/pages/ProfilePage.tsx
       <DriverApplicationDialog
         open={state.showDriverApplication}
         onClose={() => dispatch({ type: 'SET_SHOW_DRIVER_APPLICATION', payload: false })}
@@ -376,12 +327,6 @@ export function ProfilePage({ onNavigateToPaymentMethods, onNavigateToRideHistor
 
       {/* Help & Support Dialog */}
       <Dialog open={state.showHelpDialog} onOpenChange={(open: boolean) => dispatch({ type: 'SET_SHOW_HELP_DIALOG', payload: open })}>
-========
-      <DriverApplicationDialog open={showDriverApplication} onClose={() => setShowDriverApplication(false)} onSuccess={handleApplicationSuccess}/>
-
-      {/* Help & Support */}
-      <Dialog open={showHelpDialog} onOpenChange={setShowHelpDialog}>
->>>>>>>> 4b76f6d4 (refactored profile page, clean up of components):frontend/src/features/profile/pages/ProfilePage.tsx
         <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Report an Issue</DialogTitle>
@@ -423,7 +368,6 @@ export function ProfilePage({ onNavigateToPaymentMethods, onNavigateToRideHistor
 
             <div className="space-y-2">
               <Label htmlFor="description">Description</Label>
-<<<<<<<< HEAD:frontend/src/features/shared/pages/ProfilePage.tsx
               <Textarea
                 id="description"
                 placeholder="Please describe the issue in detail..."
@@ -432,18 +376,11 @@ export function ProfilePage({ onNavigateToPaymentMethods, onNavigateToRideHistor
                 rows={4}
                 className="bg-input-background"
               />
-========
-              <Textarea id="description" placeholder="Please describe the issue in detail..." value={issueDescription} onChange={(e) => setIssueDescription(e.target.value)} rows={4} className="bg-input-background" />
->>>>>>>> 4b76f6d4 (refactored profile page, clean up of components):frontend/src/features/profile/pages/ProfilePage.tsx
             </div>
           </div>
 
           <DialogFooter>
-<<<<<<<< HEAD:frontend/src/features/shared/pages/ProfilePage.tsx
             <Button variant="outline" onClick={() => dispatch({ type: 'RESET_ISSUE_FORM' })}>
-========
-            <Button variant="outline" onClick={() => { setShowHelpDialog(false); setIssueType(""); setIssueDescription(""); }}>
->>>>>>>> 4b76f6d4 (refactored profile page, clean up of components):frontend/src/features/profile/pages/ProfilePage.tsx
               Cancel
             </Button>
             <Button onClick={async () => {

@@ -3,7 +3,7 @@ import { AppHeader } from "./components/AppHeader";
 import { HomePage } from "./features/home/pages/HomePage";
 import { DriversPage } from "./features/driver/components/DriversPage";
 import { UsersPage } from "./features/settings/pages/UsersPage";
-import { ProfilePage } from "./features/shared/pages/ProfilePage";
+import { ProfilePage } from "./features/profile/pages/ProfilePage";
 import { AdminPage } from "./features/admin/pages/AdminPage";
 import { LoginPage } from "./features/auth/pages/LoginPage";
 import { RideHistory } from "./features/ride/components/RideHistory";
@@ -101,7 +101,7 @@ export default function App() {
   }, [isAuthenticated, activeTab, subPage, usersPageMode]);
 
   const isAdmin = user?.role === 'admin';
-  const isDriver = user?.role === 'driver' || user?.role === 'admin';
+  // const isDriver = user?.role === 'driver' || user?.role === 'admin';
 
   const renderPage = () => {
     // Handle sub-pages
@@ -112,7 +112,7 @@ export default function App() {
       return <PaymentMethods onBack={() => handleSubPageChange(null)} />;
     }
     if (subPage === "settings") {
-      return (<SettingsPage user={user} onBack={() => handleSubPageChange(null)} onUserUpdated={(updated) => { updateUser(updated); refreshUser();}}/>);
+            return (<SettingsPage user={user} onBack={() => handleSubPageChange(null)} onUserUpdated={(updated: any) => { updateUser(updated); refreshUser();}}/>);
     }
 
     // Handle main pages

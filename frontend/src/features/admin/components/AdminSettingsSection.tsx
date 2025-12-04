@@ -78,7 +78,7 @@ export function AdminSettingsSection({ users, isLoading, userFilter, onUserFilte
                         <div className="flex items-center gap-2">
                           <Avatar className="w-8 h-8">
                             <AvatarFallback className="bg-primary text-primary-foreground text-xs">
-                              {u.name.split(" ").map((n) => n[0]).join("")}
+                              {u.name.split(" ").map((n: string) => n[0]).join("")}
                             </AvatarFallback>
                           </Avatar>
                           {u.name}

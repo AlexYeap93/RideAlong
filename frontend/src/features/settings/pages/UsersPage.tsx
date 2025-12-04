@@ -4,6 +4,7 @@ import { Button } from "../../../components/ui/button";
 import { Avatar, AvatarFallback } from "../../../components/ui/avatar";
 import { Badge } from "../../../components/ui/badge";
 import { Star, MapPin, Clock, HelpCircle, DollarSign, CheckCircle, XCircle } from "lucide-react";
+<<<<<<< HEAD:frontend/src/features/settings/pages/UsersPage.tsx
 import { TimeSlotSelection } from "../../ride/components/TimeSlotSelection";
 import { RideCard } from "../../ride/components/RideCard";
 import { SeatSelection } from "../../ride/components/SeatSelection";
@@ -13,6 +14,24 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { Label } from "../../../components/ui/label";
 import { Textarea } from "../../../components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "../../../components/ui/radio-group";
+=======
+import { TimeSlotSelection } from "../features/shared/ui/TimeSlotSelection";
+import { RideCard } from "../features/ride/components/RideCard";
+import { SeatSelection } from "../features/shared/ui/SeatSelection";
+import { PaymentPage } from "../features/payments/pages/PaymentPage";
+import { BookingConfirmation } from "../features/ride/components/BookingConfirmation";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "./ui/dialog";
+import { Label } from "./ui/label";
+import { Textarea } from "./ui/textarea";
+import { RadioGroup, RadioGroupItem } from "./ui/radio-group";
+>>>>>>> 4b76f6d4 (refactored profile page, clean up of components):frontend/src/components/UsersPage.tsx
 import { toast } from "sonner";
 import { bookingsAPI, ridesAPI, paymentsAPI, issuesAPI, ratingsAPI, transformRideData, transformBookingData } from "../../../services/api";
 import { useAuth } from "../../../contexts/AuthContext";

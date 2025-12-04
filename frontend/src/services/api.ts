@@ -8,10 +8,6 @@ const getAuthToken = (): string | null => {
   return localStorage.getItem('authToken');
 };
 
-// Helper function to get user ID
-const getUserId = (): string | null => {
-  return localStorage.getItem('userId');
-};
 
 // Helper function for API requests
 async function apiRequest<T>(

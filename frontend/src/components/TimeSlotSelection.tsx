@@ -5,10 +5,16 @@ import { Button } from "../../../components/ui/button";
 import { Badge } from "../../../components/ui/badge";
 import { ridesAPI } from "../../../services/api";
 import { toast } from "sonner";
-import type { TimeSlot } from "../../../serviceInterface";
-import type { TimeSlotSelectionProps } from "../../../serviceInterface";
+<<<<<<<< HEAD:frontend/src/features/ride/components/TimeSlotSelection.tsx
 import { ScrollableDatePicker } from "../../../components/ScrollableDatePicker";
+import type { TimeSlot } from "../../../serviceInterface";
 import { UNIVERSITY_DESTINATION } from "../../../types/const";
+import type { TimeSlotSelectionProps } from "../../../serviceInterface";
+========
+import { ScrollableDatePicker } from "./ScrollableDatePicker";
+import { TimeSlot } from "../../../types/index";
+import { UNIVERSITY_DESTINATION } from "../../../types/const";
+>>>>>>>> 4b76f6d4 (refactored profile page, clean up of components):frontend/src/components/TimeSlotSelection.tsx
 
 
 export function TimeSlotSelection({ onTimeSlotSelect, onBack, destination = UNIVERSITY_DESTINATION.name, selectedDate: propSelectedDate = new Date(), onDateChange }: TimeSlotSelectionProps) {
