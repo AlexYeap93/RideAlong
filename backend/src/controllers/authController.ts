@@ -24,9 +24,19 @@ export const register = async (req: Request, res: Response, next: NextFunction) 
       throw error;
     }
 
-    // Validate password length of 6 only for now. Special case and capital can be added in future.
-    if (password.length < 6) {
-      const error: CustomError = new Error('Password must be at least 6 characters long');
+    // Validate password complexity
+    if (password.length < 8) {
+      const error: CustomError = new Error('Password must be at least 8 characters long');
+      error.statusCode = 400;
+      throw error;
+    }
+
+    const hasUpperCase = /[A-Z]/.test(password);
+    const hasLowerCase = /[a-z]/.test(password);
+    const hasNumber = /[0-9]/.test(password);
+    
+    if (!hasUpperCase || !hasLowerCase || !hasNumber) {
+      const error: CustomError = new Error('Password must contain at least one uppercase letter, one lowercase letter, and one number');
       error.statusCode = 400;
       throw error;
     }
