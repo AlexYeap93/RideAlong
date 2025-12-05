@@ -1,20 +1,14 @@
 import { useState, useEffect } from "react";
 import { Clock } from "lucide-react";
-import { Card } from "../../../components/ui/card";
-import { Button } from "../../../components/ui/button";
-import { Badge } from "../../../components/ui/badge";
-import { ridesAPI } from "../../../services/api";
+import { Card } from "./ui/card";
+import { Button } from "./ui/button";
+import { Badge } from "./ui/badge";
+import { ridesAPI } from "../services/api";
 import { toast } from "sonner";
-<<<<<<<< HEAD:frontend/src/features/ride/components/TimeSlotSelection.tsx
-import { ScrollableDatePicker } from "../../../components/ScrollableDatePicker";
-import type { TimeSlot } from "../../../serviceInterface";
-import { UNIVERSITY_DESTINATION } from "../../../types/const";
-import type { TimeSlotSelectionProps } from "../../../serviceInterface";
-========
 import { ScrollableDatePicker } from "./ScrollableDatePicker";
-import { TimeSlot } from "../../../types/index";
-import { UNIVERSITY_DESTINATION } from "../../../types/const";
->>>>>>>> 4b76f6d4 (refactored profile page, clean up of components):frontend/src/components/TimeSlotSelection.tsx
+import type { TimeSlot } from "../serviceInterface";
+import { UNIVERSITY_DESTINATION } from "../types/const";
+import type { TimeSlotSelectionProps } from "../serviceInterface";
 
 
 export function TimeSlotSelection({ onTimeSlotSelect, onBack, destination = UNIVERSITY_DESTINATION.name, selectedDate: propSelectedDate = new Date(), onDateChange }: TimeSlotSelectionProps) {
