@@ -389,7 +389,7 @@ export function ProfilePage({ onNavigateToPaymentMethods, onNavigateToRideHistor
                 <Label>Select Ride (Optional)</Label>
                 <Select 
                   value={state.selectedBookingId} 
-                  onValueChange={(value) => dispatch({ type: 'SET_SELECTED_BOOKING_ID', payload: value })}
+                  onValueChange={(value: string) => dispatch({ type: 'SET_SELECTED_BOOKING_ID', payload: value })}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Select a recent ride" />
