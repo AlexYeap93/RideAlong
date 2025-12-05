@@ -3,7 +3,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { Button } from "../../../../components/ui/button";
 import { Save } from "lucide-react";
 import { toast } from "sonner";
-import { bookingsAPI, usersAPI } from "../../../../services/api";
+import { bookingsAPI } from "../../../../services/BookingServices";
+import { usersAPI } from "../../../../services/UserServices";
 import { useAuth } from "../../../../contexts/AuthContext";
 import { DriverRideInfoCard } from "../DriverRideInfoCard";
 import { DriverPassengerCard } from "../DriverPassengerCard";

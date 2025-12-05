@@ -1,5 +1,6 @@
 import { useState, useCallback } from "react";
-import { ridesAPI, transformRideData } from "../../../services/api";
+import {transformRideData } from "../../../services/api";
+import { ridesAPI } from "../../../services/RideServices";
 import { toast } from "sonner";
 
 export const useRides = (selectedDate: Date) => {

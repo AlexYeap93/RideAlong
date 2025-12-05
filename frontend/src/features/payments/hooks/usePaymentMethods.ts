@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
-import { paymentMethodsAPI } from "../../../services/api";
+import { paymentMethodsAPI } from "../../../services/PaymentServices";
 import type { FrontendPaymentMethod as PaymentMethod } from "../../../types/api_interfaces";
 import type { AddCardParams } from "../../../serviceInterface";
 

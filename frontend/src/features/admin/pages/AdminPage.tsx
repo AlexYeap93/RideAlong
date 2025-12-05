@@ -6,7 +6,10 @@ import { Card } from "../../../components/ui/card";
 import { Input } from "../../../components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../../components/ui/tabs";
 
-import { usersAPI, driversAPI, issuesAPI } from "../../../services/api";
+import { usersAPI } from "../../../services/UserServices";
+import { driversAPI } from "../../../services/DriverServices";
+import { issuesAPI } from "../../../services/IssueServices";
+
 import { useAuth } from "../../../contexts/AuthContext";
 
 import { AdminUsersSection } from "../components/AdminUsersSection";

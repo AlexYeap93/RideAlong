@@ -8,7 +8,7 @@ import { Label } from "../../../components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../../components/ui/select";
 import { MapPin, Clock, DollarSign, AlertCircle } from "lucide-react";
 import { toast } from "sonner";
-import { bookingsAPI } from "../../../services/api";
+import { bookingsAPI } from "../../../services/BookingServices";
 import type { DriverPassengerCardProps } from "../../../serviceInterface";
 import { timeSlots } from "../../../types/const";
 

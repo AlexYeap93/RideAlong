@@ -3,7 +3,7 @@ import { Clock } from "lucide-react";
 import { Card } from "../../../components/ui/card";
 import { Button } from "../../../components/ui/button";
 import { Badge } from "../../../components/ui/badge";
-import { ridesAPI } from "../../../services/api";
+import { ridesAPI } from "../../../services/RideServices";
 import { toast } from "sonner";
 import type { TimeSlot } from "../../../serviceInterface";
 import type { TimeSlotSelectionProps } from "../../../serviceInterface";

@@ -8,7 +8,7 @@ import { Badge } from "../../../components/ui/badge";
 import { RadioGroup, RadioGroupItem } from "../../../components/ui/radio-group";
 import { Checkbox } from "../../../components/ui/checkbox";
 import { CreditCard, ArrowLeft, MapPin, Clock, User, Calendar, CheckCircle2, AlertCircle } from "lucide-react";
-import { paymentMethodsAPI } from "../../../services/api";
+import { paymentMethodsAPI } from "../../../services/PaymentServices";
 import { toast } from "sonner";
 import { useAuth } from "../../../contexts/AuthContext";
 import type { PaymentPageProps } from "../../../serviceInterface";

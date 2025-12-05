@@ -10,7 +10,9 @@ import { Textarea } from "../../../components/ui/textarea";
 import { Star, Edit, Settings, CreditCard, History, HelpCircle, ChevronRight, Car, LogOut } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "../../../contexts/AuthContext";
-import { bookingsAPI, driversAPI, issuesAPI } from "../../../services/api";
+import { driversAPI } from "../../../services/DriverServices";
+import { bookingsAPI } from "../../../services/BookingServices";
+import { issuesAPI } from "../../../services/IssueServices";
 import { DriverApplicationDialog } from "../../driver/components/dialog/DriverApplicationDialog";
 import type { ProfilePageProps, ProfilePageState } from "../../../serviceInterface";
 

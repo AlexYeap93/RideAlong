@@ -278,7 +278,7 @@ async function seedBookingsForSomeRides() {
         const pickupTime = ride.ride_time || '12:00:00';
 
         await query(
-          `INSERT INTO bookings (user_id, ride_id, number_of_seats, pickup_location, pickup_time, status)
+          `INSERT INTO bookings (user_id, ride_id, number_of_seats, pickup_address, pickup_time, status)
            VALUES ($1, $2, $3, $4, $5, $6)`,
           [rider.id, ride.id, seats, 'Main Campus Bus Stop', pickupTime, 'confirmed']
         );

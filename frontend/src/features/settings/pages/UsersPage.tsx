@@ -14,7 +14,12 @@ import { Label } from "../../../components/ui/label";
 import { Textarea } from "../../../components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "../../../components/ui/radio-group";
 import { toast } from "sonner";
-import { bookingsAPI, ridesAPI, paymentsAPI, issuesAPI, ratingsAPI, transformRideData, transformBookingData } from "../../../services/api";
+import {  transformRideData, transformBookingData } from "../../../services/api";
+import { ridesAPI } from "../../../services/RideServices";
+import { bookingsAPI } from "../../../services/BookingServices";
+import { paymentsAPI } from "../../../services/PaymentServices";
+import { issuesAPI } from "../../../services/IssueServices";
+import { ratingsAPI } from "../../../services/Ratingservices";
 import { useAuth } from "../../../contexts/AuthContext";
 import type { UsersPageProps } from "../../../serviceInterface";
 

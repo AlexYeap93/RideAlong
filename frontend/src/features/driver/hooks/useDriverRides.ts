@@ -1,7 +1,11 @@
 import { useState, useEffect, useCallback } from 'react';
 import { toast } from 'sonner';
 import { useAuth } from '../../../contexts/AuthContext';
-import { ridesAPI, driversAPI, bookingsAPI, paymentsAPI } from '../../../services/api';
+import { driversAPI } from '../../../services/DriverServices';
+import { bookingsAPI } from '../../../services/BookingServices';
+import { paymentsAPI } from '../../../services/PaymentServices';
+import { ridesAPI } from '../../../services/RideServices';
+
 import type { ActiveRide, CompletedRide } from '../../../types/api_interfaces';
 
 // Utility functions

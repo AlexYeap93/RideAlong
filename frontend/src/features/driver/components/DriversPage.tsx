@@ -1,4 +1,4 @@
-import { ListRideDialog } from "../../ride/components/ListRideDialog";
+import { ListRideDialog } from "../../ride/dialogs/ListRideDialog";
 import { DriverRideDetailDialog } from "./dialog/DriverRideDetailDialog";
 import { useAuth } from "../../../contexts/AuthContext";
 import { useDriverRides } from "../hooks/useDriverRides";

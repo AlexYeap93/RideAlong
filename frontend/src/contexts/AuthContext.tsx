@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { authAPI } from '../services/api';
+import { authAPI } from '../services/AuthServices';
 import type { AuthContextType, FrontendUser as User } from '../types/api_interfaces';
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);

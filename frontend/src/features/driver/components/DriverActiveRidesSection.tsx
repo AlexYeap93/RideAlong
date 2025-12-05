@@ -6,7 +6,7 @@ import { MapPin, Clock, CheckCircle } from "lucide-react";
 import type { DriverActiveRidesSectionProps } from "../../../serviceInterface";
 import type { Passenger, ActiveRide } from "../../../types/api_interfaces";
 import { toast } from "sonner";
-import { ridesAPI } from "../../../services/api";
+import { ridesAPI } from "../../../services/RideServices";
 
 
 export function DriverActiveRidesSection({ activeRides, driverId, onViewDetails, onCompleteClick, onRefresh }: DriverActiveRidesSectionProps) {

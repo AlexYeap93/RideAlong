@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { usersAPI } from "../../../services/api";
+import { usersAPI } from "../../../services/UserServices";
 import { toast } from "sonner";
 
 export function useSettingsLocation(initialUser: any, onUserUpdated?: (u: any) => void) {
