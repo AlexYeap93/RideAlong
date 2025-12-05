@@ -23,8 +23,30 @@ const app = express();
 const PORT = Number(process.env.PORT || 5001);
 
 // Middleware
+// Allow multiple dev frontends: set FRONTEND_URL as comma-separated list, e.g. http://localhost:5173,http://localhost:5174
+const allowedOrigins = (process.env.FRONTEND_URL || 'http://localhost:5173')
+  .split(',')
+  .map(origin => origin.trim())
+  .filter(Boolean);
+
+// allow localhost
+const isLocalhostOrigin = (origin: string) => {
+  try {
+    const url = new URL(origin);
+    return url.hostname === 'localhost' || url.hostname === '127.0.0.1';
+  } catch {
+    return false;
+  }
+};
+
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:5173',
+  origin: (origin, callback) => {
+    // Allow non-browser requests (no origin) and any origin in the allowed list or localhost/127.0.0.1 on any port
+    if (!origin || allowedOrigins.includes(origin) || isLocalhostOrigin(origin)) {
+      return callback(null, true);
+    }
+    return callback(new Error('Not allowed by CORS'));
+  },
   credentials: true
 }));
 app.use(express.json());
