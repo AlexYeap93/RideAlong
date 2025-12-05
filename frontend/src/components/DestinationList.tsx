@@ -1,10 +1,6 @@
-import universityImage from '../../../components/photos/UofC.jpg';
-<<<<<<<< HEAD:frontend/src/features/ride/components/DestinationList.tsx
-import type { DestinationListProps } from "../../../serviceInterface";
-========
-import { DestinationListProps } from "../../../types/index";
->>>>>>>> 4b76f6d4 (refactored profile page, clean up of components):frontend/src/components/DestinationList.tsx
-import { UNIVERSITY_DESTINATION } from "../../../types/const";
+import universityImage from './photos/UofC.jpg';
+import type { DestinationListProps } from "../serviceInterface";
+import { UNIVERSITY_DESTINATION } from "../types/const";
 
 export function DestinationList({ onDestinationSelect }: DestinationListProps) {
   // Currently only one destination is available for our project
