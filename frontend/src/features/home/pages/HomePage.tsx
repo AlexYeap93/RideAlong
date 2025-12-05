@@ -1,6 +1,6 @@
 import { useState, useRef } from "react";
 import { LocationHeader } from "../components/LocationHeader";
-import { DestinationList } from "../../shared/ui/DestinationList";
+import { DestinationList } from "../../ride/components/DestinationList";
 import { TimeSlotSelection } from "../../ride/components/TimeSlotSelection";
 import { RideCard } from "../../ride/components/RideCard";
 import { SeatSelection } from "../../ride/components/SeatSelection";
