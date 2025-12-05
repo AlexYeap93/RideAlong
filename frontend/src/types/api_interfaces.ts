@@ -82,7 +82,7 @@ export interface Booking {
   ride_id: string;
   number_of_seats: number;
   seat_number?: number;
-  pickup_location?: string;
+  pickup_address?: string;
   pickup_city?: string;
   pickup_province?: string;
   pickup_postal_code?: string;

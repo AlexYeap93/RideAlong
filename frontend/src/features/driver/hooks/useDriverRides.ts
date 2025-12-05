@@ -116,7 +116,7 @@ export function useDriverRides() {
                 name: booking.user_name || 'Passenger',
                 phone: booking.user_phone || null,
                 rating: 4.5,
-                pickupLocation: booking.pickup_location || 'Location',
+                pickupLocation: booking.pickup_address || 'Location',
                 pickupTime: pickupTime,
                 quadrant: 'DT',
                 seatNumber: booking.seat_number || booking.number_of_seats || 1,

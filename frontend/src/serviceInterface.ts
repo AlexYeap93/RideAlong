@@ -286,6 +286,8 @@ export interface ProfilePageState {
   issueType: string;
   issueDescription: string;
   averageRating: number | null;
+  recentBookings?: any[];
+  selectedBookingId?: string;
 }
 
 export interface HomeNavigationState {
