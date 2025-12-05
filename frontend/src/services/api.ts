@@ -152,7 +152,7 @@ export const transformBookingData = (booking: any) => {
     price: parseFloat(booking.price) || 10,
     status: booking.status || 'confirmed',
     date: formatDate(booking.ride_date || new Date().toISOString()),
-    pickupLocation: booking.pickup_location || 'Location',
+    pickupLocation: booking.pickup_address || 'Location',
     pickupTime: booking.pickup_time ? formatTime(booking.pickup_time) : formatTime(booking.ride_time || '12:00:00'),
     carType: carType as '5-seater' | '7-seater',
     color: 'Unknown', // Mock data
