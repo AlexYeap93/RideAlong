@@ -35,6 +35,14 @@ export const getMyDriverProfile = async ( req: Request,res: Response,next: NextF
       throw error;
     }
 
+    // Check if user is suspended
+    const userCheck = await query('SELECT is_suspended FROM users WHERE id = $1', [req.user.id]);
+    if (userCheck.rows.length > 0 && userCheck.rows[0].is_suspended === true) {
+      const error: CustomError = new Error('Your account has been suspended. You cannot access driver profile.');
+      error.statusCode = 403;
+      throw error;
+    }
+
     const result = await query(
       `SELECT d.*, 
               u.name, 
