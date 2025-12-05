@@ -17,7 +17,7 @@ COPY backend/ ./
 RUN npm run build
 
 # Expose backend port
-EXPOSE 5000
+EXPOSE 5001
 
 # Set environment to production
 ENV NODE_ENV=production
