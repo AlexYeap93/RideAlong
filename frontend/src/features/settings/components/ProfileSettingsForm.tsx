@@ -8,6 +8,24 @@ export function ProfileSettingsForm({ user, onUserUpdated }: { user: any; onUser
     return (
         <form onSubmit={(e) => { e.preventDefault(); saveProfile(); }} className="space-y-4">
             <div className="space-y-1">
+                <Label>Email</Label>
+                <Input
+                    value={user?.email || ""}
+                    disabled
+                    className="bg-muted"
+                />
+            </div>
+
+            <div className="space-y-1">
+                <Label>Role</Label>
+                <Input
+                    value={user?.role || "User"}
+                    disabled
+                    className="bg-muted capitalize"
+                />
+            </div>
+
+            <div className="space-y-1">
                 <Label>Name</Label>
                 <Input
                     value={name}

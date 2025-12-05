@@ -78,7 +78,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           address: userData.address,
           city: userData.city,
           province: userData.province,
-          postalCode: userData.postal_code,
+          postalCode: userData.postalCode || userData.postal_code,
           driverInfo: userData.driverInfo,
         });
       }
@@ -115,7 +115,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           address: userData.address,
           city: userData.city,
           province: userData.province,
-          postalCode: userData.postal_code,
+          postalCode: userData.postalCode || userData.postal_code,
           driverInfo: userData.driverInfo,
         });
       }
@@ -148,7 +148,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           address: userData.address,
           city: userData.city,
           province: userData.province,
-          postalCode: userData.postal_code,
+          postalCode: userData.postalCode || userData.postal_code,
           role: userData.role as 'user' | 'driver' | 'admin',
           driverInfo: userData.driverInfo,
         });

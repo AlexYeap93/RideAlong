@@ -79,7 +79,7 @@ export const updateUser = async (
 ) => {
   try {
     const { id } = req.params;
-    const { name, email, phone, address } = req.body;
+    const { name, email, phone, address, city, province, postalCode } = req.body;
 
     // Users can only update their own profile unless they're admin
     if (req.user && req.user.id !== id && req.user.role !== 'admin') {
@@ -137,14 +137,20 @@ export const updateUser = async (
            email = COALESCE($2, email), 
            phone = COALESCE($3, phone),
            address = COALESCE($4, address),
+           city = COALESCE($5, city),
+           province = COALESCE($6, province),
+           postal_code = COALESCE($7, postal_code),
            updated_at = NOW() 
-       WHERE id = $5 
-       RETURNING id, email, name, role, is_suspended, address, phone, updated_at`,
+       WHERE id = $8 
+       RETURNING id, email, name, role, is_suspended, address, city, province, postal_code, phone, updated_at`,
       [
         name !== undefined ? name.trim() : null,
         normalizedEmail !== undefined ? normalizedEmail : null,
         phone !== undefined ? (phone ? phone.trim() : null) : null,
         address !== undefined ? (address ? address.trim() : null) : null,
+        city !== undefined ? (city ? city.trim() : null) : null,
+        province !== undefined ? (province ? province.trim() : null) : null,
+        postalCode !== undefined ? (postalCode ? postalCode.trim() : null) : null,
         id
       ]
     );
