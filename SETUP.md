@@ -123,7 +123,7 @@ The frontend needs to know where to find the backend API.
    Create another `.env` file here with:
 
    ```env
-   VITE_API_URL=http://localhost:5000/api
+   VITE_API_URL=http://localhost:5001/api
    ```
 
    That's it! Just tells the frontend where the backend lives.

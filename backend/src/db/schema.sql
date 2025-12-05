@@ -98,6 +98,14 @@ CREATE TABLE IF NOT EXISTS issues (
 );
 
 -- Create indexes for better performance
+-- Ensure columns exist (when upgrading an existing schema)
+ALTER TABLE users ADD COLUMN IF NOT EXISTS city VARCHAR(100);
+ALTER TABLE users ADD COLUMN IF NOT EXISTS postal_code VARCHAR(20);
+ALTER TABLE users ADD COLUMN IF NOT EXISTS province VARCHAR(100);
+ALTER TABLE bookings ADD COLUMN IF NOT EXISTS pickup_city VARCHAR(100);
+ALTER TABLE bookings ADD COLUMN IF NOT EXISTS pickup_postal_code VARCHAR(20);
+ALTER TABLE bookings ADD COLUMN IF NOT EXISTS pickup_province VARCHAR(100);
+
 CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
 CREATE INDEX IF NOT EXISTS idx_users_city_postal ON users(city, postal_code);
 CREATE INDEX IF NOT EXISTS idx_users_is_suspended ON users(is_suspended);
