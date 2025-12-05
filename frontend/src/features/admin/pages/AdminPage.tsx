@@ -256,7 +256,13 @@ export function AdminPage() {
         });
 
     const filteredComplaints: AdminIssueView[] = state.issues.filter((complaint: any) => {
-        const matchesSearch = (complaint.subject || "").toLowerCase().includes(state.searchTerm.toLowerCase()) || (complaint.reporter_name || "").toLowerCase().includes(state.searchTerm.toLowerCase());
+        const searchLower = state.searchTerm.toLowerCase();
+        const matchesSearch = state.searchTerm === "" || 
+            (complaint.subject || "").toLowerCase().includes(searchLower) || 
+            (complaint.reporter_name || "").toLowerCase().includes(searchLower) ||
+            (complaint.reported_user_name || "").toLowerCase().includes(searchLower) ||
+            (complaint.description || "").toLowerCase().includes(searchLower) ||
+            (complaint.issue_type || "").toLowerCase().includes(searchLower);
         const dbStatus = complaint.status || "open";
         const matchesFilter = state.complaintFilter === "all" || dbStatus === state.complaintFilter;
         return matchesSearch && matchesFilter;
