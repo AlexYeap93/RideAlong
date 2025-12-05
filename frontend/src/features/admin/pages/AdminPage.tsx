@@ -189,6 +189,30 @@ export function AdminPage() {
         }
     };
 
+    const handleReopenComplaint = async (c: AdminIssueView) => {
+        try {
+            await issuesAPI.updateIssue(c.id.toString(), { status: "open", });
+            toast.success("Issue reopened");
+            dispatch({ type: 'SET_SHOW_COMPLAINT_DIALOG', payload: false });
+            await fetchIssues();
+        }
+        catch (error: any) {
+            toast.error("Failed to reopen issue", { description: error.message || "Please try again.", });
+        }
+    };
+
+    const handleUnderReviewComplaint = async (c: AdminIssueView) => {
+        try {
+            await issuesAPI.updateIssue(c.id.toString(), { status: "under_review", });
+            toast.success("Issue marked as under review");
+            dispatch({ type: 'SET_SHOW_COMPLAINT_DIALOG', payload: false });
+            await fetchIssues();
+        }
+        catch (error: any) {
+            toast.error("Failed to update issue", { description: error.message || "Please try again.", });
+        }
+    };
+
     const handleApproveDriver = async (d: AdminPendingDriverView) => {
         try {
             await driversAPI.approveDriver(d.id.toString());
@@ -414,6 +438,8 @@ export function AdminPage() {
                 issue={state.selectedComplaint}
                 onOpenChange={(open) => dispatch({ type: 'SET_SHOW_COMPLAINT_DIALOG', payload: open })}
                 onResolve={handleResolveComplaint}
+                onReopen={handleReopenComplaint}
+                onUnderReview={handleUnderReviewComplaint}
             />
 
             <AdminDriverDialog

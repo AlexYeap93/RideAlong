@@ -1,7 +1,7 @@
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "../../../../components/ui/dialog";
 import { Badge } from "../../../../components/ui/badge";
 import { Button } from "../../../../components/ui/button";
-import { CheckCircle2 } from "lucide-react";
+import { CheckCircle2, FolderOpen, Eye } from "lucide-react";
 import type { AdminIssueView } from "../../../../types/api_interfaces";
 
 const getStatusColor = (status: string) => {
@@ -36,9 +36,9 @@ const getPriorityColor = (priority: string) => {
   }
 };
 
-interface Props { open: boolean; issue: AdminIssueView | null; onOpenChange: (o: boolean) => void; onResolve: (i: AdminIssueView) => void;}
+interface Props { open: boolean; issue: AdminIssueView | null; onOpenChange: (o: boolean) => void; onResolve: (i: AdminIssueView) => void; onReopen: (i: AdminIssueView) => void; onUnderReview: (i: AdminIssueView) => void;}
 
-export function AdminIssueDialog({ open, issue, onOpenChange, onResolve }: Props) {
+export function AdminIssueDialog({ open, issue, onOpenChange, onResolve, onReopen, onUnderReview }: Props) {
   if (!issue) return null;
 
   return (
@@ -84,13 +84,37 @@ export function AdminIssueDialog({ open, issue, onOpenChange, onResolve }: Props
         </div>
 
         <DialogFooter className="flex-col sm:flex-row gap-2">
-          {issue.dbStatus !== "resolved" && (
-            <Button onClick={() => onResolve(issue)} className="w-full sm:w-auto">
-              <CheckCircle2 className="w-4 h-4 mr-2" />
-              Mark as Resolved
+          {issue.dbStatus === "open" && (
+            <>
+              <Button onClick={() => onUnderReview(issue)} className="w-full sm:w-auto" variant="secondary">
+                <Eye className="w-4 h-4 mr-2" />
+                Under Review
+              </Button>
+              <Button onClick={() => onResolve(issue)} className="w-full sm:w-auto">
+                <CheckCircle2 className="w-4 h-4 mr-2" />
+                Mark as Resolved
+              </Button>
+            </>
+          )}
+          {issue.dbStatus === "under_review" && (
+            <>
+              <Button onClick={() => onReopen(issue)} className="w-full sm:w-auto" variant="secondary">
+                <FolderOpen className="w-4 h-4 mr-2" />
+                Reopen
+              </Button>
+              <Button onClick={() => onResolve(issue)} className="w-full sm:w-auto">
+                <CheckCircle2 className="w-4 h-4 mr-2" />
+                Mark as Resolved
+              </Button>
+            </>
+          )}
+          {issue.dbStatus === "resolved" && (
+            <Button onClick={() => onReopen(issue)} className="w-full sm:w-auto" variant="secondary">
+              <FolderOpen className="w-4 h-4 mr-2" />
+              Reopen Issue
             </Button>
           )}
-          <Button onClick={() => onOpenChange(false)} className="w-full sm:w-auto">
+          <Button onClick={() => onOpenChange(false)} className="w-full sm:w-auto" variant="outline">
             Close
           </Button>
         </DialogFooter>
