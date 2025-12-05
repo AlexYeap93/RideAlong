@@ -19,6 +19,10 @@ const getStatusColor = (status: string) => {
   }
 };
 
+const capitalize = (str: string) => {
+  return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+};
+
 const getPriorityColor = (priority: string) => {
   switch (priority.toLowerCase()) {
     case "critical":
@@ -74,9 +78,9 @@ export function AdminIssuesSection({ complaints, isLoading, complaintFilter, onC
                     {c.description}
                   </p>
                   <div className="flex items-center gap-2 flex-wrap">
-                    <Badge className={`text-xs ${getPriorityColor(c.priority)}`}>{c.priority}</Badge>
-                    <Badge className={`text-xs ${getStatusColor(c.status)}`}>{c.status}</Badge>
-                    <span className="text-xs text-muted-foreground">{c.type}</span>
+                    <Badge className={`text-xs ${getPriorityColor(c.priority)}`}>{capitalize(c.priority)}</Badge>
+                    <Badge className={`text-xs ${getStatusColor(c.status)}`}>{capitalize(c.status)}</Badge>
+                    <span className="text-xs text-muted-foreground">{capitalize(c.type.replace(/-/g, ' '))}</span>
                     <span className="text-xs text-muted-foreground">• {c.date}</span>
                   </div>
                   <p className="text-xs text-muted-foreground mt-2">

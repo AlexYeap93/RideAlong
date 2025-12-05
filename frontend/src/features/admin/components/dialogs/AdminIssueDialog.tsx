@@ -17,6 +17,10 @@ const getStatusColor = (status: string) => {
   }
 };
 
+const capitalize = (str: string) => {
+  return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+};
+
 const getPriorityColor = (priority: string) => {
   switch (priority.toLowerCase()) {
     case "critical":
@@ -49,10 +53,10 @@ export function AdminIssueDialog({ open, issue, onOpenChange, onResolve }: Props
           <div>
             <div className="flex items-center gap-2 mb-2">
               <Badge className={`text-xs ${getPriorityColor(issue.priority)}`}>
-                {issue.priority}
+                {capitalize(issue.priority)}
               </Badge>
               <Badge className={`text-xs ${getStatusColor(issue.status)}`}>
-                {issue.status}
+                {capitalize(issue.status)}
               </Badge>
             </div>
             <h3 className="font-medium">{issue.subject}</h3>
@@ -70,7 +74,7 @@ export function AdminIssueDialog({ open, issue, onOpenChange, onResolve }: Props
             </div>
             <div>
               <p className="text-sm text-muted-foreground">Type</p>
-              <p className="font-medium">{issue.type}</p>
+              <p className="font-medium">{capitalize(issue.type.replace(/-/g, ' '))}</p>
             </div>
             <div>
               <p className="text-sm text-muted-foreground">Date</p>

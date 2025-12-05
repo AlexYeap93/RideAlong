@@ -504,7 +504,7 @@ async function seedIssuesForBookings() {
       const subject = issueType === 'payment' ? 'Payment not processed' :
                       issueType === 'driver' ? 'Driver was late' :
                       issueType === 'safety' ? 'Unsafe driving' : 'Other issue';
-      const description = `Auto-seeded issue: ${subject} on booking ${bookingId}`;
+      const description = `Issue: ${subject} on booking ${bookingId}`;
 
       // Randomly choose status; make some resolved
       const statusRoll = Math.random();

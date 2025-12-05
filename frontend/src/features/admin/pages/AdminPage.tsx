@@ -341,7 +341,7 @@ export function AdminPage() {
                         <div className="flex items-center gap-2">
                             <Shield className="w-4 h-4 text-green-600" />
                             <div>
-                                <p className="text-xs text-muted-foreground">Pending Drivers</p>
+                                <p className="text-xs text-muted-foreground">Pending Applications</p>
                                 <p className="font-medium">{pendingDriversView.length}</p>
                             </div>
                         </div>
@@ -351,10 +351,10 @@ export function AdminPage() {
 
             {/* Tabs */}
             <Tabs defaultValue="users" className="w-full max-w-full">
-                <TabsList className="grid w-full grid-cols-3 mx-4 my-4 max-w-full overflow-hidden">
-                    <TabsTrigger value="users">Users</TabsTrigger>
-                    <TabsTrigger value="complaints">Issues</TabsTrigger>
-                    <TabsTrigger value="drivers">Drivers</TabsTrigger>
+                <TabsList className="flex w-full overflow-x-auto px-4 my-4 gap-2 max-w-full [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+                    <TabsTrigger value="users" className="min-w-[110px]">Users</TabsTrigger>
+                    <TabsTrigger value="complaints" className="min-w-[110px]">Issues</TabsTrigger>
+                    <TabsTrigger value="drivers" className="min-w-[130px]">Applications</TabsTrigger>
                 </TabsList>
 
                 <TabsContent value="users" className="px-4 space-y-4 w-full max-w-full overflow-x-hidden">
