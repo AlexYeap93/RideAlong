@@ -5,7 +5,7 @@ import { StatusBadge } from "../../../../components/StatusBadge";
 export interface UserCardProps { id: number; name: string; email: string; type: string; status: string; totalRides: number; rating: string | number; onClick?: () => void;}
 
 export function UserCard(props: UserCardProps) {
-  const { name, email, type, status, rating, totalRides, onClick } = props;
+  const { name, email, status, rating, totalRides, onClick } = props;
 
   return (
     <Card className="p-4 cursor-pointer" onClick={onClick}>
