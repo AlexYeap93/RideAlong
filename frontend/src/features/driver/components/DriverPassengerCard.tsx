@@ -81,19 +81,19 @@ export function DriverPassengerCard({
               {passenger.additionalAmountStatus === 'pending' && (
                 <Badge variant="outline" className="bg-yellow-50 text-yellow-800 border-yellow-200">
                   <DollarSign className="w-3 h-3 mr-1" />
-                  $ {passenger.additionalAmountRequested} requested - Pending
+                  {passenger.additionalAmountRequested} requested - Pending
                 </Badge>
               )}
               {passenger.additionalAmountStatus === 'accepted' && (
                 <Badge variant="outline" className="bg-green-50 text-green-800 border-green-200">
                   <DollarSign className="w-3 h-3 mr-1" />
-                  $ {passenger.additionalAmountRequested} accepted
+                  {passenger.additionalAmountRequested} accepted
                 </Badge>
               )}
               {passenger.additionalAmountStatus === 'declined' && (
                 <Badge variant="outline" className="bg-red-50 text-red-800 border-red-200">
                   <AlertCircle className="w-3 h-3 mr-1" />
-                  $ {passenger.additionalAmountRequested} declined - Booking cancelled
+                  {passenger.additionalAmountRequested} declined - Booking cancelled
                 </Badge>
               )}
             </div>

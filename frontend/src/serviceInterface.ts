@@ -360,3 +360,49 @@ export interface PageHeaderProps {
   icon?: React.ReactNode;
   children?: React.ReactNode;
 }
+export interface UsersPageState {
+  showTimeSlots: boolean;
+  selectedTimeSlot: string;
+  showRides: boolean;
+  selectedDriver: any;
+  showSeatSelection: boolean;
+  showPayment: boolean;
+  showConfirmation: boolean;
+  selectedSeat: number | null;
+  bookingId: string;
+  showHelpDialog: boolean;
+  selectedBookingForHelp: any;
+  issueType: string;
+  issueDescription: string;
+  showDetailsDialog: boolean;
+  selectedBookingForDetails: any;
+  activeBookings: any[];
+  completedBookings: any[];
+  rides: any[];
+  isLoadingBookings: boolean;
+  isLoadingRides: boolean;
+  showRatingDialog: boolean;
+  selectedBookingForRating: any;
+  rating: number;
+  ratingComment: string;
+  isSubmittingRating: boolean;
+  isRespondingToAmount: {[key: string]: boolean};
+}
+
+export interface PaymentPageState {
+  paymentSource: "saved" | "manual";
+  selectedSavedMethod: string;
+  savedPaymentMethods: any[];
+  isLoadingMethods: boolean;
+  cardNumber: string;
+  expiryDate: string;
+  cvv: string;
+  cardName: string;
+  savePaymentMethod: boolean;
+  isProcessing: boolean;
+  addressSource: "saved" | "manual";
+  pickupAddress: string;
+  pickupCity: string;
+  pickupProvince: string;
+  pickupPostalCode: string;
+}

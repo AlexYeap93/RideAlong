@@ -150,7 +150,7 @@ export function PaymentMethods({ onBack }: PaymentMethodsProps) {
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-1">
                     <p className="font-medium">{method.brand || "Card"}</p>
-                    {method.is_default && (
+                    {method.isDefault && (
                       <Badge variant="secondary" className="text-xs">
                         <Check className="w-3 h-3 mr-1" />
                         Default
@@ -162,23 +162,23 @@ export function PaymentMethods({ onBack }: PaymentMethodsProps) {
                     •••• •••• •••• {method.last4}
                   </p>
 
-                  {method.cardholder_name && (
+                  {method.cardholderName && (
                     <p className="text-xs text-muted-foreground mt-1">
-                      {method.cardholder_name}
+                      {method.cardholderName}
                     </p>
                   )}
 
-                  {method.expiry_month && method.expiry_year && (
+                  {method.expiryMonth && method.expiryYear && (
                     <p className="text-xs text-muted-foreground mt-1">
                       Expires{" "}
-                      {String(method.expiry_month).padStart(2, "0")}/
-                      {String(method.expiry_year).slice(-2)}
+                      {String(method.expiryMonth).padStart(2, "0")}/
+                      {String(method.expiryYear).slice(-2)}
                     </p>
                   )}
                 </div>
 
                 <div className="flex flex-col gap-2">
-                  {!method.is_default && (
+                  {!method.isDefault && (
                     <Button variant="outline" size="sm" onClick={() => setDefault(method.id)} disabled={submitting}>
                       Set Default
                     </Button>

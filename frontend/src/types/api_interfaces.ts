@@ -191,6 +191,22 @@ export interface AdminIssueView {
   dbStatus: string;
 }
 
+export interface AdminPageState {
+  searchTerm: string;
+  userFilter: string;
+  complaintFilter: string;
+  users: any[];
+  pendingDrivers: any[];
+  issues: any[];
+  isLoadingUsers: boolean;
+  isLoadingIssues: boolean;
+  selectedUser: AdminUserView | null;
+  selectedComplaint: AdminIssueView | null;
+  selectedDriver: AdminPendingDriverView | null;
+  showUserDialog: boolean;
+  showComplaintDialog: boolean;
+  showDriverDialog: boolean;
+}
 export interface AdminPendingDriverView {
   id: number;
   user_id: number;
