@@ -83,14 +83,14 @@ export function AdminIssueDialog({ open, issue, onOpenChange, onResolve, onReope
           </div>
         </div>
 
-        <DialogFooter className="flex-col sm:flex-row gap-2">
+        <DialogFooter className="flex-col sm:flex-row sm:flex-wrap gap-2">
           {issue.dbStatus === "open" && (
             <>
-              <Button onClick={() => onUnderReview(issue)} className="w-full sm:w-auto" variant="secondary">
+              <Button onClick={() => onUnderReview(issue)} className="w-full sm:w-auto" size="sm" variant="secondary">
                 <Eye className="w-4 h-4 mr-2" />
                 Under Review
               </Button>
-              <Button onClick={() => onResolve(issue)} className="w-full sm:w-auto">
+              <Button onClick={() => onResolve(issue)} className="w-full sm:w-auto" size="sm">
                 <CheckCircle2 className="w-4 h-4 mr-2" />
                 Mark as Resolved
               </Button>
@@ -98,23 +98,29 @@ export function AdminIssueDialog({ open, issue, onOpenChange, onResolve, onReope
           )}
           {issue.dbStatus === "under_review" && (
             <>
-              <Button onClick={() => onReopen(issue)} className="w-full sm:w-auto" variant="secondary">
+              <Button onClick={() => onReopen(issue)} className="w-full sm:w-auto" size="sm" variant="secondary">
                 <FolderOpen className="w-4 h-4 mr-2" />
                 Reopen
               </Button>
-              <Button onClick={() => onResolve(issue)} className="w-full sm:w-auto">
+              <Button onClick={() => onResolve(issue)} className="w-full sm:w-auto" size="sm">
                 <CheckCircle2 className="w-4 h-4 mr-2" />
                 Mark as Resolved
               </Button>
             </>
           )}
           {issue.dbStatus === "resolved" && (
-            <Button onClick={() => onReopen(issue)} className="w-full sm:w-auto" variant="secondary">
-              <FolderOpen className="w-4 h-4 mr-2" />
-              Reopen Issue
-            </Button>
+            <>
+              <Button onClick={() => onUnderReview(issue)} className="w-full sm:w-auto" size="sm" variant="secondary">
+                <Eye className="w-4 h-4 mr-2" />
+                Under Review
+              </Button>
+              <Button onClick={() => onReopen(issue)} className="w-full sm:w-auto" size="sm" variant="secondary">
+                <FolderOpen className="w-4 h-4 mr-2" />
+                Reopen Issue
+              </Button>
+            </>
           )}
-          <Button onClick={() => onOpenChange(false)} className="w-full sm:w-auto" variant="outline">
+          <Button onClick={() => onOpenChange(false)} className="w-full sm:w-auto" size="sm" variant="outline">
             Close
           </Button>
         </DialogFooter>
