@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { issuesAPI } from "../../../services/api";
+import { issuesAPI } from "../../../services/IssueServices";
 
 export function useAdminIssues() {
   const [issues, setIssues] = useState<any[]>([]);

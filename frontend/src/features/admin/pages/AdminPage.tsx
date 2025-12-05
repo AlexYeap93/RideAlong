@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useReducer } from "react";
 import { Shield } from "lucide-react";
 import { toast } from "sonner";
 
@@ -18,27 +18,80 @@ import { AdminDriversSection } from "../components/AdminDriversSection";
 import { AdminUserDialog } from "../components/dialogs/AdminUserDialog";
 import { AdminIssueDialog } from "../components/dialogs/AdminIssueDialog";
 import { AdminDriverDialog } from "../components/dialogs/AdminDriverDialog";
-import type { AdminUserView, AdminIssueView, AdminPendingDriverView} from "../../../types/api_interfaces"; 
+import type { AdminUserView, AdminIssueView, AdminPendingDriverView, AdminPageState} from "../../../types/api_interfaces"; 
+
+
+type AdminPageAction =
+    | { type: 'SET_SEARCH_TERM'; payload: string }
+    | { type: 'SET_USER_FILTER'; payload: string }
+    | { type: 'SET_COMPLAINT_FILTER'; payload: string }
+    | { type: 'SET_USERS'; payload: any[] }
+    | { type: 'SET_PENDING_DRIVERS'; payload: any[] }
+    | { type: 'SET_ISSUES'; payload: any[] }
+    | { type: 'SET_IS_LOADING_USERS'; payload: boolean }
+    | { type: 'SET_IS_LOADING_ISSUES'; payload: boolean }
+    | { type: 'SET_SELECTED_USER'; payload: AdminUserView | null }
+    | { type: 'SET_SELECTED_COMPLAINT'; payload: AdminIssueView | null }
+    | { type: 'SET_SELECTED_DRIVER'; payload: AdminPendingDriverView | null }
+    | { type: 'SET_SHOW_USER_DIALOG'; payload: boolean }
+    | { type: 'SET_SHOW_COMPLAINT_DIALOG'; payload: boolean }
+    | { type: 'SET_SHOW_DRIVER_DIALOG'; payload: boolean };
+
+const initialState: AdminPageState = {
+    searchTerm: "",
+    userFilter: "all",
+    complaintFilter: "all",
+    users: [],
+    pendingDrivers: [],
+    issues: [],
+    isLoadingUsers: false,
+    isLoadingIssues: false,
+    selectedUser: null,
+    selectedComplaint: null,
+    selectedDriver: null,
+    showUserDialog: false,
+    showComplaintDialog: false,
+    showDriverDialog: false,
+};
+
+function adminPageReducer(state: AdminPageState, action: AdminPageAction): AdminPageState {
+    switch (action.type) {
+        case 'SET_SEARCH_TERM':
+            return { ...state, searchTerm: action.payload };
+        case 'SET_USER_FILTER':
+            return { ...state, userFilter: action.payload };
+        case 'SET_COMPLAINT_FILTER':
+            return { ...state, complaintFilter: action.payload };
+        case 'SET_USERS':
+            return { ...state, users: action.payload };
+        case 'SET_PENDING_DRIVERS':
+            return { ...state, pendingDrivers: action.payload };
+        case 'SET_ISSUES':
+            return { ...state, issues: action.payload };
+        case 'SET_IS_LOADING_USERS':
+            return { ...state, isLoadingUsers: action.payload };
+        case 'SET_IS_LOADING_ISSUES':
+            return { ...state, isLoadingIssues: action.payload };
+        case 'SET_SELECTED_USER':
+            return { ...state, selectedUser: action.payload };
+        case 'SET_SELECTED_COMPLAINT':
+            return { ...state, selectedComplaint: action.payload };
+        case 'SET_SELECTED_DRIVER':
+            return { ...state, selectedDriver: action.payload };
+        case 'SET_SHOW_USER_DIALOG':
+            return { ...state, showUserDialog: action.payload };
+        case 'SET_SHOW_COMPLAINT_DIALOG':
+            return { ...state, showComplaintDialog: action.payload };
+        case 'SET_SHOW_DRIVER_DIALOG':
+            return { ...state, showDriverDialog: action.payload };
+        default:
+            return state;
+    }
+}
 
 export function AdminPage() {
     const { user } = useAuth();
-    const [searchTerm, setSearchTerm] = useState("");
-    const [userFilter, setUserFilter] = useState("all");
-    const [complaintFilter, setComplaintFilter] = useState("all");
-
-    const [users, setUsers] = useState<any[]>([]);
-    const [pendingDrivers, setPendingDrivers] = useState<any[]>([]);
-    const [issues, setIssues] = useState<any[]>([]);
-    const [isLoadingUsers, setIsLoadingUsers] = useState(false);
-    const [isLoadingIssues, setIsLoadingIssues] = useState(false);
-
-    const [selectedUser, setSelectedUser] = useState<AdminUserView | null>(null);
-    const [selectedComplaint, setSelectedComplaint] = useState<AdminIssueView | null>(null);
-    const [selectedDriver, setSelectedDriver] = useState<AdminPendingDriverView | null>(null);
-
-    const [showUserDialog, setShowUserDialog] = useState(false);
-    const [showComplaintDialog, setShowComplaintDialog] = useState(false);
-    const [showDriverDialog, setShowDriverDialog] = useState(false);
+    const [state, dispatch] = useReducer(adminPageReducer, initialState);
 
     // Fetch users, pending drivers, and issues when the page loads or filters change
     useEffect(() => {
@@ -47,20 +100,20 @@ export function AdminPage() {
             fetchPendingDrivers();
             fetchIssues();
         }
-    }, [user?.role, complaintFilter]);
+    }, [user?.role, state.complaintFilter]);
 
     //fetchers
     const fetchUsers = async () => {
-        setIsLoadingUsers(true);
+        dispatch({ type: 'SET_IS_LOADING_USERS', payload: true });
         try {
             const response = await usersAPI.getUsers();
-            setUsers(response.data);
+            dispatch({ type: 'SET_USERS', payload: response.data });
         }
         catch (error: any) {
             toast.error("Failed to load users", { description: error.message || "Please try again." });
         }
         finally {
-            setIsLoadingUsers(false);
+            dispatch({ type: 'SET_IS_LOADING_USERS', payload: false });
         }
     };
 
@@ -68,7 +121,7 @@ export function AdminPage() {
         try {
             const response = await driversAPI.getDrivers();
             const pending = response.data.filter((d: any) => !d.is_approved);
-            setPendingDrivers(pending);
+            dispatch({ type: 'SET_PENDING_DRIVERS', payload: pending });
         }
         catch (error: any) {
             console.error("Failed to load pending drivers:", error);
@@ -76,15 +129,15 @@ export function AdminPage() {
     };
 
     const fetchIssues = async () => {
-        setIsLoadingIssues(true);
+        dispatch({ type: 'SET_IS_LOADING_ISSUES', payload: true });
         try {
             let statusFilter: string | undefined = undefined;
-            if (complaintFilter === "open") statusFilter = "open";
-            else if (complaintFilter === "under_review") statusFilter = "under_review";
-            else if (complaintFilter === "resolved") statusFilter = "resolved";
+            if (state.complaintFilter === "open") statusFilter = "open";
+            else if (state.complaintFilter === "under_review") statusFilter = "under_review";
+            else if (state.complaintFilter === "resolved") statusFilter = "resolved";
 
             const response = await issuesAPI.getIssues({ status: statusFilter, });
-            setIssues(response.data);
+            dispatch({ type: 'SET_ISSUES', payload: response.data });
         }
         catch (error: any) {
             toast.error("Failed to load issues", {
@@ -92,7 +145,7 @@ export function AdminPage() {
             });
         }
         finally {
-            setIsLoadingIssues(false);
+            dispatch({ type: 'SET_IS_LOADING_ISSUES', payload: false });
         }
     };
 
@@ -102,7 +155,7 @@ export function AdminPage() {
         try {
             await usersAPI.suspendUser(u.id.toString());
             toast.success(`User ${u.name} has been suspended`);
-            setShowUserDialog(false);
+            dispatch({ type: 'SET_SHOW_USER_DIALOG', payload: false });
             await fetchUsers();
         }
         catch (error: any) {
@@ -116,7 +169,7 @@ export function AdminPage() {
         try {
             await usersAPI.unsuspendUser(u.id.toString());
             toast.success(`User ${u.name} has been activated`);
-            setShowUserDialog(false);
+            dispatch({ type: 'SET_SHOW_USER_DIALOG', payload: false });
             await fetchUsers();
         }
         catch (error: any) {
@@ -128,7 +181,7 @@ export function AdminPage() {
         try {
             await issuesAPI.updateIssue(c.id.toString(), { status: "resolved", });
             toast.success("Issue marked as resolved");
-            setShowComplaintDialog(false);
+            dispatch({ type: 'SET_SHOW_COMPLAINT_DIALOG', payload: false });
             await fetchIssues();
         }
         catch (error: any) {
@@ -140,7 +193,7 @@ export function AdminPage() {
         try {
             await driversAPI.approveDriver(d.id.toString());
             toast.success(`${d.name} has been approved as a driver!`);
-            setShowDriverDialog(false);
+            dispatch({ type: 'SET_SHOW_DRIVER_DIALOG', payload: false });
             await fetchPendingDrivers();
         }
         catch (error: any) {
@@ -150,23 +203,23 @@ export function AdminPage() {
 
     const handleRejectDriver = (d: AdminPendingDriverView) => {
         toast.error(`${d.name}'s application has been rejected`);
-        setShowDriverDialog(false);
+        dispatch({ type: 'SET_SHOW_DRIVER_DIALOG', payload: false });
     };
 
     //derived view models
 
-    const filteredUsers: AdminUserView[] = users.filter((userItem: any) => {
-        const matchesSearch = userItem.name.toLowerCase().includes(searchTerm.toLowerCase()) || userItem.email.toLowerCase().includes(searchTerm.toLowerCase());
+    const filteredUsers: AdminUserView[] = state.users.filter((userItem: any) => {
+        const matchesSearch = userItem.name.toLowerCase().includes(state.searchTerm.toLowerCase()) || userItem.email.toLowerCase().includes(state.searchTerm.toLowerCase());
 
         let matchesFilter = true;
 
-        if (userFilter === "driver")
+        if (state.userFilter === "driver")
             matchesFilter = userItem.role === "driver";
-        else if (userFilter === "rider")
+        else if (state.userFilter === "rider")
             matchesFilter = userItem.role === "user";
-        else if (userFilter === "active")
+        else if (state.userFilter === "active")
             matchesFilter = !userItem.is_suspended;
-        else if (userFilter === "suspended")
+        else if (state.userFilter === "suspended")
             matchesFilter = !!userItem.is_suspended;
 
         return matchesSearch && matchesFilter;
@@ -202,10 +255,10 @@ export function AdminPage() {
             };
         });
 
-    const filteredComplaints: AdminIssueView[] = issues.filter((complaint: any) => {
-        const matchesSearch = (complaint.subject || "").toLowerCase().includes(searchTerm.toLowerCase()) || (complaint.reporter_name || "").toLowerCase().includes(searchTerm.toLowerCase());
+    const filteredComplaints: AdminIssueView[] = state.issues.filter((complaint: any) => {
+        const matchesSearch = (complaint.subject || "").toLowerCase().includes(state.searchTerm.toLowerCase()) || (complaint.reporter_name || "").toLowerCase().includes(state.searchTerm.toLowerCase());
         const dbStatus = complaint.status || "open";
-        const matchesFilter = complaintFilter === "all" || dbStatus === complaintFilter;
+        const matchesFilter = state.complaintFilter === "all" || dbStatus === state.complaintFilter;
         return matchesSearch && matchesFilter;
     })
         .map(
@@ -224,8 +277,8 @@ export function AdminPage() {
             })
         );
 
-    const pendingDriversView: AdminPendingDriverView[] = pendingDrivers.map((driver: any) => {
-        const driverUser = users.find((u: any) => u.id === driver.user_id);
+    const pendingDriversView: AdminPendingDriverView[] = state.pendingDrivers.map((driver: any) => {
+        const driverUser = state.users.find((u: any) => u.id === driver.user_id);
 
         return {
             id: driver.id,
@@ -244,7 +297,7 @@ export function AdminPage() {
     if (user?.role !== "admin")
         return null;
 
-    const openIssuesCount = issues.filter((c: any) => c.status === "open").length;
+    const openIssuesCount = state.issues.filter((c: any) => c.status === "open").length;
 
     //render
 
@@ -260,7 +313,7 @@ export function AdminPage() {
 
                     {/* Global Search */}
                     <div className="relative">
-                        <Input placeholder="Search..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)}/>
+                        <Input placeholder="Search..." value={state.searchTerm} onChange={(e) => dispatch({ type: 'SET_SEARCH_TERM', payload: e.target.value })}/>
                     </div>
                 </div>
 
@@ -271,7 +324,7 @@ export function AdminPage() {
                             <Shield className="w-4 h-4 text-blue-600" />
                             <div>
                                 <p className="text-xs text-muted-foreground">Total Users</p>
-                                <p className="font-medium">{users.length}</p>
+                                <p className="font-medium">{state.users.length}</p>
                             </div>
                         </div>
                     </Card>
@@ -307,12 +360,12 @@ export function AdminPage() {
                 <TabsContent value="users" className="px-4 space-y-4 w-full max-w-full overflow-x-hidden">
                     <AdminUsersSection
                         users={filteredUsers}
-                        isLoading={isLoadingUsers}
-                        userFilter={userFilter}
-                        onUserFilterChange={setUserFilter}
+                        isLoading={state.isLoadingUsers}
+                        userFilter={state.userFilter}
+                        onUserFilterChange={(filter) => dispatch({ type: 'SET_USER_FILTER', payload: filter })}
                         onUserClick={(u) => {
-                            setSelectedUser(u);
-                            setShowUserDialog(true);
+                            dispatch({ type: 'SET_SELECTED_USER', payload: u });
+                            dispatch({ type: 'SET_SHOW_USER_DIALOG', payload: true });
                         }}
                     />
                 </TabsContent>
@@ -320,12 +373,12 @@ export function AdminPage() {
                 <TabsContent value="complaints" className="px-4 space-y-4 w-full max-w-full overflow-x-hidden">
                     <AdminIssuesSection
                         complaints={filteredComplaints}
-                        isLoading={isLoadingIssues}
-                        complaintFilter={complaintFilter}
-                        onComplaintFilterChange={setComplaintFilter}
+                        isLoading={state.isLoadingIssues}
+                        complaintFilter={state.complaintFilter}
+                        onComplaintFilterChange={(filter) => dispatch({ type: 'SET_COMPLAINT_FILTER', payload: filter })}
                         onComplaintClick={(c) => {
-                            setSelectedComplaint(c);
-                            setShowComplaintDialog(true);
+                            dispatch({ type: 'SET_SELECTED_COMPLAINT', payload: c });
+                            dispatch({ type: 'SET_SHOW_COMPLAINT_DIALOG', payload: true });
                         }}
                     />
                 </TabsContent>
@@ -334,8 +387,8 @@ export function AdminPage() {
                     <AdminDriversSection
                         pendingDrivers={pendingDriversView}
                         onDriverClick={(d) => {
-                            setSelectedDriver(d);
-                            setShowDriverDialog(true);
+                            dispatch({ type: 'SET_SELECTED_DRIVER', payload: d });
+                            dispatch({ type: 'SET_SHOW_DRIVER_DIALOG', payload: true });
                         }}
                     />
                 </TabsContent>
@@ -343,24 +396,24 @@ export function AdminPage() {
 
             {/* Dialogs */}
             <AdminUserDialog
-                open={showUserDialog}
-                user={selectedUser}
-                onOpenChange={setShowUserDialog}
+                open={state.showUserDialog}
+                user={state.selectedUser}
+                onOpenChange={(open) => dispatch({ type: 'SET_SHOW_USER_DIALOG', payload: open })}
                 onSuspendUser={handleSuspendUser}
                 onActivateUser={handleActivateUser}
             />
 
             <AdminIssueDialog
-                open={showComplaintDialog}
-                issue={selectedComplaint}
-                onOpenChange={setShowComplaintDialog}
+                open={state.showComplaintDialog}
+                issue={state.selectedComplaint}
+                onOpenChange={(open) => dispatch({ type: 'SET_SHOW_COMPLAINT_DIALOG', payload: open })}
                 onResolve={handleResolveComplaint}
             />
 
             <AdminDriverDialog
-                open={showDriverDialog}
-                driver={selectedDriver}
-                onOpenChange={setShowDriverDialog}
+                open={state.showDriverDialog}
+                driver={state.selectedDriver}
+                onOpenChange={(open) => dispatch({ type: 'SET_SHOW_DRIVER_DIALOG', payload: open })}
                 onApprove={handleApproveDriver}
                 onReject={handleRejectDriver}
             />

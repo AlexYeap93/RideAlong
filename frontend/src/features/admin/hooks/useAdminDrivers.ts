@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { driversAPI } from "../../../services/api";
+import { driversAPI } from "../../../services/DriverServices";
 
 export function useAdminDrivers() {
   const [drivers, setDrivers] = useState<any[]>([]);
