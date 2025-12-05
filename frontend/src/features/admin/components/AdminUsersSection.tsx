@@ -7,7 +7,6 @@ import { Eye } from "lucide-react";
 import type { adminUserProps } from "../../../serviceInterface";
 
 
-
 const getStatusColor = (status: string) => {
   switch (status.toLowerCase()) {
     case "active":

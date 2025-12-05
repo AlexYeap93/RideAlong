@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { usersAPI } from "../../../services/api";
+import { usersAPI } from "../../../services/UserServices";
 
 export function useAdminUsers() {
   const [users, setUsers] = useState<any[]>([]);

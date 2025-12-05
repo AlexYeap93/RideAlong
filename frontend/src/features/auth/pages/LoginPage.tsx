@@ -364,13 +364,6 @@ export function LoginPage({ initialMode = "login", initialUserType = "rider", on
             <p className="text-muted-foreground">
               By continuing, you agree to our Terms of Service and Privacy Policy
             </p>
-            {!isSignUp && (
-              <div className="pt-4 border-t border-border">
-                <p className="text-muted-foreground">
-                  Admin? Sign in with <span className="font-mono bg-muted px-2 py-1 rounded">admin@admin.com</span>
-                </p>
-              </div>
-            )}
           </div>
         </div>
       </div>

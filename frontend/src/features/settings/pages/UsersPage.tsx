@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useReducer, useEffect } from "react";
 import { Card } from "../../../components/ui/card";
 import { Button } from "../../../components/ui/button";
 import { Avatar, AvatarFallback } from "../../../components/ui/avatar";
@@ -21,41 +21,162 @@ import { paymentsAPI } from "../../../services/PaymentServices";
 import { issuesAPI } from "../../../services/IssueServices";
 import { ratingsAPI } from "../../../services/Ratingservices";
 import { useAuth } from "../../../contexts/AuthContext";
-import type { UsersPageProps } from "../../../serviceInterface";
+import type { UsersPageProps, UsersPageState } from "../../../serviceInterface";
+
+type UsersPageAction =
+  | { type: 'SET_SHOW_TIME_SLOTS'; payload: boolean }
+  | { type: 'SET_SELECTED_TIME_SLOT'; payload: string }
+  | { type: 'SET_SHOW_RIDES'; payload: boolean }
+  | { type: 'SET_SELECTED_DRIVER'; payload: any }
+  | { type: 'SET_SHOW_SEAT_SELECTION'; payload: boolean }
+  | { type: 'SET_SHOW_PAYMENT'; payload: boolean }
+  | { type: 'SET_SHOW_CONFIRMATION'; payload: boolean }
+  | { type: 'SET_SELECTED_SEAT'; payload: number | null }
+  | { type: 'SET_BOOKING_ID'; payload: string }
+  | { type: 'SET_SHOW_HELP_DIALOG'; payload: boolean }
+  | { type: 'SET_SELECTED_BOOKING_FOR_HELP'; payload: any }
+  | { type: 'SET_ISSUE_TYPE'; payload: string }
+  | { type: 'SET_ISSUE_DESCRIPTION'; payload: string }
+  | { type: 'SET_SHOW_DETAILS_DIALOG'; payload: boolean }
+  | { type: 'SET_SELECTED_BOOKING_FOR_DETAILS'; payload: any }
+  | { type: 'SET_ACTIVE_BOOKINGS'; payload: any[] }
+  | { type: 'SET_COMPLETED_BOOKINGS'; payload: any[] }
+  | { type: 'SET_RIDES'; payload: any[] }
+  | { type: 'SET_IS_LOADING_BOOKINGS'; payload: boolean }
+  | { type: 'SET_IS_LOADING_RIDES'; payload: boolean }
+  | { type: 'SET_SHOW_RATING_DIALOG'; payload: boolean }
+  | { type: 'SET_SELECTED_BOOKING_FOR_RATING'; payload: any }
+  | { type: 'SET_RATING'; payload: number }
+  | { type: 'SET_RATING_COMMENT'; payload: string }
+  | { type: 'SET_IS_SUBMITTING_RATING'; payload: boolean }
+  | { type: 'SET_IS_RESPONDING_TO_AMOUNT'; payload: {[key: string]: boolean} }
+  | { type: 'RESET_BOOKING_FLOW' }
+  | { type: 'RESET_ISSUE_FORM' }
+  | { type: 'RESET_RATING_FORM' };
+
+function usersPageReducer(state: UsersPageState, action: UsersPageAction): UsersPageState {
+  switch (action.type) {
+    case 'SET_SHOW_TIME_SLOTS':
+      return { ...state, showTimeSlots: action.payload };
+    case 'SET_SELECTED_TIME_SLOT':
+      return { ...state, selectedTimeSlot: action.payload };
+    case 'SET_SHOW_RIDES':
+      return { ...state, showRides: action.payload };
+    case 'SET_SELECTED_DRIVER':
+      return { ...state, selectedDriver: action.payload };
+    case 'SET_SHOW_SEAT_SELECTION':
+      return { ...state, showSeatSelection: action.payload };
+    case 'SET_SHOW_PAYMENT':
+      return { ...state, showPayment: action.payload };
+    case 'SET_SHOW_CONFIRMATION':
+      return { ...state, showConfirmation: action.payload };
+    case 'SET_SELECTED_SEAT':
+      return { ...state, selectedSeat: action.payload };
+    case 'SET_BOOKING_ID':
+      return { ...state, bookingId: action.payload };
+    case 'SET_SHOW_HELP_DIALOG':
+      return { ...state, showHelpDialog: action.payload };
+    case 'SET_SELECTED_BOOKING_FOR_HELP':
+      return { ...state, selectedBookingForHelp: action.payload };
+    case 'SET_ISSUE_TYPE':
+      return { ...state, issueType: action.payload };
+    case 'SET_ISSUE_DESCRIPTION':
+      return { ...state, issueDescription: action.payload };
+    case 'SET_SHOW_DETAILS_DIALOG':
+      return { ...state, showDetailsDialog: action.payload };
+    case 'SET_SELECTED_BOOKING_FOR_DETAILS':
+      return { ...state, selectedBookingForDetails: action.payload };
+    case 'SET_ACTIVE_BOOKINGS':
+      return { ...state, activeBookings: action.payload };
+    case 'SET_COMPLETED_BOOKINGS':
+      return { ...state, completedBookings: action.payload };
+    case 'SET_RIDES':
+      return { ...state, rides: action.payload };
+    case 'SET_IS_LOADING_BOOKINGS':
+      return { ...state, isLoadingBookings: action.payload };
+    case 'SET_IS_LOADING_RIDES':
+      return { ...state, isLoadingRides: action.payload };
+    case 'SET_SHOW_RATING_DIALOG':
+      return { ...state, showRatingDialog: action.payload };
+    case 'SET_SELECTED_BOOKING_FOR_RATING':
+      return { ...state, selectedBookingForRating: action.payload };
+    case 'SET_RATING':
+      return { ...state, rating: action.payload };
+    case 'SET_RATING_COMMENT':
+      return { ...state, ratingComment: action.payload };
+    case 'SET_IS_SUBMITTING_RATING':
+      return { ...state, isSubmittingRating: action.payload };
+    case 'SET_IS_RESPONDING_TO_AMOUNT':
+      return { ...state, isRespondingToAmount: action.payload };
+    case 'RESET_BOOKING_FLOW':
+      return {
+        ...state,
+        showTimeSlots: false,
+        showRides: false,
+        showSeatSelection: false,
+        showPayment: false,
+        showConfirmation: false,
+        selectedTimeSlot: "",
+        selectedDriver: null,
+        selectedSeat: null,
+        bookingId: "",
+      };
+    case 'RESET_ISSUE_FORM':
+      return {
+        ...state,
+        issueType: "",
+        issueDescription: "",
+        showHelpDialog: false,
+        selectedBookingForHelp: null,
+      };
+    case 'RESET_RATING_FORM':
+      return {
+        ...state,
+        rating: 5,
+        ratingComment: "",
+        showRatingDialog: false,
+        selectedBookingForRating: null,
+      };
+    default:
+      return state;
+  }
+}
 
 export function UsersPage({ initialMode = "main", onModeChange, refreshTrigger, onNavigateToHome }: UsersPageProps) {
   const { user } = useAuth();
-  const [showTimeSlots, setShowTimeSlots] = useState(initialMode === "browseRides");
-  const [selectedTimeSlot, setSelectedTimeSlot] = useState("");
-  const [showRides, setShowRides] = useState(false);
-  const [selectedDriver, setSelectedDriver] = useState<any>(null);
-  const [showSeatSelection, setShowSeatSelection] = useState(false);
-  const [showPayment, setShowPayment] = useState(false);
-  const [showConfirmation, setShowConfirmation] = useState(false);
-  const [selectedSeat, setSelectedSeat] = useState<number | null>(null);
-  const [bookingId, setBookingId] = useState("");
-  const [showHelpDialog, setShowHelpDialog] = useState(false);
-  const [selectedBookingForHelp, setSelectedBookingForHelp] = useState<any>(null);
-  const [issueType, setIssueType] = useState("");
-  const [issueDescription, setIssueDescription] = useState("");
-  const [showDetailsDialog, setShowDetailsDialog] = useState(false);
-  const [selectedBookingForDetails, setSelectedBookingForDetails] = useState<any>(null);
-  const [activeBookings, setActiveBookings] = useState<any[]>([]);
-  const [completedBookings, setCompletedBookings] = useState<any[]>([]);
-  const [rides, setRides] = useState<any[]>([]);
-  const [isLoadingBookings, setIsLoadingBookings] = useState(false);
-  const [isLoadingRides, setIsLoadingRides] = useState(false);
-  const [showRatingDialog, setShowRatingDialog] = useState(false);
-  const [selectedBookingForRating, setSelectedBookingForRating] = useState<any>(null);
-  const [rating, setRating] = useState<number>(5);
-  const [ratingComment, setRatingComment] = useState("");
-  const [isSubmittingRating, setIsSubmittingRating] = useState(false);
-  const [isRespondingToAmount, setIsRespondingToAmount] = useState<{[key: string]: boolean}>({});
+  const [state, dispatch] = useReducer(usersPageReducer, {
+    showTimeSlots: initialMode === "browseRides",
+    selectedTimeSlot: "",
+    showRides: false,
+    selectedDriver: null,
+    showSeatSelection: false,
+    showPayment: false,
+    showConfirmation: false,
+    selectedSeat: null,
+    bookingId: "",
+    showHelpDialog: false,
+    selectedBookingForHelp: null,
+    issueType: "",
+    issueDescription: "",
+    showDetailsDialog: false,
+    selectedBookingForDetails: null,
+    activeBookings: [],
+    completedBookings: [],
+    rides: [],
+    isLoadingBookings: false,
+    isLoadingRides: false,
+    showRatingDialog: false,
+    selectedBookingForRating: null,
+    rating: 5,
+    ratingComment: "",
+    isSubmittingRating: false,
+    isRespondingToAmount: {},
+  });
 
   // Sync with initialMode changes
   useEffect(() => {
     if (initialMode === "browseRides") {
-      setShowTimeSlots(true);
+      dispatch({ type: 'SET_SHOW_TIME_SLOTS', payload: true });
     }
   }, [initialMode]);
 
@@ -85,7 +206,7 @@ export function UsersPage({ initialMode = "main", onModeChange, refreshTrigger, 
   const fetchBookings = async () => {
     if (!user?.id) return;
     
-    setIsLoadingBookings(true);
+    dispatch({ type: 'SET_IS_LOADING_BOOKINGS', payload: true });
     try {
       const response = await bookingsAPI.getBookingsByUser(user.id);
       const transformedBookings = response.data.map(transformBookingData);
@@ -113,22 +234,22 @@ export function UsersPage({ initialMode = "main", onModeChange, refreshTrigger, 
       const confirmed = todayBookings.filter((b: any) => b.status === 'confirmed');
       const completed = todayBookings.filter((b: any) => b.status === 'completed');
       
-      setActiveBookings(confirmed);
-      setCompletedBookings(completed);
+      dispatch({ type: 'SET_ACTIVE_BOOKINGS', payload: confirmed });
+      dispatch({ type: 'SET_COMPLETED_BOOKINGS', payload: completed });
     } catch (error: any) {
       toast.error("Failed to load bookings", {
         description: error.message || "Please try again.",
       });
     } finally {
-      setIsLoadingBookings(false);
+      dispatch({ type: 'SET_IS_LOADING_BOOKINGS', payload: false });
     }
   };
 
   const handleTimeSlotSelect = async (timeSlot: string) => {
-    setSelectedTimeSlot(timeSlot);
-    setShowTimeSlots(false);
-    setIsLoadingRides(true);
-    setShowRides(true);
+    dispatch({ type: 'SET_SELECTED_TIME_SLOT', payload: timeSlot });
+    dispatch({ type: 'SET_SHOW_TIME_SLOTS', payload: false });
+    dispatch({ type: 'SET_IS_LOADING_RIDES', payload: true });
+    dispatch({ type: 'SET_SHOW_RIDES', payload: true });
 
     try {
       const time24 = convertTo24Hour(timeSlot);
@@ -153,14 +274,14 @@ export function UsersPage({ initialMode = "main", onModeChange, refreshTrigger, 
         return Math.abs(getTimeDifference(backendTimeHM, selectedTimeHM)) <= 30;
       });
 
-      setRides(filteredRides);
+      dispatch({ type: 'SET_RIDES', payload: filteredRides });
     } catch (error: any) {
       toast.error("Failed to load rides", {
         description: error.message || "Please try again.",
       });
-      setRides([]);
+      dispatch({ type: 'SET_RIDES', payload: [] });
     } finally {
-      setIsLoadingRides(false);
+      dispatch({ type: 'SET_IS_LOADING_RIDES', payload: false });
     }
   };
 
@@ -184,40 +305,32 @@ export function UsersPage({ initialMode = "main", onModeChange, refreshTrigger, 
   };
 
   const handleBackToTimeSlots = () => {
-    setShowRides(false);
-    setShowSeatSelection(false);
-    setShowTimeSlots(true);
-    setSelectedDriver(null);
+    dispatch({ type: 'SET_SHOW_RIDES', payload: false });
+    dispatch({ type: 'SET_SHOW_SEAT_SELECTION', payload: false });
+    dispatch({ type: 'SET_SHOW_TIME_SLOTS', payload: true });
+    dispatch({ type: 'SET_SELECTED_DRIVER', payload: null });
   };
 
   const handleBackToRides = () => {
-    setShowSeatSelection(false);
-    setSelectedDriver(null);
+    dispatch({ type: 'SET_SHOW_SEAT_SELECTION', payload: false });
+    dispatch({ type: 'SET_SELECTED_DRIVER', payload: null });
   };
 
   const handleBackToMain = () => {
-    setShowTimeSlots(false);
-    setShowRides(false);
-    setShowSeatSelection(false);
-    setShowPayment(false);
-    setShowConfirmation(false);
-    setSelectedTimeSlot("");
-    setSelectedDriver(null);
-    setSelectedSeat(null);
-    setBookingId("");
+    dispatch({ type: 'RESET_BOOKING_FLOW' });
     onModeChange?.("main");
   };
 
   const handleDriverSelect = (driver: any) => {
-    setSelectedDriver(driver);
-    setShowSeatSelection(true);
-    setShowRides(false);
+    dispatch({ type: 'SET_SELECTED_DRIVER', payload: driver });
+    dispatch({ type: 'SET_SHOW_SEAT_SELECTION', payload: true });
+    dispatch({ type: 'SET_SHOW_RIDES', payload: false });
   };
 
   const handleSeatConfirm = (seatNumber: number) => {
-    setSelectedSeat(seatNumber);
-    setShowSeatSelection(false);
-    setShowPayment(true);
+    dispatch({ type: 'SET_SELECTED_SEAT', payload: seatNumber });
+    dispatch({ type: 'SET_SHOW_SEAT_SELECTION', payload: false });
+    dispatch({ type: 'SET_SHOW_PAYMENT', payload: true });
   };
 
   const handlePaymentConfirm = async (
@@ -227,7 +340,7 @@ export function UsersPage({ initialMode = "main", onModeChange, refreshTrigger, 
     pickupProvince: string,
     pickupPostalCode: string
   ) => {
-    if (!user || !selectedDriver || !selectedSeat) {
+    if (!user || !state.selectedDriver || !state.selectedSeat) {
       toast.error("Missing information", {
         description: "Please try again.",
       });
@@ -245,24 +358,24 @@ export function UsersPage({ initialMode = "main", onModeChange, refreshTrigger, 
       // Create booking with complete pickup address combined into one string
       const fullPickupAddress = `${pickupAddress}, ${pickupCity}, ${pickupProvince} ${pickupPostalCode}`;
       const bookingResponse = await bookingsAPI.createBooking({
-        rideId: selectedDriver.rideId || selectedDriver.id,
+        rideId: state.selectedDriver.rideId || state.selectedDriver.id,
         numberOfSeats: 1,
-        seatNumber: selectedSeat,
+        seatNumber: state.selectedSeat,
         pickupLocation: fullPickupAddress,
       });
 
       const booking = bookingResponse.data;
-      setBookingId(booking.id);
+      dispatch({ type: 'SET_BOOKING_ID', payload: booking.id });
 
       await paymentsAPI.createPayment({
         bookingId: booking.id,
-        amount: selectedDriver.price * selectedSeat,
+        amount: state.selectedDriver.price * state.selectedSeat,
         paymentMethod: paymentMethod,
         paymentStatus: 'completed',
       });
 
-      setShowPayment(false);
-      setShowConfirmation(true);
+      dispatch({ type: 'SET_SHOW_PAYMENT', payload: false });
+      dispatch({ type: 'SET_SHOW_CONFIRMATION', payload: true });
       
       toast.success("Payment successful!", {
         description: "Your booking has been confirmed."
@@ -282,24 +395,24 @@ export function UsersPage({ initialMode = "main", onModeChange, refreshTrigger, 
   };
 
   const handleBookAnotherRide = () => {
-    setShowConfirmation(false);
-    setShowPayment(false);
-    setShowSeatSelection(false);
-    setShowRides(false);
-    setSelectedDriver(null);
-    setSelectedSeat(null);
-    setBookingId("");
-    setShowTimeSlots(true);
+    dispatch({ type: 'SET_SHOW_CONFIRMATION', payload: false });
+    dispatch({ type: 'SET_SHOW_PAYMENT', payload: false });
+    dispatch({ type: 'SET_SHOW_SEAT_SELECTION', payload: false });
+    dispatch({ type: 'SET_SHOW_RIDES', payload: false });
+    dispatch({ type: 'SET_SELECTED_DRIVER', payload: null });
+    dispatch({ type: 'SET_SELECTED_SEAT', payload: null });
+    dispatch({ type: 'SET_BOOKING_ID', payload: "" });
+    dispatch({ type: 'SET_SHOW_TIME_SLOTS', payload: true });
     onModeChange?.("browseRides");
   };
 
   const handleOpenHelp = (booking: any) => {
-    setSelectedBookingForHelp(booking);
-    setShowHelpDialog(true);
+    dispatch({ type: 'SET_SELECTED_BOOKING_FOR_HELP', payload: booking });
+    dispatch({ type: 'SET_SHOW_HELP_DIALOG', payload: true });
   };
 
   const handleSubmitHelp = async () => {
-    if (!issueType || !issueDescription.trim()) {
+    if (!state.issueType || !state.issueDescription.trim()) {
       toast.error("Please fill in all required fields");
       return;
     }
@@ -307,9 +420,9 @@ export function UsersPage({ initialMode = "main", onModeChange, refreshTrigger, 
     try {
       // Determine priority based on issue type
       let priority = 'medium';
-      if (issueType === 'safety') {
+      if (state.issueType === 'safety') {
         priority = 'critical';
-      } else if (issueType === 'driver-noshow' || issueType === 'payment') {
+      } else if (state.issueType === 'driver-noshow' || state.issueType === 'payment') {
         priority = 'high';
       }
 
@@ -324,10 +437,10 @@ export function UsersPage({ initialMode = "main", onModeChange, refreshTrigger, 
       };
 
       await issuesAPI.createIssue({
-        bookingId: selectedBookingForHelp?.bookingId || selectedBookingForHelp?.id,
-        issueType: issueType,
-        subject: issueTypeLabels[issueType] || 'Issue reported',
-        description: issueDescription.trim(),
+        bookingId: state.selectedBookingForHelp?.bookingId || state.selectedBookingForHelp?.id,
+        issueType: state.issueType,
+        subject: issueTypeLabels[state.issueType] || 'Issue reported',
+        description: state.issueDescription.trim(),
         priority: priority,
       });
 
@@ -336,10 +449,7 @@ export function UsersPage({ initialMode = "main", onModeChange, refreshTrigger, 
       });
 
       // Reset form
-      setIssueType("");
-      setIssueDescription("");
-      setShowHelpDialog(false);
-      setSelectedBookingForHelp(null);
+      dispatch({ type: 'RESET_ISSUE_FORM' });
     } catch (error: any) {
       toast.error("Failed to submit issue", {
         description: error.message || "Please try again.",
@@ -348,8 +458,8 @@ export function UsersPage({ initialMode = "main", onModeChange, refreshTrigger, 
   };
 
   const handleOpenDetails = (booking: any) => {
-    setSelectedBookingForDetails(booking);
-    setShowDetailsDialog(true);
+    dispatch({ type: 'SET_SELECTED_BOOKING_FOR_DETAILS', payload: booking });
+    dispatch({ type: 'SET_SHOW_DETAILS_DIALOG', payload: true });
   };
 
 
@@ -365,20 +475,20 @@ export function UsersPage({ initialMode = "main", onModeChange, refreshTrigger, 
   };
 
   // If showing confirmation
-  if (showConfirmation && selectedDriver && selectedSeat) {
+  if (state.showConfirmation && state.selectedDriver && state.selectedSeat) {
     return (
       <BookingConfirmation
         bookingDetails={{
-          bookingId: bookingId,
-          driverName: selectedDriver.driverName,
-          rating: selectedDriver.rating,
-          departureTime: selectedDriver.departureTime,
-          destination: selectedDriver.destination,
-          quadrant: selectedDriver.quadrant,
-          seatNumber: selectedSeat,
-          price: selectedDriver.price,
-          car: selectedDriver.car,
-          carType: selectedDriver.carType,
+          bookingId: state.bookingId,
+          driverName: state.selectedDriver.driverName,
+          rating: state.selectedDriver.rating,
+          departureTime: state.selectedDriver.departureTime,
+          destination: state.selectedDriver.destination,
+          quadrant: state.selectedDriver.quadrant,
+          seatNumber: state.selectedSeat,
+          price: state.selectedDriver.price,
+          car: state.selectedDriver.car,
+          carType: state.selectedDriver.carType,
           bookingDate: getCurrentDate()
         }}
         onViewBookings={handleViewBookings}
@@ -388,43 +498,43 @@ export function UsersPage({ initialMode = "main", onModeChange, refreshTrigger, 
   }
 
   // If showing payment
-  if (showPayment && selectedDriver && selectedSeat) {
+  if (state.showPayment && state.selectedDriver && state.selectedSeat) {
     return (
       <PaymentPage
         bookingDetails={{
-          driverName: selectedDriver.driverName,
-          rating: selectedDriver.rating,
-          departureTime: selectedDriver.departureTime,
-          destination: selectedDriver.destination,
-          quadrant: selectedDriver.quadrant,
-          seatNumber: selectedSeat,
-          price: selectedDriver.price,
-          car: selectedDriver.car,
-          carType: selectedDriver.carType,
+          driverName: state.selectedDriver.driverName,
+          rating: state.selectedDriver.rating,
+          departureTime: state.selectedDriver.departureTime,
+          destination: state.selectedDriver.destination,
+          quadrant: state.selectedDriver.quadrant,
+          seatNumber: state.selectedSeat,
+          price: state.selectedDriver.price,
+          car: state.selectedDriver.car,
+          carType: state.selectedDriver.carType,
           bookingDate: getCurrentDate(),
-          rideId: selectedDriver.rideId || selectedDriver.id,
+          rideId: state.selectedDriver.rideId || state.selectedDriver.id,
         }}
-        onBack={() => setShowPayment(false)}
+        onBack={() => dispatch({ type: 'SET_SHOW_PAYMENT', payload: false })}
         onConfirm={handlePaymentConfirm}
       />
     );
   }
 
   // If showing seat selection
-  if (showSeatSelection && selectedDriver) {
+  if (state.showSeatSelection && state.selectedDriver) {
     return (
       <SeatSelection 
         driver={{
-          name: selectedDriver.driverName,
-          rating: selectedDriver.rating,
-          car: selectedDriver.car,
-          carType: selectedDriver.carType,
-          price: selectedDriver.price,
-          departureTime: selectedDriver.departureTime,
-          destination: selectedDriver.destination,
-          quadrant: selectedDriver.quadrant,
-          rideId: selectedDriver.rideId || selectedDriver.id,
-          driverId: selectedDriver.driverId || selectedDriver.driver_user_id,
+          name: state.selectedDriver.driverName,
+          rating: state.selectedDriver.rating,
+          car: state.selectedDriver.car,
+          carType: state.selectedDriver.carType,
+          price: state.selectedDriver.price,
+          departureTime: state.selectedDriver.departureTime,
+          destination: state.selectedDriver.destination,
+          quadrant: state.selectedDriver.quadrant,
+          rideId: state.selectedDriver.rideId || state.selectedDriver.id,
+          driverId: state.selectedDriver.driverId || state.selectedDriver.driver_user_id,
         }}
         onBack={handleBackToRides}
         onConfirm={handleSeatConfirm}
@@ -433,7 +543,7 @@ export function UsersPage({ initialMode = "main", onModeChange, refreshTrigger, 
   }
 
   // If showing time slots
-  if (showTimeSlots) {
+  if (state.showTimeSlots) {
     return (
       <TimeSlotSelection 
         onTimeSlotSelect={handleTimeSlotSelect}
@@ -443,15 +553,15 @@ export function UsersPage({ initialMode = "main", onModeChange, refreshTrigger, 
   }
 
   // If showing available rides
-  if (showRides) {
+  if (state.showRides) {
     return (
       <div className="pb-20 bg-background min-h-screen">
         <div className="p-4 bg-white border-b flex items-center justify-between">
           <div>
             <h2 className="font-medium">Rides to University of Calgary</h2>
             <p className="text-sm text-muted-foreground">
-              {selectedTimeSlot && `Departing at ${selectedTimeSlot} • `}
-              {isLoadingRides ? "Loading..." : `${rides.length} rides available`}
+              {state.selectedTimeSlot && `Departing at ${state.selectedTimeSlot} • `}
+              {state.isLoadingRides ? "Loading..." : `${state.rides.length} rides available`}
             </p>
           </div>
           <Button 
@@ -463,18 +573,18 @@ export function UsersPage({ initialMode = "main", onModeChange, refreshTrigger, 
           </Button>
         </div>
         
-        {isLoadingRides ? (
+        {state.isLoadingRides ? (
           <div className="p-8 text-center">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
             <p className="mt-4 text-muted-foreground">Loading rides...</p>
           </div>
-        ) : rides.length === 0 ? (
+        ) : state.rides.length === 0 ? (
           <div className="p-8 text-center">
             <p className="text-muted-foreground">No rides available for this time slot.</p>
           </div>
         ) : (
           <div className="space-y-0">
-            {rides.map((ride) => (
+            {state.rides.map((ride) => (
               <RideCard 
                 key={ride.id} 
                 {...ride} 
@@ -505,7 +615,7 @@ export function UsersPage({ initialMode = "main", onModeChange, refreshTrigger, 
               onNavigateToHome();
             } else {
               // Fallback to old behavior if callback not provided
-              setShowTimeSlots(true);
+              dispatch({ type: 'SET_SHOW_TIME_SLOTS', payload: true });
               onModeChange?.("browseRides");
             }
           }}
@@ -515,16 +625,16 @@ export function UsersPage({ initialMode = "main", onModeChange, refreshTrigger, 
       </div>
 
       {/* Active Bookings Section */}
-      {isLoadingBookings ? (
+      {state.isLoadingBookings ? (
         <div className="p-8 text-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
           <p className="mt-4 text-muted-foreground">Loading bookings...</p>
         </div>
-      ) : activeBookings.length > 0 ? (
+      ) : state.activeBookings.length > 0 ? (
         <div className="px-4 mb-6">
           <h2 className="mb-3">Your Active Rides Today</h2>
           <div className="space-y-3">
-            {activeBookings.map((booking) => (
+            {state.activeBookings.map((booking) => (
               <Card key={booking.id} className="p-4 border-2 border-green-500">
                 <div className="flex items-start gap-3 mb-3">
                   <Avatar className="w-12 h-12">
@@ -598,7 +708,7 @@ export function UsersPage({ initialMode = "main", onModeChange, refreshTrigger, 
                             variant="default"
                             className="flex-1 bg-green-600 hover:bg-green-700 text-xs sm:text-sm"
                             onClick={async () => {
-                              setIsRespondingToAmount(prev => ({ ...prev, [booking.id]: true }));
+                              dispatch({ type: 'SET_IS_RESPONDING_TO_AMOUNT', payload: { ...state.isRespondingToAmount, [booking.id]: true } });
                               try {
                                 await bookingsAPI.respondToAdditionalAmount(booking.id, 'accepted');
                                 toast.success("Additional amount accepted", {
@@ -610,10 +720,10 @@ export function UsersPage({ initialMode = "main", onModeChange, refreshTrigger, 
                                   description: error.message || "Please try again.",
                                 });
                               } finally {
-                                setIsRespondingToAmount(prev => ({ ...prev, [booking.id]: false }));
+                                dispatch({ type: 'SET_IS_RESPONDING_TO_AMOUNT', payload: { ...state.isRespondingToAmount, [booking.id]: false } });
                               }
                             }}
-                            disabled={isRespondingToAmount[booking.id]}
+                            disabled={state.isRespondingToAmount[booking.id]}
                           >
                             <CheckCircle className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
                             <span className="hidden sm:inline">Accept </span>$ {parseFloat(booking.additional_amount_requested).toFixed(2)}
@@ -623,7 +733,7 @@ export function UsersPage({ initialMode = "main", onModeChange, refreshTrigger, 
                             variant="destructive"
                             className="flex-1 text-xs sm:text-sm"
                             onClick={async () => {
-                              setIsRespondingToAmount(prev => ({ ...prev, [booking.id]: true }));
+                              dispatch({ type: 'SET_IS_RESPONDING_TO_AMOUNT', payload: { ...state.isRespondingToAmount, [booking.id]: true } });
                               try {
                                 await bookingsAPI.respondToAdditionalAmount(booking.id, 'declined');
                                 toast.info("Request declined", {
@@ -635,10 +745,10 @@ export function UsersPage({ initialMode = "main", onModeChange, refreshTrigger, 
                                   description: error.message || "Please try again.",
                                 });
                               } finally {
-                                setIsRespondingToAmount(prev => ({ ...prev, [booking.id]: false }));
+                                dispatch({ type: 'SET_IS_RESPONDING_TO_AMOUNT', payload: { ...state.isRespondingToAmount, [booking.id]: false } });
                               }
                             }}
-                            disabled={isRespondingToAmount[booking.id]}
+                            disabled={state.isRespondingToAmount[booking.id]}
                           >
                             <XCircle className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
                             Decline
@@ -706,11 +816,11 @@ export function UsersPage({ initialMode = "main", onModeChange, refreshTrigger, 
       )}
 
       {/* Completed Bookings Section */}
-      {completedBookings.length > 0 && (
+      {state.completedBookings.length > 0 && (
         <div className="px-4 mb-6">
           <h2 className="mb-3">Completed Rides</h2>
           <div className="space-y-3">
-            {completedBookings.map((booking) => (
+            {state.completedBookings.map((booking) => (
               <Card key={booking.id} className="p-4 border-2 border-blue-500">
                 <div className="flex items-start gap-3 mb-3">
                   <Avatar className="w-12 h-12">
@@ -754,15 +864,15 @@ export function UsersPage({ initialMode = "main", onModeChange, refreshTrigger, 
                           toast.info("You have already rated this ride");
                           return;
                         }
-                        setSelectedBookingForRating(booking);
-                        setRating(5);
-                        setRatingComment("");
-                        setShowRatingDialog(true);
+                        dispatch({ type: 'SET_SELECTED_BOOKING_FOR_RATING', payload: booking });
+                        dispatch({ type: 'SET_RATING', payload: 5 });
+                        dispatch({ type: 'SET_RATING_COMMENT', payload: "" });
+                        dispatch({ type: 'SET_SHOW_RATING_DIALOG', payload: true });
                       } catch (error: any) {
-                        setSelectedBookingForRating(booking);
-                        setRating(5);
-                        setRatingComment("");
-                        setShowRatingDialog(true);
+                        dispatch({ type: 'SET_SELECTED_BOOKING_FOR_RATING', payload: booking });
+                        dispatch({ type: 'SET_RATING', payload: 5 });
+                        dispatch({ type: 'SET_RATING_COMMENT', payload: "" });
+                        dispatch({ type: 'SET_SHOW_RATING_DIALOG', payload: true });
                       }
                     }}
                   >
@@ -786,20 +896,20 @@ export function UsersPage({ initialMode = "main", onModeChange, refreshTrigger, 
       )}
 
       {/* Rating Dialog */}
-      <Dialog open={showRatingDialog} onOpenChange={setShowRatingDialog}>
+      <Dialog open={state.showRatingDialog} onOpenChange={(open: boolean) => dispatch({ type: 'SET_SHOW_RATING_DIALOG', payload: open })}>
         <DialogContent className="max-w-md">
           <DialogHeader>
             <DialogTitle>Rate Your Driver</DialogTitle>
             <DialogDescription>
-              How was your ride with {selectedBookingForRating?.driverName}?
+              How was your ride with {state.selectedBookingForRating?.driverName}?
             </DialogDescription>
           </DialogHeader>
 
           <div className="space-y-4 py-4">
-            {selectedBookingForRating && (
+            {state.selectedBookingForRating && (
               <div className="p-3 bg-muted rounded-md text-sm">
-                <p><strong>Ride:</strong> {selectedBookingForRating.destination}</p>
-                <p><strong>Date:</strong> {selectedBookingForRating.date} at {selectedBookingForRating.departureTime}</p>
+                <p><strong>Ride:</strong> {state.selectedBookingForRating.destination}</p>
+                <p><strong>Date:</strong> {state.selectedBookingForRating.date} at {state.selectedBookingForRating.departureTime}</p>
               </div>
             )}
 
@@ -810,19 +920,19 @@ export function UsersPage({ initialMode = "main", onModeChange, refreshTrigger, 
                   <button
                     key={star}
                     type="button"
-                    onClick={() => setRating(star)}
+                    onClick={() => dispatch({ type: 'SET_RATING', payload: star })}
                     className="focus:outline-none"
                   >
                     <Star
                       className={`w-8 h-8 ${
-                        star <= rating
+                        star <= state.rating
                           ? 'fill-yellow-400 text-yellow-400'
                           : 'text-gray-300'
                       }`}
                     />
                   </button>
                 ))}
-                <span className="ml-2 text-sm text-muted-foreground">{rating} / 5</span>
+                <span className="ml-2 text-sm text-muted-foreground">{state.rating} / 5</span>
               </div>
             </div>
 
@@ -831,8 +941,8 @@ export function UsersPage({ initialMode = "main", onModeChange, refreshTrigger, 
               <Textarea
                 id="comment"
                 placeholder="Share your experience..."
-                value={ratingComment}
-                onChange={(e) => setRatingComment(e.target.value)}
+                value={state.ratingComment}
+                onChange={(e) => dispatch({ type: 'SET_RATING_COMMENT', payload: e.target.value })}
                 rows={4}
                 className="bg-input-background"
               />
@@ -840,48 +950,45 @@ export function UsersPage({ initialMode = "main", onModeChange, refreshTrigger, 
           </div>
 
           <DialogFooter>
-            <Button variant="outline" onClick={() => setShowRatingDialog(false)}>
+            <Button variant="outline" onClick={() => dispatch({ type: 'SET_SHOW_RATING_DIALOG', payload: false })}>
               Cancel
             </Button>
             <Button 
               onClick={async () => {
-                if (!selectedBookingForRating) return;
+                if (!state.selectedBookingForRating) return;
                 
-                setIsSubmittingRating(true);
+                dispatch({ type: 'SET_IS_SUBMITTING_RATING', payload: true });
                 try {
                   await ratingsAPI.createRating({
-                    bookingId: selectedBookingForRating.id,
-                    rating: rating,
-                    comment: ratingComment.trim() || undefined,
+                    bookingId: state.selectedBookingForRating.id,
+                    rating: state.rating,
+                    comment: state.ratingComment.trim() || undefined,
                   });
                   
                   toast.success("Rating submitted successfully!", {
                     description: "Thank you for your feedback.",
                   });
                   
-                  setShowRatingDialog(false);
-                  setSelectedBookingForRating(null);
-                  setRating(5);
-                  setRatingComment("");
+                  dispatch({ type: 'RESET_RATING_FORM' });
                   await fetchBookings(); // Refresh to update UI
                 } catch (error: any) {
                   toast.error("Failed to submit rating", {
                     description: error.message || "Please try again.",
                   });
                 } finally {
-                  setIsSubmittingRating(false);
+                  dispatch({ type: 'SET_IS_SUBMITTING_RATING', payload: false });
                 }
               }}
-              disabled={isSubmittingRating}
+              disabled={state.isSubmittingRating}
             >
-              {isSubmittingRating ? "Submitting..." : "Submit Rating"}
+              {state.isSubmittingRating ? "Submitting..." : "Submit Rating"}
             </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
 
       {/* Help/Dispute Dialog */}
-      <Dialog open={showHelpDialog} onOpenChange={setShowHelpDialog}>
+      <Dialog open={state.showHelpDialog} onOpenChange={(open: boolean) => dispatch({ type: 'SET_SHOW_HELP_DIALOG', payload: open })}>
         <DialogContent className="max-w-md">
           <DialogHeader>
             <DialogTitle>Report an Issue</DialogTitle>
@@ -891,17 +998,17 @@ export function UsersPage({ initialMode = "main", onModeChange, refreshTrigger, 
           </DialogHeader>
 
           <div className="space-y-4 py-4">
-            {selectedBookingForHelp && (
+            {state.selectedBookingForHelp && (
               <div className="p-3 bg-muted rounded-md text-sm">
-                <p><strong>Ride:</strong> {selectedBookingForHelp.destination}</p>
-                <p><strong>Driver:</strong> {selectedBookingForHelp.driverName}</p>
-                <p><strong>Date:</strong> {selectedBookingForHelp.date} at {selectedBookingForHelp.departureTime}</p>
+                <p><strong>Ride:</strong> {state.selectedBookingForHelp.destination}</p>
+                <p><strong>Driver:</strong> {state.selectedBookingForHelp.driverName}</p>
+                <p><strong>Date:</strong> {state.selectedBookingForHelp.date} at {state.selectedBookingForHelp.departureTime}</p>
               </div>
             )}
 
             <div className="space-y-3">
               <Label>Issue Type</Label>
-              <RadioGroup value={issueType} onValueChange={setIssueType}>
+              <RadioGroup value={state.issueType} onValueChange={(value: string) => dispatch({ type: 'SET_ISSUE_TYPE', payload: value })}>
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="driver-late" id="driver-late" />
                   <Label htmlFor="driver-late" className="font-normal">Driver is late</Label>
@@ -934,8 +1041,8 @@ export function UsersPage({ initialMode = "main", onModeChange, refreshTrigger, 
               <Textarea
                 id="description"
                 placeholder="Please describe the issue in detail..."
-                value={issueDescription}
-                onChange={(e) => setIssueDescription(e.target.value)}
+                value={state.issueDescription}
+                onChange={(e) => dispatch({ type: 'SET_ISSUE_DESCRIPTION', payload: e.target.value })}
                 rows={4}
                 className="bg-input-background"
               />
@@ -943,7 +1050,7 @@ export function UsersPage({ initialMode = "main", onModeChange, refreshTrigger, 
           </div>
 
           <DialogFooter>
-            <Button variant="outline" onClick={() => setShowHelpDialog(false)}>
+            <Button variant="outline" onClick={() => dispatch({ type: 'SET_SHOW_HELP_DIALOG', payload: false })}>
               Cancel
             </Button>
             <Button onClick={handleSubmitHelp}>
@@ -954,7 +1061,7 @@ export function UsersPage({ initialMode = "main", onModeChange, refreshTrigger, 
       </Dialog>
 
       {/* Details Dialog */}
-      <Dialog open={showDetailsDialog} onOpenChange={setShowDetailsDialog}>
+      <Dialog open={state.showDetailsDialog} onOpenChange={(open: boolean) => dispatch({ type: 'SET_SHOW_DETAILS_DIALOG', payload: open })}>
         <DialogContent className="max-w-md">
           <DialogHeader>
             <DialogTitle>Ride Details</DialogTitle>
@@ -964,58 +1071,58 @@ export function UsersPage({ initialMode = "main", onModeChange, refreshTrigger, 
           </DialogHeader>
 
           <div className="space-y-4 py-4">
-            {selectedBookingForDetails && (
+            {state.selectedBookingForDetails && (
               <div className="space-y-3">
                 <div className="p-4 bg-muted rounded-md space-y-2">
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Destination:</span>
-                    <span className="font-medium">{selectedBookingForDetails.destination}</span>
+                    <span className="font-medium">{state.selectedBookingForDetails.destination}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Driver:</span>
-                    <span className="font-medium">{selectedBookingForDetails.driverName}</span>
+                    <span className="font-medium">{state.selectedBookingForDetails.driverName}</span>
                   </div>
-                  {selectedBookingForDetails.driverPhone && (
+                  {state.selectedBookingForDetails.driverPhone && (
                     <div className="flex justify-between">
                       <span className="text-muted-foreground">Driver Phone:</span>
-                      <span className="font-medium">{selectedBookingForDetails.driverPhone}</span>
+                      <span className="font-medium">{state.selectedBookingForDetails.driverPhone}</span>
                     </div>
                   )}
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Rating:</span>
-                    <span className="font-medium">{selectedBookingForDetails.driverRating} ★</span>
+                    <span className="font-medium">{state.selectedBookingForDetails.driverRating} ★</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Date:</span>
-                    <span className="font-medium">{selectedBookingForDetails.date}</span>
+                    <span className="font-medium">{state.selectedBookingForDetails.date}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Departure Time:</span>
-                    <span className="font-medium">{selectedBookingForDetails.departureTime}</span>
+                    <span className="font-medium">{state.selectedBookingForDetails.departureTime}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Pickup Time:</span>
-                    <span className="font-medium">{selectedBookingForDetails.pickupTime}</span>
+                    <span className="font-medium">{state.selectedBookingForDetails.pickupTime}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Pickup Location:</span>
-                    <span className="font-medium">{selectedBookingForDetails.pickupLocation}</span>
+                    <span className="font-medium">{state.selectedBookingForDetails.pickupLocation}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Quadrant:</span>
-                    <span className="font-medium">{selectedBookingForDetails.quadrant}</span>
+                    <span className="font-medium">{state.selectedBookingForDetails.quadrant}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Car:</span>
-                    <span className="font-medium">{selectedBookingForDetails.car} ({selectedBookingForDetails.color})</span>
+                    <span className="font-medium">{state.selectedBookingForDetails.car} ({state.selectedBookingForDetails.color})</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Seat Number:</span>
-                    <span className="font-medium">{selectedBookingForDetails.seatNumber}</span>
+                    <span className="font-medium">{state.selectedBookingForDetails.seatNumber}</span>
                   </div>
                   <div className="flex justify-between border-t pt-2 mt-2">
                     <span className="text-muted-foreground">Price:</span>
-                    <span className="font-medium">${selectedBookingForDetails.price}.00</span>
+                    <span className="font-medium">${state.selectedBookingForDetails.price}.00</span>
                   </div>
                 </div>
               </div>
@@ -1023,7 +1130,7 @@ export function UsersPage({ initialMode = "main", onModeChange, refreshTrigger, 
           </div>
 
           <DialogFooter>
-            <Button onClick={() => setShowDetailsDialog(false)}>
+            <Button onClick={() => dispatch({ type: 'SET_SHOW_DETAILS_DIALOG', payload: false })}>
               OK
             </Button>
           </DialogFooter>
