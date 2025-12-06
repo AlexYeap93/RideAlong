@@ -62,7 +62,12 @@ export default function App() {
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/drivers" element={<DriversPage />} />
-        <Route path="/users" element={<UsersPage />} />
+        <Route path="/users" element={<UsersPage onNavigateToHome={() => { 
+          navigate("/");
+          setTimeout(() => {
+            window.location.hash = `home/timeslots/${encodeURIComponent("University of Calgary")}`;
+          }, 0);
+        }} />} />
         <Route path="/profile" element={<ProfilePage />} />
         <Route path="/admin" element={isAdmin ? <AdminPage /> : <Navigate to="/" />} />
         <Route path="/rideHistory" element={<RideHistory />} />
