@@ -39,7 +39,6 @@ export interface UseHomeNavigationProps {
 export interface LoginPageProps {
   initialMode?: "login" | "signup";
   initialUserType?: "rider" | "driver";
-  onBack?: () => void;
 }
 
 export interface RequestRideDialogProps {
@@ -68,7 +67,7 @@ export interface SeatSelectionProps {
     rideId?: string;
     driverId?: string;
   };
-  onBack: () => void;
+  onBack?: () => void;
   onConfirm: (seat: number) => void;
 }
 
@@ -88,7 +87,7 @@ export interface TimeSlot {
 
 export interface TimeSlotSelectionProps {
   onTimeSlotSelect: (timeSlot: string) => void;
-  onBack: () => void;
+  onBack?: () => void;
   destination?: string;
   selectedDate?: Date;
   onDateChange?: (date: Date) => void;
@@ -216,7 +215,7 @@ export interface RideCardProps {
 }
 
 export interface RideHistoryProps {
-  onBack: () => void;
+  onBack?: () => void;
 }
 
 export interface ListRideDialogProps {
@@ -240,12 +239,13 @@ export interface PaymentPageProps {
     bookingDate: string;
     rideId?: string;
   };
-  onBack: () => void;
+  onBack?: () => void;
   onConfirm: (paymentMethod: string, pickupAddress: string, pickupCity: string, pickupProvince: string, pickupPostalCode: string) => void;
 }
 
 export interface PaymentMethodsProps {
-  onBack: () => void;
+  onBack?: () => void;
+
 }
 
 export interface AddCardParams {
@@ -265,7 +265,7 @@ export interface UsersPageProps {
 
 export interface SettingsPageProps {
   user: any;
-  onBack: () => void;
+  onBack?: () => void;
   onUserUpdated?: (updated: any) => void;
 }
 

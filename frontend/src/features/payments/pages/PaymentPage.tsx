@@ -11,6 +11,7 @@ import { CreditCard, ArrowLeft, MapPin, Clock, User, Calendar, CheckCircle2, Ale
 import { paymentMethodsAPI } from "../../../services/PaymentServices";
 import { toast } from "sonner";
 import { useAuth } from "../../../contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
 import type { PaymentPageProps, PaymentPageState } from "../../../serviceInterface";
 
 
@@ -69,6 +70,7 @@ function paymentPageReducer(state: PaymentPageState, action: PaymentPageAction):
 }
 
 export function PaymentPage({ bookingDetails, onBack, onConfirm }: PaymentPageProps) {
+  const navigate = useNavigate();
   const { user } = useAuth();
   const [state, dispatch] = useReducer(paymentPageReducer, {
     paymentSource: "saved",
@@ -257,7 +259,7 @@ export function PaymentPage({ bookingDetails, onBack, onConfirm }: PaymentPagePr
       {/* Header */}
       <div className="sticky top-0 z-10 p-4 bg-white border-b">
         <div className="flex items-center gap-3">
-          <Button variant="ghost" size="icon" onClick={onBack}>
+          <Button variant="ghost" size="icon" onClick={() => onBack ? onBack() : navigate(-1)}>
             <ArrowLeft className="w-5 h-5" />
           </Button>
           <h1 className="flex-1">Payment</h1>

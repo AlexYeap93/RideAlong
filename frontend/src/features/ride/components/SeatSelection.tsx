@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Card } from "../../../components/ui/card";
 import { Button } from "../../../components/ui/button";
+import { useNavigate } from "react-router-dom";
 import { Avatar, AvatarFallback } from "../../../components/ui/avatar";
 import { Badge } from "../../../components/ui/badge";
 import { X, Star, MapPin } from "lucide-react";
@@ -13,6 +14,7 @@ import { TOTAL_SEATS } from "../../../types/const";
 // Seat Selection component for the ride checks for number of seat and shows the composition of the car
 //Checks if seat is taken and if it is, it is disabled and if it is not, it is enabled
 export function SeatSelection({ driver, onBack, onConfirm }: SeatSelectionProps) {
+  const navigate = useNavigate();
   const [selectedSeat, setSelectedSeat] = useState<number | null>(null);
   const [bookedSeats, setBookedSeats] = useState<number[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -156,7 +158,7 @@ export function SeatSelection({ driver, onBack, onConfirm }: SeatSelectionProps)
       <div className="p-4 bg-white border-b">
         <div className="flex items-center justify-between mb-4">
           <h2 className="font-medium">Select Your Seat</h2>
-          <Button variant="outline" size="sm" onClick={onBack}>
+          <Button variant="outline" size="sm" onClick={() => onBack ? onBack() : navigate(-1)}>
             Back
           </Button>
         </div>

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { ArrowLeft, CreditCard, Plus, Trash2, Check } from "lucide-react";
 import { Button } from "../../../components/ui/button";
+import { useNavigate } from "react-router-dom";
 import { Card } from "../../../components/ui/card";
 import { Input } from "../../../components/ui/input";
 import { Label } from "../../../components/ui/label";
@@ -32,6 +33,7 @@ const formatExpiryDate = (value: string) => {
 };
 
 export function PaymentMethods({ onBack }: PaymentMethodsProps) {
+  const navigate = useNavigate();
 
   const {paymentMethods,loading, submitting, addCard, remove, setDefault,} = usePaymentMethods();
   const [showAddCard, setShowAddCard] = useState(false);
@@ -58,7 +60,7 @@ export function PaymentMethods({ onBack }: PaymentMethodsProps) {
       {/* Header */}
       <div className="bg-primary text-primary-foreground p-4">
         <div className="flex items-center gap-3">
-          <Button variant="ghost" size="icon" onClick={onBack} className="text-primary-foreground hover:bg-primary-foreground/10">
+          <Button variant="ghost" size="icon" onClick={() => onBack ? onBack() : navigate(-1)} className="text-primary-foreground hover:bg-primary-foreground/10">
             <ArrowLeft className="w-5 h-5" />
           </Button>
           <div>

@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Clock } from "lucide-react";
 import { Card } from "../../../components/ui/card";
 import { Button } from "../../../components/ui/button";
+import { useNavigate } from "react-router-dom";
 import { Badge } from "../../../components/ui/badge";
 import { ridesAPI } from "../../../services/RideServices";
 import { toast } from "sonner";
@@ -12,6 +13,7 @@ import { UNIVERSITY_DESTINATION } from "../../../types/const";
 
 
 export function TimeSlotSelection({ onTimeSlotSelect, onBack, destination = UNIVERSITY_DESTINATION.name, selectedDate: propSelectedDate = new Date(), onDateChange }: TimeSlotSelectionProps) {
+  const navigate = useNavigate();
   const [timeSlots, setTimeSlots] = useState<TimeSlot[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedDate, setSelectedDate] = useState<Date>(propSelectedDate);
@@ -184,7 +186,7 @@ export function TimeSlotSelection({ onTimeSlotSelect, onBack, destination = UNIV
           <Button 
             variant="outline" 
             size="sm"
-            onClick={onBack}
+            onClick={() => onBack ? onBack() : navigate(-1)}
           >
             Back
           </Button>
