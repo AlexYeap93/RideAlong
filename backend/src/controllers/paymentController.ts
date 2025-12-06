@@ -66,6 +66,14 @@ export const createPayment = async (req: Request,res: Response,next: NextFunctio
       throw error;
     }
 
+    // Check if user is suspended
+    const userCheck = await query('SELECT is_suspended FROM users WHERE id = $1', [req.user.id]);
+    if (userCheck.rows.length > 0 && userCheck.rows[0].is_suspended === true) {
+      const error: CustomError = new Error('Your account has been suspended. You cannot make payments.');
+      error.statusCode = 403;
+      throw error;
+    }
+
     const { bookingId, amount, paymentMethod, paymentStatus } = req.body;
 
     if (!bookingId || !amount || !paymentMethod) {

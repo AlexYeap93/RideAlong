@@ -154,7 +154,7 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
 
     // Find user
     const result = await query(
-      'SELECT id, email, password, name, role, phone, address, city, province, postal_code FROM users WHERE email = $1',
+      'SELECT id, email, password, name, role, phone, address, city, province, postal_code, is_suspended FROM users WHERE email = $1',
       [normalizedEmail]
     );
 
@@ -165,6 +165,13 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
     }
 
     const user = result.rows[0];
+
+    // Check if user is suspended
+    if (user.is_suspended) {
+      const error: CustomError = new Error('Your account has been suspended. Please contact support.');
+      error.statusCode = 403;
+      throw error;
+    }
 
     // Verify password
     const isValidPassword = await bcrypt.compare(password, user.password);

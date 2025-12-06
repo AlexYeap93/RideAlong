@@ -189,6 +189,30 @@ export function AdminPage() {
         }
     };
 
+    const handleReopenComplaint = async (c: AdminIssueView) => {
+        try {
+            await issuesAPI.updateIssue(c.id.toString(), { status: "open", });
+            toast.success("Issue reopened");
+            dispatch({ type: 'SET_SHOW_COMPLAINT_DIALOG', payload: false });
+            await fetchIssues();
+        }
+        catch (error: any) {
+            toast.error("Failed to reopen issue", { description: error.message || "Please try again.", });
+        }
+    };
+
+    const handleUnderReviewComplaint = async (c: AdminIssueView) => {
+        try {
+            await issuesAPI.updateIssue(c.id.toString(), { status: "under_review", });
+            toast.success("Issue marked as under review");
+            dispatch({ type: 'SET_SHOW_COMPLAINT_DIALOG', payload: false });
+            await fetchIssues();
+        }
+        catch (error: any) {
+            toast.error("Failed to update issue", { description: error.message || "Please try again.", });
+        }
+    };
+
     const handleApproveDriver = async (d: AdminPendingDriverView) => {
         try {
             await driversAPI.approveDriver(d.id.toString());
@@ -256,7 +280,13 @@ export function AdminPage() {
         });
 
     const filteredComplaints: AdminIssueView[] = state.issues.filter((complaint: any) => {
-        const matchesSearch = (complaint.subject || "").toLowerCase().includes(state.searchTerm.toLowerCase()) || (complaint.reporter_name || "").toLowerCase().includes(state.searchTerm.toLowerCase());
+        const searchLower = state.searchTerm.toLowerCase();
+        const matchesSearch = state.searchTerm === "" || 
+            (complaint.subject || "").toLowerCase().includes(searchLower) || 
+            (complaint.reporter_name || "").toLowerCase().includes(searchLower) ||
+            (complaint.reported_user_name || "").toLowerCase().includes(searchLower) ||
+            (complaint.description || "").toLowerCase().includes(searchLower) ||
+            (complaint.issue_type || "").toLowerCase().includes(searchLower);
         const dbStatus = complaint.status || "open";
         const matchesFilter = state.complaintFilter === "all" || dbStatus === state.complaintFilter;
         return matchesSearch && matchesFilter;
@@ -408,6 +438,8 @@ export function AdminPage() {
                 issue={state.selectedComplaint}
                 onOpenChange={(open) => dispatch({ type: 'SET_SHOW_COMPLAINT_DIALOG', payload: open })}
                 onResolve={handleResolveComplaint}
+                onReopen={handleReopenComplaint}
+                onUnderReview={handleUnderReviewComplaint}
             />
 
             <AdminDriverDialog

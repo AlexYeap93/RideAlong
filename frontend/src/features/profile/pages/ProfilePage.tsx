@@ -7,6 +7,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { Label } from "../../../components/ui/label";
 import { RadioGroup, RadioGroupItem } from "../../../components/ui/radio-group";
 import { Textarea } from "../../../components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../../components/ui/select";
 import { Star, Edit, Settings, CreditCard, History, HelpCircle, ChevronRight, Car, LogOut } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "../../../contexts/AuthContext";
@@ -29,7 +30,9 @@ type ProfilePageAction =
   | { type: 'SET_ISSUE_DESCRIPTION'; payload: string }
   | { type: 'SET_AVERAGE_RATING'; payload: number | null }
   | { type: 'SET_DRIVER_STATUS'; payload: { hasDriverProfile: boolean; isApprovedDriver: boolean; driverId: string | null; averageRating: number | null } }
-  | { type: 'RESET_ISSUE_FORM' };
+  | { type: 'RESET_ISSUE_FORM' }
+  | { type: 'SET_RECENT_BOOKINGS'; payload: any[] }
+  | { type: 'SET_SELECTED_BOOKING_ID'; payload: string };
 
 const initialState: ProfilePageState = {
   ridesTaken: 0,
@@ -42,6 +45,8 @@ const initialState: ProfilePageState = {
   issueType: "",
   issueDescription: "",
   averageRating: null,
+  recentBookings: [],
+  selectedBookingId: "",
 };
 
 function profilePageReducer(state: ProfilePageState, action: ProfilePageAction): ProfilePageState {
@@ -74,8 +79,12 @@ function profilePageReducer(state: ProfilePageState, action: ProfilePageAction):
         driverId: action.payload.driverId,
         averageRating: action.payload.averageRating,
       };
+    case 'SET_RECENT_BOOKINGS':
+      return { ...state, recentBookings: action.payload };
+    case 'SET_SELECTED_BOOKING_ID':
+      return { ...state, selectedBookingId: action.payload };
     case 'RESET_ISSUE_FORM':
-      return { ...state, issueType: "", issueDescription: "", showHelpDialog: false };
+      return { ...state, showHelpDialog: false, issueType: "", issueDescription: "", selectedBookingId: "" };
     default:
       return state;
   }
@@ -134,6 +143,13 @@ export function ProfilePage({ onNavigateToPaymentMethods, onNavigateToRideHistor
     try {
       // Get user bookings (rides taken)
       const bookingsResponse = await bookingsAPI.getBookingsByUser(user.id);
+      
+      // Store recent bookings for issue reporting (last 10)
+      const sortedBookings = [...bookingsResponse.data].sort((a: any, b: any) => {
+        return new Date(b.created_at || b.ride_date).getTime() - new Date(a.created_at || a.ride_date).getTime();
+      }).slice(0, 10);
+      dispatch({ type: 'SET_RECENT_BOOKINGS', payload: sortedBookings });
+
       const allBookings = bookingsResponse.data.filter((b: any) => b.status !== 'cancelled');
       dispatch({ type: 'SET_RIDES_TAKEN', payload: allBookings.length });
       
@@ -368,6 +384,27 @@ export function ProfilePage({ onNavigateToPaymentMethods, onNavigateToRideHistor
               </RadioGroup>
             </div>
 
+            {['driver-late', 'driver-noshow', 'safety', 'route'].includes(state.issueType) && (
+              <div className="space-y-2">
+                <Label>Select Ride (Optional)</Label>
+                <Select 
+                  value={state.selectedBookingId} 
+                  onValueChange={(value: string) => dispatch({ type: 'SET_SELECTED_BOOKING_ID', payload: value })}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select a recent ride" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {state.recentBookings?.map((booking: any) => (
+                      <SelectItem key={booking.id} value={booking.id}>
+                        {new Date(booking.ride_date).toLocaleDateString()} - {booking.destination} ({booking.driver_name || 'Driver'})
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
+
             <div className="space-y-2">
               <Label htmlFor="description">Description</Label>
               <Textarea
@@ -413,6 +450,7 @@ export function ProfilePage({ onNavigateToPaymentMethods, onNavigateToRideHistor
                   subject: issueTypeLabels[state.issueType] || 'Issue reported',
                   description: state.issueDescription.trim(),
                   priority: priority,
+                  bookingId: state.selectedBookingId || undefined,
                 });
 
                 toast.success("Issue reported successfully", {

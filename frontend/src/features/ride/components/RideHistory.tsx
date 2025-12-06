@@ -122,7 +122,7 @@ export function RideHistory() {
                   <p className="font-medium">{ride.driverName}</p>
                   <div className="flex items-center gap-1">
                     <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" />
-                    <span className="text-sm">{ride.rating}</span>
+                    <span className="text-sm">{Number(ride.rating).toFixed(1)}</span>
                   </div>
                 </div>
                 <p className="text-sm text-muted-foreground">{ride.car}</p>

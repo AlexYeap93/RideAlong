@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
+import { query } from '../config/database';
 import { CustomError } from './errorHandler';
 
 // Extend Request interface to include user
@@ -10,6 +11,7 @@ declare global {
         id: string;
         email: string;
         role: 'user' | 'driver' | 'admin';
+        is_suspended?: boolean;
       };
     }
   }
@@ -47,10 +49,28 @@ export const authenticate = async (req: Request, res: Response, next: NextFuncti
     try {
       const decoded = jwt.verify(token, jwtSecret) as JwtPayload;
       
+      // Check if user is suspended
+      const userResult = await query('SELECT is_suspended FROM users WHERE id = $1', [decoded.id]);
+      
+      if (userResult.rows.length === 0) {
+        const error: CustomError = new Error('User not found');
+        error.statusCode = 401;
+        throw error;
+      }
+
+      const isSuspended = userResult.rows[0].is_suspended;
+
+      if (isSuspended) {
+        const error: CustomError = new Error('Your account has been suspended. Please contact support.');
+        error.statusCode = 403;
+        throw error;
+      }
+      
       req.user = {
         id: decoded.id,
         email: decoded.email,
         role: decoded.role,
+        is_suspended: isSuspended,
       };
 
       next();
