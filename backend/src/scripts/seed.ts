@@ -467,6 +467,20 @@ async function seedCompleteBookingsAndRatings() {
   }
 }
 
+// Function to classify priority based on issue type
+function getPriorityFromIssueType(issueType: string): string {
+  const priorityMap: { [key: string]: string } = {
+    'safety': 'critical',
+    'driver-noshow': 'high',
+    'driver-late': 'high',
+    'route': 'medium',
+    'payment': 'medium',
+    'other': 'low'
+  };
+  
+  return priorityMap[issueType?.toLowerCase()] || 'medium';
+}
+
 // Seed issues for some bookings to populate admin issues page
 async function seedIssuesForBookings() {
   try {
@@ -487,7 +501,7 @@ async function seedIssuesForBookings() {
       return;
     }
 
-    const issueTypes = ['payment', 'driver', 'safety', 'other'];
+    const issueTypes = ['driver-late', 'driver-noshow', 'payment', 'safety', 'route', 'other'];
     const statuses = ['open', 'resolved'];
 
     let issuesCreated = 0;
@@ -502,8 +516,10 @@ async function seedIssuesForBookings() {
 
       const issueType = issueTypes[Math.floor(Math.random() * issueTypes.length)];
       const subject = issueType === 'payment' ? 'Payment not processed' :
-                      issueType === 'driver' ? 'Driver was late' :
-                      issueType === 'safety' ? 'Unsafe driving' : 'Other issue';
+                      issueType === 'driver-late' ? 'Driver was late' :
+                      issueType === 'driver-noshow' ? 'Driver did not show up' :
+                      issueType === 'safety' ? 'Safety concern' :
+                      issueType === 'route' ? 'Wrong route taken' : 'Other issue';
       const description = `Issue: ${subject} on booking ${bookingId}`;
 
       // Randomly choose status; make some resolved
@@ -525,12 +541,15 @@ async function seedIssuesForBookings() {
       if (exists.rows.length > 0) continue;
 
       // reported_user_id set to driver for driver-related issues, else null
-      const reportedUserId = issueType === 'driver' ? driverUserId : null;
+      const reportedUserId = ['driver-late', 'driver-noshow'].includes(issueType) ? driverUserId : null;
+
+      // Calculate priority based on issue type
+      const priority = getPriorityFromIssueType(issueType);
 
       await query(
         `INSERT INTO issues (user_id, booking_id, issue_type, subject, description, reported_user_id, status, priority, admin_notes)
          VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
-        [userId, bookingId, issueType, subject, description, reportedUserId, status, 'medium', adminNotes]
+        [userId, bookingId, issueType, subject, description, reportedUserId, status, priority, adminNotes]
       );
 
       issuesCreated++;

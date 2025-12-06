@@ -27,7 +27,7 @@ export function AdminStatsRow() {
           <div>
             <p className="text-xs text-muted-foreground">Open Issues</p>
             <p className="font-medium">
-              {issues.filter(i => i.status === "open").length}
+              {issues.filter((i: any) => i.status === "open").length}
             </p>
           </div>
         </div>

@@ -131,12 +131,8 @@ export function AdminPage() {
     const fetchIssues = async () => {
         dispatch({ type: 'SET_IS_LOADING_ISSUES', payload: true });
         try {
-            let statusFilter: string | undefined = undefined;
-            if (state.complaintFilter === "open") statusFilter = "open";
-            else if (state.complaintFilter === "under_review") statusFilter = "under_review";
-            else if (state.complaintFilter === "resolved") statusFilter = "resolved";
-
-            const response = await issuesAPI.getIssues({ status: statusFilter, });
+            // Always fetch all issues without filters to get accurate counts
+            const response = await issuesAPI.getIssues();
             dispatch({ type: 'SET_ISSUES', payload: response.data });
         }
         catch (error: any) {
@@ -288,7 +284,19 @@ export function AdminPage() {
             (complaint.description || "").toLowerCase().includes(searchLower) ||
             (complaint.issue_type || "").toLowerCase().includes(searchLower);
         const dbStatus = complaint.status || "open";
-        const matchesFilter = state.complaintFilter === "all" || dbStatus === state.complaintFilter;
+        const dbPriority = complaint.priority || "medium";
+        
+        // Handle both status and priority filters in the combined filter
+        let matchesFilter = state.complaintFilter === "all";
+        if (!matchesFilter) {
+            // Check if filter matches status
+            matchesFilter = dbStatus === state.complaintFilter;
+            // Check if filter matches priority
+            if (!matchesFilter) {
+                matchesFilter = dbPriority === state.complaintFilter;
+            }
+        }
+        
         return matchesSearch && matchesFilter;
     })
         .map(
@@ -327,6 +335,7 @@ export function AdminPage() {
     if (user?.role !== "admin")
         return null;
 
+    // Count open issues from all issues (unfiltered)
     const openIssuesCount = state.issues.filter((c: any) => c.status === "open").length;
 
     //render

@@ -44,13 +44,17 @@ export function AdminIssuesSection({ complaints, isLoading, complaintFilter, onC
     <>
       <Select value={complaintFilter} onValueChange={onComplaintFilterChange}>
         <SelectTrigger>
-          <SelectValue placeholder="Filter complaints" />
+          <SelectValue placeholder="Filter issues" />
         </SelectTrigger>
         <SelectContent>
           <SelectItem value="all">All Issues</SelectItem>
           <SelectItem value="open">Open</SelectItem>
           <SelectItem value="under_review">Under Review</SelectItem>
           <SelectItem value="resolved">Resolved</SelectItem>
+          <SelectItem value="critical">Critical Priority</SelectItem>
+          <SelectItem value="high">High Priority</SelectItem>
+          <SelectItem value="medium">Medium Priority</SelectItem>
+          <SelectItem value="low">Low Priority</SelectItem>
         </SelectContent>
       </Select>
 

@@ -2,6 +2,20 @@ import { Request, Response, NextFunction } from 'express';
 import { query } from '../config/database';
 import { CustomError } from '../middleware/errorHandler';
 
+//classify priority based on issue type
+const getPriorityFromIssueType = (issueType: string): string => {
+  const priorityMap: { [key: string]: string } = {
+    'safety': 'critical',
+    'driver-noshow': 'high',
+    'driver-late': 'high',
+    'route': 'medium',
+    'payment': 'medium',
+    'other': 'low'
+  };
+  
+  return priorityMap[issueType?.toLowerCase()] || 'medium';
+};
+
 //submit a issue ticket
 export const createIssue = async (req: Request,res: Response,next: NextFunction) => {
   try {
@@ -49,6 +63,9 @@ export const createIssue = async (req: Request,res: Response,next: NextFunction)
       }
     }
 
+    // Automatically assign priority based on issue type
+    const priority = getPriorityFromIssueType(issueType);
+
     const result = await query(
       `INSERT INTO issues (user_id, booking_id, issue_type, subject, description, reported_user_id, status, priority) 
        VALUES ($1, $2, $3, $4, $5, $6, $7, $8) 
@@ -61,7 +78,7 @@ export const createIssue = async (req: Request,res: Response,next: NextFunction)
         description,
         driverUserId, // reported_user_id = the driver (the one being reported)
         'open',
-        req.body.priority || 'medium'
+        priority
       ]
     );
 
