@@ -40,7 +40,7 @@ export function LoginPage({ initialMode = "login", initialUserType = "rider" }: 
         <Button 
           variant="ghost" 
           size="icon" 
-          onClick={() => navigate(-1)}
+          onClick={() => navigate("/")}
           className="mb-4"
         >
           <ArrowLeft className="w-5 h-5" />

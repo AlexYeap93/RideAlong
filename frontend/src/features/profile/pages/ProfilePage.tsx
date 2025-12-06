@@ -240,9 +240,6 @@ export function ProfilePage({ onNavigateToPaymentMethods, onNavigateToRideHistor
               </div>
             )}
           </div>
-          <Button variant="ghost" size="icon" className="text-primary-foreground">
-            <Edit className="w-5 h-5" />
-          </Button>
         </div>
       </div>
 
