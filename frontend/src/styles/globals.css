@@ -121,6 +121,11 @@
   --color-sidebar-ring: var(--sidebar-ring);
 }
 
+[data-slot="tabs-trigger"].rounded-full {
+  border-radius: 9999px;
+}
+
+
 @layer base {
   * {
     @apply border-border outline-ring/50;

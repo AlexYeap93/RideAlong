@@ -112,12 +112,12 @@ export function AdminUserDialog({ open, user, onOpenChange, onSuspendUser, onAct
         <DialogFooter className="flex-col sm:flex-row gap-2">
           {!isAdmin && (
             user.status === "Active" ? (
-              <Button  variant="destructive"  onClick={() => onSuspendUser(user)}  className="w-full sm:w-auto">
+              <Button  variant="destructive"  onClick={() => onSuspendUser(user)}  className="w-full sm:w-auto rounded-full">
                 <Ban className="w-4 h-4 mr-2" />
                 Suspend User
               </Button>
             ) : (
-              <Button  variant="default"  onClick={() => onActivateUser(user)}  className="w-full sm:w-auto">
+              <Button  variant="default"  onClick={() => onActivateUser(user)}  className="w-full sm:w-auto rounded-full">
                 <CheckCircle2 className="w-4 h-4 mr-2" />
                 Activate User
               </Button>
@@ -128,7 +128,7 @@ export function AdminUserDialog({ open, user, onOpenChange, onSuspendUser, onAct
               Admin users cannot be suspended
             </p>
           )}
-          <Button  variant="outline"  onClick={() => onOpenChange(false)}  className="w-full sm:w-auto">
+          <Button  variant="outline"  onClick={() => onOpenChange(false)}  className="w-full sm:w-auto rounded-full">
             Close
           </Button>
         </DialogFooter>

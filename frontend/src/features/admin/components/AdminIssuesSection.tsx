@@ -69,7 +69,7 @@ export function AdminIssuesSection({ complaints, isLoading, complaintFilter, onC
           <p className="text-muted-foreground">No issues found</p>
         </Card>
       ) : (
-        <div className="space-y-2">
+        <div className="space-y-2 mt-2">
           {complaints.map((c) => (
             <Card key={c.id} className="p-4">
               <div className="flex items-start gap-3">

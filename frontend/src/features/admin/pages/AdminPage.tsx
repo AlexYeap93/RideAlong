@@ -1,5 +1,5 @@
 import { useEffect, useReducer } from "react";
-import { Shield } from "lucide-react";
+import { Users, AlertTriangle, Clock, Shield } from "lucide-react";
 import { toast } from "sonner";
 
 import { Card } from "../../../components/ui/card";
@@ -360,7 +360,7 @@ export function AdminPage() {
                 <div className="grid grid-cols-3 gap-2 px-4 pb-4">
                     <Card className="p-3">
                         <div className="flex items-center gap-2">
-                            <Shield className="w-4 h-4 text-blue-600" />
+                            <Users className="w-4 h-4 text-blue-600" />
                             <div>
                                 <p className="text-xs text-muted-foreground">Total Users</p>
                                 <p className="font-medium">{state.users.length}</p>
@@ -369,7 +369,7 @@ export function AdminPage() {
                     </Card>
                     <Card className="p-3">
                         <div className="flex items-center gap-2">
-                            <Shield className="w-4 h-4 text-orange-600" />
+                            <AlertTriangle className="w-4 h-4 text-orange-600" />
                             <div>
                                 <p className="text-xs text-muted-foreground">Open Issues</p>
                                 <p className="font-medium">{openIssuesCount}</p>
@@ -378,7 +378,7 @@ export function AdminPage() {
                     </Card>
                     <Card className="p-3">
                         <div className="flex items-center gap-2">
-                            <Shield className="w-4 h-4 text-green-600" />
+                            <Clock className="w-4 h-4 text-green-600" />
                             <div>
                                 <p className="text-xs text-muted-foreground">Pending Applications</p>
                                 <p className="font-medium">{pendingDriversView.length}</p>
@@ -390,10 +390,10 @@ export function AdminPage() {
 
             {/* Tabs */}
             <Tabs defaultValue="users" className="w-full max-w-full">
-                <TabsList className="flex w-full overflow-x-auto px-4 my-4 gap-2 max-w-full [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-                    <TabsTrigger value="users" className="min-w-[110px]">Users</TabsTrigger>
-                    <TabsTrigger value="complaints" className="min-w-[110px]">Issues</TabsTrigger>
-                    <TabsTrigger value="drivers" className="min-w-[130px]">Applications</TabsTrigger>
+                <TabsList className="flex w-full overflow-x-auto px-4 my-4 gap-2 max-w-full [scrollbar-width:none] [&::-webkit-scrollbar]:hidden rounded-full">
+                    <TabsTrigger value="users" className="min-w-[110px] rounded-full">Users</TabsTrigger>
+                    <TabsTrigger value="complaints" className="min-w-[110px] rounded-full">Issues</TabsTrigger>
+                    <TabsTrigger value="drivers" className="min-w-[130px] rounded-full">Applications</TabsTrigger>
                 </TabsList>
 
                 <TabsContent value="users" className="px-4 space-y-4 w-full max-w-full overflow-x-hidden">

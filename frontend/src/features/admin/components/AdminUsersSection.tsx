@@ -46,7 +46,7 @@ export function AdminUsersSection({
           <p className="mt-4 text-muted-foreground">Loading users...</p>
         </div>
       ) : (
-        <div className="space-y-2">
+        <div className="space-y-2 mt-2">
           {users.map((u) => (
             <Card key={u.id} className="p-4">
               <div className="flex items-start gap-3">
