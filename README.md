@@ -1,4 +1,5 @@
 # RideAlong
+## Release 1.0
 
 A carpooling app built for university students and commuters. Think of it like Uber, but for people who are already going the same way. Drivers can list their rides and make some money, riders can find affordable transportation to campus or wherever they need to go.
 
