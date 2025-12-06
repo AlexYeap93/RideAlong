@@ -362,8 +362,8 @@ export function AdminPage() {
                         <div className="flex items-center gap-2">
                             <Users className="w-4 h-4 text-blue-600" />
                             <div>
-                                <p className="text-xs text-muted-foreground">Total Users</p>
-                                <p className="font-medium">{state.users.length}</p>
+                                <p className="text-xs text-muted-foreground mb-0">Total Users</p>
+                                <p className="font-medium text-sm">{state.users.length}</p>
                             </div>
                         </div>
                     </Card>
@@ -371,8 +371,8 @@ export function AdminPage() {
                         <div className="flex items-center gap-2">
                             <AlertTriangle className="w-4 h-4 text-orange-600" />
                             <div>
-                                <p className="text-xs text-muted-foreground">Open Issues</p>
-                                <p className="font-medium">{openIssuesCount}</p>
+                                <p className="text-xs text-muted-foreground mb-0">Open Issues</p>
+                                <p className="font-medium text-sm">{openIssuesCount}</p>
                             </div>
                         </div>
                     </Card>
@@ -380,8 +380,8 @@ export function AdminPage() {
                         <div className="flex items-center gap-2">
                             <Clock className="w-4 h-4 text-green-600" />
                             <div>
-                                <p className="text-xs text-muted-foreground">Pending Applications</p>
-                                <p className="font-medium">{pendingDriversView.length}</p>
+                                <p className="text-xs text-muted-foreground mb-0">Pending Applications</p>
+                                <p className="font-medium text-sm">{pendingDriversView.length}</p>
                             </div>
                         </div>
                     </Card>
