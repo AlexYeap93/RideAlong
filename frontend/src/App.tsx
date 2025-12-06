@@ -69,10 +69,20 @@ export default function App() {
           }, 0);
         }} />} />
         <Route path="/profile" element={<ProfilePage />} />
+        <Route path="/users" element={<UsersPage />} />
+        <Route path="/profile" element={<ProfilePage 
+            onNavigateToRideHistory={() => navigate("/rideHistory")}
+            onNavigateToPaymentMethods={() => navigate("/paymentMethods")}
+            onNavigateToSettings={() => {
+              // Always navigate to Settings page for editing user information
+              navigate("/settings");
+            }}
+          />
+} />
         <Route path="/admin" element={isAdmin ? <AdminPage /> : <Navigate to="/" />} />
         <Route path="/rideHistory" element={<RideHistory />} />
         <Route path="/paymentMethods" element={<PaymentMethods />} />
-        <Route path="/settings" element={<SettingsPage user={user} onUserUpdated={(updated: any) => { updateUser(updated);}} />} />
+        <Route path="/settings" element={ <SettingsPage onBack={()=>{navigate(-1)}} user={user} onUserUpdated={(updated: any) => { updateUser(updated);}} />} />
       </Routes>
       <BottomNavigation activeTab={activeTab} onTabChange={handleTabChange} isAdmin={isAdmin} />
       <Toaster />
