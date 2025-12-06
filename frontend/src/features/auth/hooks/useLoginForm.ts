@@ -1,6 +1,7 @@
 import { useReducer } from "react";
 import { toast } from "sonner";
 import { useAuth } from "../../../contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 interface LoginFormState {
   isSignUp: boolean;
@@ -78,8 +79,9 @@ function loginFormReducer(state: LoginFormState, action: LoginFormAction): Login
   }
 }
 
-export function useLoginForm(initialMode: "login" | "signup", initialUserType: "rider" | "driver", onBack?: () => void) {
+export function useLoginForm(initialMode: "login" | "signup", initialUserType: "rider" | "driver") {
   const { login, register } = useAuth();
+  const navigate = useNavigate();
 
   const [state, dispatch] = useReducer(loginFormReducer, {
     isSignUp: initialMode === "signup",
@@ -151,7 +153,7 @@ export function useLoginForm(initialMode: "login" | "signup", initialUserType: "
         });
 
         toast.success("Registration successful!");
-        onBack?.();
+        navigate(-1);
       } else {
         if (!state.email || !state.password) {
           toast.error("Enter email + password");

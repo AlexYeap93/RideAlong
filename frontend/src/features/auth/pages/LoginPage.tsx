@@ -3,9 +3,10 @@ import { Tabs, TabsList, TabsTrigger } from "../../../components/ui/tabs";
 import { Car, ArrowLeft } from "lucide-react";
 import { useLoginForm } from "../hooks/useLoginForm";
 import { LoginPageProps } from "../../../serviceInterface";
+import { useNavigate } from "react-router-dom";
 
 //Login Page for the app
-export function LoginPage({ initialMode = "login", initialUserType = "rider", onBack }: LoginPageProps) {
+export function LoginPage({ initialMode = "login", initialUserType = "rider" }: LoginPageProps) {
   
   const {
     isSignUp, setIsSignUp,
@@ -26,7 +27,8 @@ export function LoginPage({ initialMode = "login", initialUserType = "rider", on
     isLoading,
     handleSubmit,
     handleFileChange,
-  } = useLoginForm(initialMode, initialUserType, onBack);
+  } = useLoginForm(initialMode, initialUserType);
+  const navigate = useNavigate();
   
 
   
@@ -35,16 +37,14 @@ export function LoginPage({ initialMode = "login", initialUserType = "rider", on
     <div className="min-h-screen bg-background flex flex-col">
       {/* Header */}
       <div className="px-6 pt-12 pb-8">
-        {onBack && (
-          <Button 
-            variant="ghost" 
-            size="icon" 
-            onClick={onBack}
-            className="mb-4"
-          >
-            <ArrowLeft className="w-5 h-5" />
-          </Button>
-        )}
+        <Button 
+          variant="ghost" 
+          size="icon" 
+          onClick={() => navigate(-1)}
+          className="mb-4"
+        >
+          <ArrowLeft className="w-5 h-5" />
+        </Button>
         <div className="flex items-center justify-center gap-2 mb-2">
           <div className="w-10 h-10 bg-primary rounded-full flex items-center justify-center">
             <Car className="w-5 h-5 text-primary-foreground" />
@@ -52,7 +52,7 @@ export function LoginPage({ initialMode = "login", initialUserType = "rider", on
           <h1 className="text-primary">RideAlong</h1>
         </div>
         <p className="text-center text-muted-foreground mt-2">
-          {isSignUp && userType === "driver" && onBack 
+          {isSignUp && userType === "driver" 
             ? "Complete your driver registration" 
             : "Carpooling to University of Calgary"}
         </p>
@@ -317,7 +317,7 @@ export function LoginPage({ initialMode = "login", initialUserType = "rider", on
                 </>
               )}
 
-              {!isSignUp && (
+              {/* {!isSignUp && (
                 <div className="flex justify-end">
                   <button
                     type="button"
@@ -326,7 +326,7 @@ export function LoginPage({ initialMode = "login", initialUserType = "rider", on
                     Forgot password?
                   </button>
                 </div>
-              )}
+              )} */}
 
               <button 
                 type="submit" 
@@ -364,13 +364,13 @@ export function LoginPage({ initialMode = "login", initialUserType = "rider", on
             <p className="text-muted-foreground">
               By continuing, you agree to our Terms of Service and Privacy Policy
             </p>
-            {!isSignUp && (
+            {/* {!isSignUp && (
               <div className="pt-4 border-t border-border">
                 <p className="text-muted-foreground">
                   Admin? Sign in with <span className="font-mono bg-muted px-2 py-1 rounded">admin@admin.com</span>
                 </p>
               </div>
-            )}
+            )} */}
           </div>
         </div>
       </div>

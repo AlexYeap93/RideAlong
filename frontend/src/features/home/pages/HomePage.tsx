@@ -13,7 +13,7 @@ import { bookingsAPI } from "../../../services/BookingServices";
 import { useAuth } from "../../../contexts/AuthContext";
 import { useRides } from "../hooks/useRides"; 
 import { useHomeNavigation } from "../hooks/useHomeNavigation";
-import { HomePageProps } from "../../../types/index";
+import { HomePageProps } from "../../../serviceInterface";
   
 
 export function HomePage({ onNavigateToUsers, onBookingCreated, autoSelectDestination }: HomePageProps) {

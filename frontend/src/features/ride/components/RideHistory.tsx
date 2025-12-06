@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Card } from "../../../components/ui/card";
 import { Button } from "../../../components/ui/button";
+import { useNavigate } from "react-router-dom";
 import { Avatar, AvatarFallback } from "../../../components/ui/avatar";
 import { Badge } from "../../../components/ui/badge";
 import { ArrowLeft, MapPin, Calendar, Clock, Star, Download } from "lucide-react";
@@ -8,9 +9,9 @@ import { transformBookingData } from "../../../services/api";
 import { bookingsAPI } from "../../../services/BookingServices";
 import { useAuth } from "../../../contexts/AuthContext";
 import { toast } from "sonner";
-import type { RideHistoryProps } from "../../../serviceInterface";
 
-export function RideHistory({ onBack }: RideHistoryProps) {
+export function RideHistory() {
+  const navigate = useNavigate();
   const { user } = useAuth();
   const [rideHistory, setRideHistory] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -59,7 +60,7 @@ export function RideHistory({ onBack }: RideHistoryProps) {
           <Button 
             variant="ghost" 
             size="icon" 
-            onClick={onBack}
+            onClick={() => navigate(-1)}
             className="text-primary-foreground hover:bg-primary-foreground/10"
           >
             <ArrowLeft className="w-5 h-5" />
