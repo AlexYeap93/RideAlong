@@ -177,3 +177,35 @@ The API follows REST conventions and most endpoints require authentication. Chec
 
 - **[SETUP.md](./SETUP.md)** - Detailed setup instructions
 - **[HOW_IT_WORKS.md](./HOW_IT_WORKS.md)** - Deep dive into how the app works (architecture, database schema, authentication, etc.)
+## UI Walkthrough & Screenshots
+
+The following screenshots demonstrate the complete end-to-end workflow of **RideAlong**, including login (authentication: JWT), ride discovery, booking, seat selection, payments, and role-based dashboards for riders, drivers, and administrators.
+
+### 
+![Login](docs/screenshots/login.png)
+
+### Home & Ride Discovery
+![Home](docs/screenshots/home.png)
+![Driver Selection](docs/screenshots/driver_selection.png)
+
+### Booking Flow
+![Booking](docs/screenshots/booking.png)
+![Booking Selection](docs/screenshots/booking_selection.png)
+
+### Seat Selection
+![Seat Selection](docs/screenshots/seat_selection.png)
+
+### Booking Confirmation
+![Booking Confirmation](docs/screenshots/booking_confirmation.png)
+
+### Rider Dashboard
+![Rider Dashboard](docs/screenshots/rider.png)
+
+### Driver Dashboard
+![Driver Dashboard](docs/screenshots/driver.png)
+
+### Admin Dashboard
+![Admin Dashboard](docs/screenshots/admin.png)
+
+### User Profile
+![Profile](docs/screenshots/profile.png)
